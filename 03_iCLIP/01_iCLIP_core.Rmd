@@ -1,0 +1,354 @@
+---
+title: "01 Analysis of DDX3X iCLIP"
+author: "Joanna A. Krupka"
+date: "May 6, 2020"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+### Background  
+
+The aim of this analysis is to identify mRNA transcripts directly bound by DDX3X
+with performed individual nucleotide resolution crosslinking immunoprecipitation (iCLIP). 
+The experiments were performed using primary germinal center B-cells, U2932 and Mutu cells.
+
+### Objectives   
+
+1. Examine distribution of iCLIP X-linking sites in different genomic regions.    
+2. Examine reproducibility between replicates: correlation  
+3. Examine distribution of iCLIP peaks density per gene.  
+4. Examine the overlap between primary germinal center B-cells, U2932 and Mutu cells. 
+5. Examine the relationship between peaks density and gene expression level  
+6. Visualise DDX3X binding profile across mature transcript (metagene analysis)  
+7. Perform gene ontology analysis of identified DDX3X targets.  
+
+### Materials and methods  
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+library(tidyverse)
+library(rtracklayer)
+library(ComplexHeatmap)
+library(graphics)
+library(corrplot)
+library(GenomicFeatures)
+library(biomaRt)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+
+source("../utilis.R")
+
+GTF <- "~/Documents/reference-genome/gencode_v29_annotations/gencode.v29.basic.annotation.gtf"
+HUGO.RPs <- read_csv("../../dxJungle/signatures/HUGO_ribosomal_proteins_all.csv")
+
+# Load annotations
+gtfTab <- rtracklayer::import(GTF, "GTF") %>%
+  as.data.frame() %>%
+  filter(transcript_type == "protein_coding" 
+          & tag == "CCDS")
+
+txdb <- makeTxDbFromGFF(GTF, format = "gtf")
+exons <- exonsBy(txdb, by = "gene")
+```
+
+### Analysis
+
+#### Distribution of X-linking sites by genomic regions (Fig. 4A)
+
+I first examined which genomic regions accumulated the largest number of 
+DDX3X X-linking sites.  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+xlinking.sites.type <- list.files("iMaps/summary", "_type.tsv$", full.names = T)
+
+de.byRegion <- tibble()
+
+suppressMessages(
+  for (i in 1:length(xlinking.sites.type)){
+    tab <- read_delim(xlinking.sites.type[i], delim = "\t") %>%
+      mutate(Frac_Length = Length/sum(Length),
+             Frac_Reads = `reads #`/sum(`reads #`),
+             Density_Enrichment = Frac_Reads/Frac_Length,
+             Model = splitvec(splitvec(xlinking.sites.type[i],"/", 3), "_", 1)) %>%
+      dplyr::select(Type, Density_Enrichment, Model) 
+    
+    if(nrow(de.byRegion) == 0){
+      de.byRegion <- tab
+    } else {
+      de.byRegion <- de.byRegion %>%
+        full_join(tab)
+    }
+  }
+)
+de.byRegion <- de.byRegion %>% 
+  mutate(Type = factor(Type, levels = c("intergenic","ncRNA", "intron", "UTR3", "CDS", "UTR5")),
+         Model = factor(Model, levels = c("Mutu", "GCBcells", "U2932")))
+
+ggplot(de.byRegion, aes(y = Density_Enrichment, x = Type, fill = Model)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  coord_flip() +
+  scale_fill_manual(values = divergingPal[c(2,12,10)]) +
+  nature_barplot() +
+  labs(x = "Genomic Region", y = "Density enrichments of the X-linking sites", fill ="")
+ggsave("plots/iCLIP_Xlinsites_byGenomicRegion_barplot.pdf", width = 7, height = 5)
+```
+Cross-linking sites mapped predominantly to mature mRNA transcripts. Binding profile 
+between all cell types was similar. 
+
+#### Examine reproducibility in iCLIP peaks between replicates (Fig. S4 C) 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+tabs <- list.files("iMaps/peaks/peaksUngrouped", "sumgene.tab", full.names = T)
+samples <- c("GCBcells_1", "GCBcells_2", 
+             "Mutu_1", "Mutu_2",
+             "U2932_1", "U2932_2", "U2932_3")
+countsByGene <- tibble()
+
+for (t in 1:length(tabs)){
+  tab <- read_delim(tabs[t], delim = "\t", skip = 1) %>% 
+    dplyr::select(gene_name, total_same_count_sum)
+  
+  colnames(tab) <- c("gene_name", samples[t])
+  
+  if(nrow(countsByGene) == 0){
+    countsByGene <- tab
+  } else {
+    countsByGene <- countsByGene %>%
+      full_join(tab)
+  }
+  
+}
+
+countsByGene[is.na(countsByGene)] <- 0
+cortab <- cor(edgeR::cpm(countsByGene[,-1]), method = "pearson")
+
+pdf("plots/replicatesCorrelation.pdf") 
+corrplot::corrplot(cortab, method = "number", type = "lower", order = "hclust", tl.col = "black")
+dev.off() 
+```
+
+#### Distribution of iCLIP peaks density per gene (Fig. S4 C)
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+peaks.bed <- list.files("iMaps/peaks", "peaks.bed$", full.names = T)
+
+allPeaks <- tibble()
+
+for (i in 1:length(peaks.bed)){
+  bed <- import(peaks.bed[i], format = "BED")
+  overlaps <- findOverlaps(bed, exons)
+  multimaps <- table(queryHits(overlaps))
+  overlaps <- overlaps[queryHits(overlaps) %in% names(multimaps)[multimaps == 1]]
+  
+  bed$geneID <- NA
+  bed$geneID[queryHits(overlaps)] <- names(exons)[subjectHits(overlaps)]
+  
+  peaksTab <- bed %>% as.data.frame() %>%
+    dplyr::filter(!is.na(geneID)) %>%
+    mutate(ensembl_gene_id = splitvec(geneID, "[.]", 1)) %>%
+    group_by(ensembl_gene_id) %>%
+    summarize(N_peaks = length(ensembl_gene_id),
+              mean_cDNA = mean(score)) %>%
+    mutate(Model = splitvec(splitvec(peaks.bed[i],"/", 3), "_", 1)) %>%
+    mutate(Model = factor(Model, levels = c("IgG", "U2932", "Mutu", "GCBcells")))
+  
+   if(nrow(allPeaks) == 0){
+    allPeaks <- peaksTab
+  } else {
+    allPeaks <- allPeaks %>%
+      full_join(peaksTab)
+  }
+}
+
+# Histogram of the number of peaks per gene   
+ggplot(allPeaks, aes(x = N_peaks, fill = Model)) +
+  facet_grid(Model~.) +
+  geom_histogram(binwidth = 1) +
+  scale_fill_manual(values = c("black", divergingPal[c(10,2,12)])) +
+  nature_barplot() +
+  labs(x = "Number of peaks per gene", y = "Count", fill = "") +
+  scale_x_continuous(breaks = c(seq(0, 60, by = 5))) 
+  ggsave("plots/iCLIP_peaksHistogram_byModel.pdf",  width = 7, height = 12)
+```
+
+#### Examine overlap in iCLIP peaks between cell models (Fig. S4 D) 
+
+Genes with more than 4 cross-linking peaks in at least one experiment were considered as valid DDX3X targets.
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+allPeaks.filtered <- allPeaks %>%
+  dplyr::filter(N_peaks > 3)
+
+overlapTab <- tibble(ensembl_gene_id = unique(allPeaks.filtered$ensembl_gene_id),
+                     Mutu = as.numeric(ensembl_gene_id %in% allPeaks.filtered$ensembl_gene_id[allPeaks.filtered$Model == "Mutu"]),
+                     U2932 = as.numeric(ensembl_gene_id %in% allPeaks.filtered$ensembl_gene_id[allPeaks.filtered$Model == "U2932"]),
+                     GCBcells = as.numeric(ensembl_gene_id %in% allPeaks.filtered$ensembl_gene_id[allPeaks.filtered$Model == "GCBcells"])) %>%
+  mutate(N = Mutu + U2932 + GCBcells)
+
+# UpSetPlot
+comb.matrix <- make_comb_mat(as.matrix(overlapTab[,2:4]))
+ht = draw(UpSet(comb.matrix))
+
+# Overlapping targets  
+DX.targets.common <- overlapTab 
+
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+entrezIDs <- getBM(attributes=c('entrezgene_id', 
+                                'external_gene_name',
+                                'ensembl_gene_id'), 
+                   filters = "ensembl_gene_id",
+                   values = DX.targets.common$ensembl_gene_id, 
+                   mart = ens) 
+DX.targets.common <- DX.targets.common %>%
+  left_join(entrezIDs) 
+all(DX.targets.common$ensembl_gene_id %in% overlapTab$ensembl_gene_id)
+
+
+write_csv(DX.targets.common, "results/iCLIP_targets_byCells.csv")
+```
+
+#### Relationship between peaks density and gene expression level   
+
+In order to check specificity of iCLIP binding (whether iCLIP signal is not just 
+a reflection of mRNA abundance), I will compare the number of genes with and without DDX3X 
+X-linking peaks at different expression levels. 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+peaks.mean.expr.all <-  read_csv("../utilis/expressionData/mRNA_MeanTPM_MutuU2932GCB_RNAseq.csv")
+  
+peaks.mean.expr <- peaks.mean.expr.all %>%
+  group_by(ensembl_gene_id) %>%
+  filter(meanTPM > 1) %>%
+  #filter(length(ensembl_gene_id) == 3) %>%
+  ungroup() %>%
+  mutate(Category = case_when(Model == "GCBcells" & ensembl_gene_id %in% 
+                                allPeaks$ensembl_gene_id[allPeaks.filtered$Model == "GCBcells"] ~ "WithPeaks",
+                              Model == "Mutu" & ensembl_gene_id %in% 
+                                allPeaks$ensembl_gene_id[allPeaks.filtered$Model == "Mutu"] ~ "WithPeaks",
+                              Model == "U2932" & ensembl_gene_id %in% 
+                                allPeaks$ensembl_gene_id[allPeaks.filtered$Model == "U2932"] ~ "WithPeaks",
+                              TRUE ~ "NoPeaks")) %>%
+  mutate(log2_meanTPM = round(log2(meanTPM+1),0)) %>%
+  group_by(log2_meanTPM, Model, Category) %>%
+  summarise(N = length(ensembl_gene_id))
+
+ggplot(peaks.mean.expr, aes(x = log2_meanTPM, y = N, fill = Category)) +
+  geom_bar(stat = "identity", position = position_dodge(preserve = "single")) +
+  xlim(1,15) +
+  #scale_x_continuous(breaks = seq(1,15, by = 2)) +
+  scale_y_log10() +
+  scale_fill_manual(values = divergingPal[c(10,2)]) +
+  facet_grid(Model~.) +
+  nature_barplot() 
+ggsave("plots/iCLIP_peaks_byExpression_byModel.pdf", width = 7, height = 12)
+```
+#### Metagene analysis  
+
+Metagene analysis with Deeptools to visualise DDX3X binding profile across 
+mature transcripts. 
+
+```{bash eval = F, echo = T, message = F, warning = F, error = F}
+#BED to BAM
+ls iMaps/xlinsites/*.bed | cut -d "." -f 1 | cut -d "/" -f 3 | parallel "bedToBam -i iMaps/xlinsites/{}.bed -g /home/JAK75/Documents/reference-genome/gencode_v29_annotations/GRCh38.primary_assembly.genome.chrom.sizes > iMaps/bam/{}.bam"
+ls iMaps/bam/*.bam | parallel "samtools index {}"
+
+ls iMaps/bam/*.bam | cut -d '/' -f 3 | cut -d '.' -f 1 | parallel 'bamCoverage -p 16 --bam iMaps/bam/{}.bam -o iMaps/bigWigs/{}.bw --binSize 1 --normalizeUsing CPM --ignoreForNormalization chrX chrY'
+
+computeMatrix scale-regions -p 20 -S iMaps/bigWigs/*.bw -R ../../dxJungle/expression_data/gtf/gencode.v29.basic.annotation_filtered.gtf -o iMaps/bigWigs/allGrouped_CPM.gz -bs 20 --samplesLabel GCBcells Mutu U2932 -m 5000 -b 3000 -a 3000 -p 40 --metagene --exonID CDS  --transcriptID transcript --skipZeros
+
+plotProfile -m  iMaps/bigWigs/allGrouped_CPM.gz \
+-out plots/metagene_gencodeBasic_profile_CPM.pdf \
+--perGroup \
+--colors "#808080" "#D53E4F" "#3288BD" \
+--samplesLabel "Primary GC B-cells" "Mutu" "U2932" \
+--startLabel "TSS" --endLabel "TTS"
+```
+
+#### Gene ontology analysis   
+
+Gene ontology analysis of DDX3X targets.  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# Load reference set. 
+refU2932 <- read_csv("../utilis/refList/U2932_refList.csv")
+refMutu <- read_csv("../utilis/refList/Mutu_refList.csv")
+
+# Create lists
+universeList <- as.character(unique(c(refU2932$entrezgene_id, refMutu$entrezgene_id)))
+
+ontologyTab <- tibble()
+
+samples <- c("Mutu", "U2932", "GCBcells")
+ontologies <- c("BP","CC", "MF")
+for (i in 1:3){
+  TargetsList <- DX.targets.common %>% 
+    dplyr::select(samples[i], entrezgene_id) 
+  TargetsList <- TargetsList[TargetsList[,1] == 1,]
+  TargetsList <- TargetsList$entrezgene_id
+  
+  for (o in 1:3){
+    goTab<- enrichGO(gene = as.character(TargetsList),
+                universe = as.character(universeList),
+                OrgDb = org.Hs.eg.db,
+                ont = ontologies[o],
+                pAdjustMethod = "BH",
+                pvalueCutoff = 0.01,
+                qvalueCutoff = 0.05,
+                readable = T)
+    
+      goTab <- as.data.frame(goTab) %>%
+        separate(GeneRatio, c("n", "N"), "/", remove = F) %>%
+        separate(BgRatio, c("b", "B"), "/", remove = F) %>%
+        mutate(n = as.numeric(n),
+               N = as.numeric(N),
+               b = as.numeric(b),
+               B = as.numeric(B),
+               EnrichmentScore = (n/N)/(b/B))  %>%
+        filter(n > 10,
+               b > 20)  %>% 
+        arrange(desc(EnrichmentScore)) %>%
+        mutate(group = paste("GO", ontologies[o]),
+               sample = samples[i]) 
+          
+      toSave <- goTab
+      
+      if(nrow(ontologyTab) == 0){
+        ontologyTab <- toSave
+      } else {
+        ontologyTab <- ontologyTab %>%
+          full_join(toSave)
+      }      
+      
+  }
+}
+
+write_csv(ontologyTab, "iMaps/GO_Targets_byModel.csv")
+
+# Barplot
+plot_df <- ontologyTab %>%
+  group_by(Description) %>%
+  filter(length(Description) == 3) %>%
+  mutate(meanES = mean(EnrichmentScore),
+         meanFDR =mean(p.adjust)) %>%
+  ungroup() %>%
+  group_by(group,sample) %>%
+  mutate(rank = rank(-meanES)) %>%
+  filter(rank < 6) %>%
+  ungroup() %>%
+  mutate(Description = factor(Description, levels = unique(Description[order(meanFDR, decreasing = T)])),
+         sample = factor(sample, levels = c("Mutu", "GCBcells", "U2932")))
+
+ggplot(plot_df, aes(x = Description, y = -log10(p.adjust), fill = sample)) +
+  facet_grid(group~., scales = "free") +
+  geom_bar(stat = "identity", position = position_dodge2()) +
+  nature_barplot() +
+  coord_flip() +
+  scale_fill_manual(values = divergingPal[c(2,12,10)]) +
+  labs(y = expr(-log[10]*("FDR")),
+       x = "",
+       fill = "") +
+  theme(strip.text.y = element_text(margin = margin(2,2,2,2)))
+
+ggsave("plots/GO_barplot_universeExpressed.pdf", width = 14, height = 5)
+```

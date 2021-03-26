@@ -1,0 +1,357 @@
+---
+title: "01 Analysis of Co-IP + SILAC of endogenous DDX3X"
+author: "Joanna A. Krupka"
+date: "May 6, 2020"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+### Background  
+
+The aim of this analysis is to establish the protein interactome of endogenous DDX3X 
+in human lymphoid cell lines: U2932 (female, DDX3X WT) and Mutu (male, DDX3X mutant). 
+
+### Objectives   
+
+1. Clean the data: unify redundant protein group, select enriched proteins for downstream analysis  
+2. Perform Gene Ontology and pathway analysis (Reactome)  
+3. Visualise the results for both cell lines: Venn Diagram + scatter plot 
+
+### Materials and methods  
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+library(tidyverse)
+library(magrittr)
+library(clusterProfiler)
+library(msigdbr)
+library(org.Hs.eg.db)
+library(biomaRt)
+library(limma)
+library(VennDiagram)
+library(ggrepel)
+library(ReactomePA)
+
+source("../utilis.R")
+
+# FUNCTIONS
+# Function to parse multiple gene names. 
+unify <- function(x){
+ paste(unique(toupper(unlist(strsplit(x, ";")))), collapse = ";")
+}
+
+# Wrapper function for GO analysis
+doGO <- function(genes, background, categories){
+  
+  resultsTab <- data.frame()
+  for (c in 1:length(categories)){
+      msigDf <- msigdbr(species = "Homo sapiens", category = categories[c]) %>%
+        dplyr::select(gs_name, entrez_gene) 
+      mSigRes <- enricher(as.character(genes), TERM2GENE=msigDf, 
+                          universe = background, pvalueCutoff = 0.1)
+      mSigResRead <- DOSE::setReadable(mSigRes, org.Hs.eg.db, keyType = "ENTREZID")
+      
+      mSigResTab <- as.data.frame(mSigResRead) %>%
+        separate(GeneRatio, c("n", "N"), "/", remove = F) %>%
+        separate(BgRatio, c("b", "B"), "/", remove = F) %>%
+        mutate(EnrichmentN = as.numeric(n)/as.numeric(b),
+               Category = categories[c]) %>%
+        arrange(desc(EnrichmentN)) %>%
+        mutate(IDs = gsub("_", " ", ID)) %>%
+        mutate(IDs = tools::toTitleCase(tolower(as.character(IDs))),
+               IDs = gsub("Go", "GO", IDs),
+               IDs = gsub("Rna", "RNA", IDs),
+               IDs = gsub("Mrna", "mRNA", IDs),
+               IDs = gsub("Dna", "DNA", IDs),
+               IDs = gsub("Reactome", "REACTOME", IDs),
+               IDs = gsub("Utr", "UTR", IDs),
+               IDs = gsub("Kegg", "KEGG", IDs),
+               IDs = gsub("Poly a", "Poly-A", IDs),
+               IDs = factor(IDs, levels = IDs[order(p.adjust)]),
+               N = as.numeric(N),
+               n = as.numeric(n),
+               b = as.numeric(b),
+               B = as.numeric(B))
+      
+        if(nrow(resultsTab) == 0){
+          resultsTab <- mSigResTab
+        } else {
+          resultsTab <- rbind(resultsTab, mSigResTab)
+        }
+      
+  }
+  return(resultsTab)
+}
+
+
+# SILAC data (Max Quant output)
+MUTU_DATA <-  "data/12092016_Mutu_DDX3X IP.csv"
+U2932_DATA <- "data/T_Oellerich_08112016_U2932.csv"
+```
+
+### Analysis  
+
+#### Load and organise the results selecting top enriched proteins for further analysis  
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Load Mutu
+mutu.tab <- read_csv(MUTU_DATA) %>%
+  dplyr::select(`Gene names`, `Ratio H/L`, `Ratio H/L normalized`, Intensity) %>%
+  dplyr::rename(Mutu_HL_Ratio = `Ratio H/L normalized`,
+                Mutu_Intensity = Intensity) %>%
+  group_by(`Gene names`) %>%
+  mutate(Gene_names = unify(`Gene names`),
+         MutuSignif = Mutu_HL_Ratio > 7) %>%
+  ungroup() %>%
+  dplyr::select(Gene_names, Mutu_HL_Ratio, Mutu_Intensity, MutuSignif) %>%
+  mutate(Gene_names_rep = splitvec(Gene_names, ";", 1))
+
+# Enrichment threshold
+ggdensity(mutu.tab, x = "Mutu_HL_Ratio", rug = TRUE,
+   color = "MutuSignif", fill = "MutuSignif",
+   palette = divergingPal[c(12,10)]) +
+  geom_vline(xintercept = 7, linetype = "longdash")
+ggsave(file.path("plots", paste("QC_Mutu_HL_Ratio.pdf", sep = "_")),
+           width = 5, height = 4)
+
+# Load U2932 
+U2392.tab <- read_csv(U2932_DATA) %>%
+  dplyr::select(`Gene names`, `Ratio H/L`, `Ratio H/L normalized`, Intensity) %>%
+  dplyr::rename(U2932_HL_Ratio = `Ratio H/L normalized`,
+                U2932_Intensity = Intensity) %>%
+  group_by(`Gene names`) %>%
+  mutate(Gene_names = unify(`Gene names`),
+         U2932Signif = U2932_HL_Ratio > 7) %>%
+  ungroup() %>%
+  dplyr::select(Gene_names, U2932_HL_Ratio, U2932_Intensity, U2932Signif) %>%
+  mutate(Gene_names_rep = splitvec(Gene_names, ";", 1))
+
+# Enrichment threshold
+ggdensity(U2392.tab, x = "U2932_HL_Ratio", rug = TRUE,
+   color = "U2932Signif", fill = "U2932Signif",
+   palette = divergingPal[c(12,11)]) +
+  geom_vline(xintercept = 4, linetype = "longdash")
+ggsave(file.path("plots", paste("QC_U2932_HL_Ratio.pdf", sep = "_")),
+           width = 5, height = 4)
+
+# Combine Mutu and U2932 results into one table, add entrezgene IDs
+# Extract significant genes
+combined.raw <- mutu.tab %>%
+  full_join(U2392.tab, by = "Gene_names_rep")
+
+# Add annotations 
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart_ensembl2name <- getBM(attributes=c('external_gene_name',
+                                           'entrezgene_id'), 
+                                filters = "external_gene_name", 
+                                values = combined.raw$Gene_names_rep, 
+                                mart = ens)
+
+# Use HUGO aproved gene symbols
+hgnc <- read.delim("../utilis/signatures/HUGO_annotations.txt")
+
+combined.raw <- combined.raw %>% 
+  left_join(biomart_ensembl2name, by = c("Gene_names_rep" = "external_gene_name")) %>%
+  group_by(Gene_names_rep) %>%
+  mutate(entrezgene_id = entrezgene_id,
+         ApprovedSymbol = case_when(
+           is.na(entrezgene_id) ~ as.character(hgnc$Approved.symbol[grepl(Gene_names_rep,
+                                                                          hgnc$Previous.symbol)][1]),
+           !is.na(entrezgene_id)  ~ Gene_names_rep)) %>%
+  ungroup() %>% 
+  mutate(Gene_names_rep = case_when(
+    !is.na(ApprovedSymbol) ~ ApprovedSymbol,
+    is.na(ApprovedSymbol)  ~ Gene_names_rep)) %>%
+  dplyr::select(-entrezgene_id) %>%
+  distinct()
+
+# Correct annotations based on HUGO
+biomart_ensembl2name <- getBM(attributes=c('external_gene_name',
+                                           'entrezgene_id'), 
+                                filters = "external_gene_name", 
+                                values = combined.raw$Gene_names_rep, 
+                                mart = ens)
+
+combined.raw <- combined.raw %>%
+    left_join(biomart_ensembl2name, by = c("Gene_names_rep" = "external_gene_name"))
+
+# Save for manual curation (removing redundant entries manually)
+write_csv(combined.raw, "results/combined_results_raw.csv")
+```
+
+Manual curation involved collapsing redundant protein groups into consensus groups 
+that were decided based on the H/L ratio in both cell lines (group with higher H/L 
+ratio considered as dominant). 
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Load curated, rank scores
+combined.clean <- read_csv("results/combined_results_clean.csv")
+
+# Select proteins enriched in at least one cell line of further analysis
+signifTabSelected <- combined.clean %>%
+  filter(U2932Signif | MutuSignif) %>%
+  distinct() 
+```
+
+#### Gene ontology analysis
+
+In order to identify enriched gene sets in DDX3X interacting proteins, I will perform 
+a gene ontology analysis. As background I will use a list of genes expressed at mRNA level
+in each cell line (lists obtained from RNA-Seq experiment after filtering out genes with
+low expression as described in methods specyfying RNA-Seq analysis). 
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+toSave <- c()
+ontologies <- c("BP","CC", "MF")
+ontologyTab <- tibble()
+
+# Background set (load genes expressed in analysed cell lines)
+refU2932 <- read_csv("../utilis/refList/U2932_refList.csv")
+refMutu <- read_csv("../utilis/refList/Mutu_refList.csv")
+
+# Create lists
+universeList <- as.character(unique(c(refU2932$entrezgene_id, refMutu$entrezgene_id)))
+signifList <- signifTabSelected$entrezgene_id
+
+# GO
+for (o in 1:3){
+    toSave<- enrichGO(gene = as.character(signifList),
+                universe = as.character(universeList),
+                OrgDb = org.Hs.eg.db,
+                ont = ontologies[o],
+                pAdjustMethod = "BH",
+                pvalueCutoff = 0.01,
+                qvalueCutoff = 0.05,
+                readable = T) %>% 
+      as.data.frame() %>%
+      separate(GeneRatio, c("n", "N"), "/", remove = F) %>%
+      separate(BgRatio, c("b", "B"), "/", remove = F) %>%
+      mutate(n = as.numeric(n),
+             N = as.numeric(N),
+             b = as.numeric(b),
+             B = as.numeric(B),
+             EnrichmentScore = (n/N)/(b/B))  %>%
+      arrange(desc(EnrichmentScore)) %>%
+      mutate(group = paste("GO", ontologies[o]),
+               sample = "Co-IP") 
+      
+      if(nrow(ontologyTab) == 0){
+        ontologyTab <- toSave
+      } else {
+        ontologyTab <- ontologyTab %>%
+          full_join(toSave)
+      }      
+}
+
+# Reactome
+pathways <- enrichPathway(gene = as.character(signifList),
+              universe = as.character(universeList), 
+              organism = "human", readable = T)
+pathwaysTab <- as.data.frame(pathways)
+
+write_csv(ontologyTab, "results/GOanalysis_full.csv")
+write_csv(pathwaysTab, "results/Reactome_full.csv")
+
+# Barplot
+plot_df <- ontologyTab %>%
+  group_by(group) %>%
+  mutate(rank = rank(-EnrichmentScore)) %>%
+  filter(rank < 5) %>%
+  ungroup() %>%
+  arrange(group, p.adjust) %>%
+  mutate(Description = factor(Description, levels = Description[order(p.adjust, decreasing = T)]),
+         rank = factor(as.character(1:length(Description)), 
+                       levels = as.character(1:length(Description))))
+
+# Barplot
+ggplot(plot_df, aes(x = Description, y = -log10(p.adjust))) +
+  geom_bar(aes(fill = rank), stat = "identity") +
+  geom_text(aes(label = paste(n, b, sep = "/")), 
+            position = position_identity(), hjust = 1.2, 
+            colour = "white") +
+  facet_grid(group~., space = "free", scales = "free") +
+  coord_flip() +
+  nature_barplot() +
+  labs(y =  bquote(~-Log[10]~'(FDR)'), x = "", colour = "") +
+  theme(legend.position = "None") +
+  scale_fill_manual(values = colorRampPalette(brewer.pal(11, "Spectral")[11:9])(14)) 
+
+ggsave(file.path("plots", paste("GO_atLeast1in3.pdf", sep = "_")),
+           width = 9, height = 4)
+```
+
+#### Examining the overlap between Mutu and U2932
+
+Venn Diagram
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Venn Diagram
+U2932 <- na.omit(signifTabSelected$Id[signifTabSelected$U2932Signif])
+Mutu <- na.omit(signifTabSelected$Id[signifTabSelected$MutuSignif])
+
+## Venn 1
+venn.diagram(
+        x = list(U2932, Mutu),
+        category.names = c("U2932" , "Mutu"),
+        filename = 'plots/VennDiagram.png',
+        output=TRUE,
+        
+        # Output features
+        imagetype="png" ,
+        height = 500 , 
+        width = 500 , 
+        resolution = 300,
+        compression = "lzw",
+        
+        # Circles
+        lwd = 2,
+        lty = 'blank',
+        fill = divergingPal[c(4,9)],
+        
+        # Numbers
+        cex = .6,
+        fontface = "bold",
+        fontfamily = "sans",
+        
+        cat.cex = 0.6,
+        cat.fontface = "bold",
+        cat.fontfamily = "sans",
+        cat.default.pos = "outer")
+```
+
+Dot plot 
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Annotate 
+plot_df <- combined.clean %>%
+  mutate(status = case_when(
+    MutuSignif & U2932Signif ~ "Both",
+    MutuSignif               ~ "Mutu",
+    U2932Signif              ~ "U2932",
+    TRUE ~ "Not Enriched"
+  ))
+
+select <- plot_df$status == "Both"
+
+ggplot() +
+  geom_point(aes(x = plot_df$Mutu_HL_Ratio, y =  plot_df$U2932_HL_Ratio, 
+                 color = plot_df$status)) +
+   geom_text_repel(aes(x =  plot_df$Mutu_HL_Ratio[select], 
+                       y =  plot_df$U2932_HL_Ratio[select], 
+                       label = plot_df$Id[select]),
+                   size = 3,
+                   box.padding = 0.5) +
+  nature_point() +
+  lims(x = c(0,50), y = c(0,50)) +
+  geom_hline(yintercept = 4, color = divergingPal[2], linetype = "longdash", alpha = 0.5) +
+  geom_vline(xintercept = 7, color = divergingPal[2], linetype = "longdash", alpha = 0.5) +
+  scale_x_log10(breaks = c(0.1,1,10)) +
+  scale_y_log10(breaks = c(0.1,1,10)) +
+  labs(x = "Co-IP Mutu (Ratio H/L)", y = "Co-IP U2932 (Ratio H/L) ",
+       color = "Status") +
+  scale_color_manual(values = c(divergingPal[c(2,10)], "grey", divergingPal[c(11)]))
+  
+ggsave(file.path("plots", paste("CoIP_MutuVsU2932.pdf", sep = "_")),
+           width = 8, height = 5, useDingbats=FALSE)
+```
