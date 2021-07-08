@@ -1,0 +1,46 @@
+R version 4.0.3 (2020-10-10)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: Fedora 30 (Workstation Edition)
+
+Matrix products: default
+BLAS/LAPACK: /home/JAK75/anaconda3/envs/rbase4/lib/libopenblasp-r0.3.12.so
+
+locale:
+ [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C               LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+ [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8    LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] msigdbr_7.2.1               ReactomePA_1.34.0           org.Hs.eg.db_3.12.0         AnnotationDbi_1.52.0       
+ [5] clusterProfiler_3.18.1      SummarizedExperiment_1.20.0 Biobase_2.50.0              GenomicRanges_1.42.0       
+ [9] GenomeInfoDb_1.26.2         IRanges_2.24.1              S4Vectors_0.28.1            BiocGenerics_0.36.0        
+[13] MatrixGenerics_1.2.0        matrixStats_0.57.0          pheatmap_1.0.12             corrplot_0.84              
+[17] biomaRt_2.46.3              RColorBrewer_1.1-2          forcats_0.5.0               stringr_1.4.0              
+[21] dplyr_1.0.2                 purrr_0.3.4                 readr_1.4.0                 tidyr_1.1.2                
+[25] tibble_3.0.4                ggplot2_3.3.3               tidyverse_1.3.0            
+
+loaded via a namespace (and not attached):
+  [1] fgsea_1.16.0           colorspace_2.0-0       ellipsis_0.3.1         qvalue_2.22.0          XVector_0.30.0        
+  [6] fs_1.5.0               rstudioapi_0.13        farver_2.0.3           graphlayouts_0.7.1     ggrepel_0.9.1         
+ [11] bit64_4.0.5            scatterpie_0.1.5       lubridate_1.7.9.2      xml2_1.3.2             splines_4.0.3         
+ [16] cachem_1.0.1           GOSemSim_2.16.1        knitr_1.30             polyclip_1.10-0        jsonlite_1.7.2        
+ [21] broom_0.7.3            GO.db_3.12.1           dbplyr_2.0.0           graph_1.68.0           graphite_1.36.0       
+ [26] ggforce_0.3.2          BiocManager_1.30.10    compiler_4.0.3         httr_1.4.2             rvcheck_0.1.8         
+ [31] backports_1.2.1        assertthat_0.2.1       Matrix_1.3-2           fastmap_1.1.0          cli_3.0.0             
+ [36] tweenr_1.0.1           prettyunits_1.1.1      tools_4.0.3            igraph_1.2.6           gtable_0.3.0          
+ [41] glue_1.4.2             GenomeInfoDbData_1.2.4 reshape2_1.4.4         DO.db_2.9              rappdirs_0.3.1        
+ [46] fastmatch_1.1-0        Rcpp_1.0.6             enrichplot_1.10.2      cellranger_1.1.0       vctrs_0.3.6           
+ [51] ggraph_2.0.4           xfun_0.20              rvest_0.3.6            lifecycle_1.0.0        XML_3.99-0.5          
+ [56] DOSE_3.16.0            zlibbioc_1.36.0        MASS_7.3-53            scales_1.1.1           tidygraph_1.2.0       
+ [61] reactome.db_1.74.0     hms_0.5.3              curl_4.3               memoise_2.0.0          gridExtra_2.3         
+ [66] downloader_0.4         stringi_1.5.3          RSQLite_2.2.2          checkmate_2.0.0        BiocParallel_1.24.1   
+ [71] rlang_0.4.10           pkgconfig_2.0.3        bitops_1.0-6           lattice_0.20-41        shadowtext_0.0.7      
+ [76] cowplot_1.1.1          bit_4.0.4              tidyselect_1.1.0       plyr_1.8.6             magrittr_2.0.1        
+ [81] R6_2.5.0               generics_0.1.0         DelayedArray_0.16.0    DBI_1.1.0              pillar_1.4.7          
+ [86] haven_2.3.1            withr_2.4.2            RCurl_1.98-1.2         modelr_0.1.8           crayon_1.3.4          
+ [91] BiocFileCache_1.14.0   viridis_0.6.1          progress_1.2.2         grid_4.0.3             readxl_1.3.1          
+ [96] data.table_1.13.6      blob_1.2.1             reprex_0.3.0           digest_0.6.27          openssl_1.4.3         
+[101] munsell_0.5.0          viridisLite_0.4.0      askpass_1.1           
