@@ -1,0 +1,471 @@
+Gene Name,Transcript,Census Tier 1,Sample Name,Sample ID,AA Mutation,CDS Mutation,Primary Tissue,Tissue Subtype 1,Tissue Subtype 2,Histology,Histology Subtype 1,Histology Subtype 2,Pubmed Id,CGP Study,Somatic Status,Sample Type,Zygosity,Genomic Co-ordinates
+DDX3X,ENST00000399959,Yes,T316,2658569,p.M1I,c.3G>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41334255..41334255
+DDX3X,ENST00000399959,Yes,GS18004,2777902,p.M1I,c.3G>C,Upper aerodigestive tract,Mouth,NS,Carcinoma,Squamous cell carcinoma,NS,30563911,-,Confirmed Somatic,Tumour Sample,Unknown,X:41334255..41334255
+DDX3X,ENST00000399959,Yes,MedB-1,2479247,p.S2R,c.4A>C,Haematopoietic and lymphoid,Mediastinum,NS,Lymphoid neoplasm,Diffuse large B cell lymphoma,Primary mediastinal B cell lymphoma,24531327,-,Variant of unknown origin,Cultured,Unknown,X:41334256..41334256
+DDX3X,ENST00000399959,Yes,2011-2280:2012-366-T,2297698,p.N8fs*12,c.20delA,Upper aerodigestive tract,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25056374,-,Confirmed Somatic,Tumour Sample,Homozygous,X:41334272..41334272
+DDX3X,ENST00000399959,Yes,Thyroid-CN-WZ029T,2635090,p.F16S,c.47T>C,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41337409..41337409
+DDX3X,ENST00000399959,Yes,W2T,2745039,p.F16S,c.47T>C,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41337409..41337409
+DDX3X,ENST00000399959,Yes,TCGA-EJ-5515-01,1797202,p.A17G,c.50C>G,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,-,435,Confirmed Somatic,Tumour Sample,Unknown,X:41337412..41337412
+DDX3X,ENST00000399959,Yes,CLL33_2,2776212,p.L21fs*3,c.60_67delCCTGAACT,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41337422..41337429
+DDX3X,ENST00000399959,Yes,TCGA-YC-A89H-01,2339203,p.L21L,c.63G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41337425..41337425
+DDX3X,ENST00000399959,Yes,HKNPC-019-Tumor-SM-64MF6,2640117,p.S23C,c.68C>G,Upper aerodigestive tract,Pharynx,Nasopharynx,Carcinoma,Nasopharyngeal carcinoma,NS,28098136,-,Confirmed Somatic,Tumour Sample,Unknown,X:41337430..41337430
+DDX3X,ENST00000399959,Yes,TCGA-ZF-AA51-01,2385835,p.S23F,c.68C>T,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41337430..41337430
+DDX3X,ENST00000399959,Yes,CLL003,1897463,p.S24*,c.71C>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,23415222,-,Confirmed Somatic,Tumour Sample,Unknown,X:41337433..41337433
+DDX3X,ENST00000399959,Yes,TCGA-EE-A3AA-06,2121692,p.S24*,c.71C>A,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41337433..41337433
+DDX3X,ENST00000399959,Yes,RK136_C01,2194706,p.S24*,c.71C>A,Liver,NS,NS,Carcinoma,NS,NS,-,322,Confirmed Somatic,Unknown,Unknown,X:41337433..41337433
+DDX3X,ENST00000399959,Yes,TCGA-44-6777-01,1780131,p.D25N,c.73G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,-,417,Variant of unknown origin,Tumour Sample,Unknown,X:41337435..41337435
+DDX3X,ENST00000399959,Yes,TCGA-D8-A1JA-01,2187785,p.Q27H,c.81G>C,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Unknown,Unknown,X:41337443..41337443
+DDX3X,ENST00000399959,Yes,2542850,2542850,p.G30*,c.88G>T,Haematopoietic and lymphoid,Sinonasal and nasal cavity,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26773734,-,Variant of unknown origin,Tumour Sample,Unknown,X:41337450..41337450
+DDX3X,ENST00000399959,Yes,M42PT,2671647,p.?,c.103+1_103+2insT,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41337466..41337467
+DDX3X,ENST00000399959,Yes,tumor_4189998,1819102,p.?,c.103+2T>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Burkitt lymphoma,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41337467..41337467
+DDX3X,ENST00000399959,Yes,ZZUFHECRKL-G057T,2456980,p.?,c.104-10_104-9insT,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,582,Confirmed Somatic,Tumour Sample,Unknown,X:41339026..41339027
+DDX3X,ENST00000399959,Yes,T4500,2658312,p.?,c.104-9delT,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41339027..41339027
+DDX3X,ENST00000399959,Yes,AOCS-166-1-2,2196284,p.?,c.104-8T>A,Ovary,NS,NS,Carcinoma,Mixed adenosquamous carcinoma,NS,-,585,Confirmed Somatic,Unknown,Unknown,X:41339028..41339028
+DDX3X,ENST00000399959,Yes,A-2A,2746111,p.?,c.104-8T>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,646,Confirmed Somatic,Tumour Sample,Unknown,X:41339028..41339028
+DDX3X,ENST00000399959,Yes,LOVO,2301996,p.R37C,c.109C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,24755471,-,Previously Reported,Cultured,Homozygous,X:41339041..41339041
+DDX3X,ENST00000399959,Yes,M36PT,2671654,p.R37C,c.109C>T,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41339041..41339041
+DDX3X,ENST00000399959,Yes,ESCC_153,2479642,p.Y38C,c.113A>G,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,26873401,-,Confirmed Somatic,Unknown,Unknown,X:41339045..41339045
+DDX3X,ENST00000399959,Yes,Thyroid-CN-WZ047T,2635108,p.Y38F,c.113A>T,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41339045..41339045
+DDX3X,ENST00000399959,Yes,W34T,2745057,p.Y38F,c.113A>T,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41339045..41339045
+DDX3X,ENST00000399959,Yes,TCGA-EE-A2ML-06,2121683,p.P41L,c.122C>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41339054..41339054
+DDX3X,ENST00000399959,Yes,TCGA-B5-A11E-01,1783399,p.?,c.152-1G>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41341483..41341483
+DDX3X,ENST00000399959,Yes,CLL11_1,2776193,p.S62fs*159,c.185delC,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41341517..41341517
+DDX3X,ENST00000399959,Yes,CLL11_2,2776194,p.S62fs*159,c.185delC,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41341517..41341517
+DDX3X,ENST00000399959,Yes,CLL11_3,2776195,p.S62fs*159,c.185delC,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41341517..41341517
+DDX3X,ENST00000399959,Yes,002,2640406,p.D65N,c.193G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,27545006,-,Confirmed Somatic,Unknown,Unknown,X:41341525..41341525
+DDX3X,ENST00000399959,Yes,2759320,2759320,p.K66fs*155,c.196_196delA,Peritoneum,NS,NS,Mesothelioma,Epithelial,NS,27813512,-,Confirmed Somatic,Tumour Sample,Unknown,X:41341528..41341528
+DDX3X,ENST00000399959,Yes,LUAD-NYU184,1765199,p.D67Y,c.199G>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22980975,-,Variant of unknown origin,Tumour Sample,Unknown,X:41341531..41341531
+DDX3X,ENST00000399959,Yes,TCGA-BH-A0HF-01,2187797,p.A68V,c.203C>T,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Unknown,Unknown,X:41341535..41341535
+DDX3X,ENST00000399959,Yes,2748753,2748753,p.A68V,c.203C>T,Biliary tract,Bile duct,NS,Carcinoma,Adenocarcinoma,NS,29360550,-,Confirmed Somatic,Tumour Sample,Unknown,X:41341535..41341535
+DDX3X,ENST00000399959,Yes,PASVIN,2730513,p.S76fs*2,c.224_225insGACT,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic T cell leukaemia,NS,28671688,-,Confirmed Somatic,Tumour Sample,Unknown,X:41341556..41341557
+DDX3X,ENST00000399959,Yes,CSCC-27-T,2292469,p.G80G,c.240G>A,Skin,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25303977,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41341572..41341572
+DDX3X,ENST00000399959,Yes,CHG-14-11255T,2634330,p.R88C,c.262C>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41341594..41341594
+DDX3X,ENST00000399959,Yes,2011-2319:2012-355-T,2297731,p.G94fs*127,c.278delG,Upper aerodigestive tract,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25056374,-,Confirmed Somatic,Tumour Sample,Homozygous,X:41341610..41341610
+DDX3X,ENST00000399959,Yes,WA48,1689692,p.F96fs*5,c.287_294delTTGATGAT,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,22722839,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342497..41342504
+DDX3X,ENST00000399959,Yes,TCGA-HU-A4GU-01,2198106,p.R99C,c.295C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41342505..41342505
+DDX3X,ENST00000399959,Yes,TCGA-BR-7703-01,2198144,p.R99H,c.296G>A,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41342506..41342506
+DDX3X,ENST00000399959,Yes,TCGA-AA-A010-01,1651109,p.Y104Y,c.312C>T,Large intestine,Colon,Transverse,Carcinoma,Adenocarcinoma,NS,22810696,376,Confirmed Somatic,Unknown,Unknown,X:41342522..41342522
+DDX3X,ENST00000399959,Yes,B52,2097284,p.Y104*,c.312C>G,Urinary tract,Bladder,NS,Carcinoma,Transitional cell carcinoma,NS,24121792,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342522..41342522
+DDX3X,ENST00000399959,Yes,B52-Tumor,2185979,p.Y104*,c.312C>G,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,581,Confirmed Somatic,Unknown,Unknown,X:41342522..41342522
+DDX3X,ENST00000399959,Yes,TCGA-B5-A0K9-01,1783398,p.G108D,c.323G>A,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Confirmed Somatic,Tumour Sample,Unknown,X:41342533..41342533
+DDX3X,ENST00000399959,Yes,TCGA-D1-A103-01,1783494,p.S109S,c.327C>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41342537..41342537
+DDX3X,ENST00000399959,Yes,TCGA-AP-A0LD-01,1783344,p.R110C,c.328C>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Confirmed Somatic,Tumour Sample,Unknown,X:41342538..41342538
+DDX3X,ENST00000399959,Yes,TCGA-BR-4361-01,2197879,p.R110C,c.328C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41342538..41342538
+DDX3X,ENST00000399959,Yes,ESCC_68,2479572,p.R113fs*109,c.334_335insAC,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,26873401,-,Confirmed Somatic,Unknown,Unknown,X:41342544..41342545
+DDX3X,ENST00000399959,Yes,ESCC_68,2479572,p.R113T,c.338G>C,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,26873401,-,Confirmed Somatic,Unknown,Unknown,X:41342548..41342548
+DDX3X,ENST00000399959,Yes,8015299,1842451,p.R121C,c.361C>T,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,-,328,Confirmed Somatic,Tumour Sample,Unknown,X:41342571..41342571
+DDX3X,ENST00000399959,Yes,TCGA-AA-3492-01,1650967,p.R121H,c.362G>A,Large intestine,Colon,Ascending,Carcinoma,Adenocarcinoma,NS,-,376,Confirmed Somatic,Unknown,Unknown,X:41342572..41342572
+DDX3X,ENST00000399959,Yes,2542855,2542855,p.S125C,c.373A>T,Haematopoietic and lymphoid,Lymph node,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26773734,-,Variant of unknown origin,Tumour Sample,Unknown,X:41342583..41342583
+DDX3X,ENST00000399959,Yes,S02322,2480904,p.S125fs*4,c.374_375delGT,Lung,NS,NS,Carcinoma,Small cell carcinoma,NS,26168399,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342584..41342585
+DDX3X,ENST00000399959,Yes,TCGA-XF-AAMX-01,2339188,p.R126P,c.377G>C,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41342587..41342587
+DDX3X,ENST00000399959,Yes,T2423,2658334,p.W127R,c.379T>C,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41342589..41342589
+DDX3X,ENST00000399959,Yes,CHG-2009-22328T,2634351,p.S131*,c.392C>A,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41342602..41342602
+DDX3X,ENST00000399959,Yes,TCGA-22-4595-01,1780846,p.D132N,c.394G>A,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,418,Variant of unknown origin,Tumour Sample,Unknown,X:41342604..41342604
+DDX3X,ENST00000399959,Yes,T352566,2658332,p.W136R,c.406T>C,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41342616..41342616
+DDX3X,ENST00000399959,Yes,tumor_4186812,2634645,p.W136*,c.407G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41342617..41342617
+DDX3X,ENST00000399959,Yes,TCGA-AO-A03L-01,1899769,p.P142L,c.425C>T,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Tumour Sample,Unknown,X:41342635..41342635
+DDX3X,ENST00000399959,Yes,008,2640412,p.P142Q,c.425C>A,Lung,NS,NS,Carcinoma,Bronchioloalveolar adenocarcinoma,NS,27545006,-,Confirmed Somatic,Unknown,Unknown,X:41342635..41342635
+DDX3X,ENST00000399959,Yes,012,2640416,p.P142Q,c.425C>A,Lung,NS,NS,Carcinoma,Bronchioloalveolar adenocarcinoma,NS,27545006,-,Confirmed Somatic,Unknown,Unknown,X:41342635..41342635
+DDX3X,ENST00000399959,Yes,PASVIN,2730513,p.?,c.443+2_443+4TAA>12,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic T cell leukaemia,NS,28671688,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342655..41342657
+DDX3X,ENST00000399959,Yes,2011-2345:2012-332-T,2297756,p.?,c.444-1G>T,Upper aerodigestive tract,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25056374,-,Confirmed Somatic,Tumour Sample,Homozygous,X:41342736..41342736
+DDX3X,ENST00000399959,Yes,TCGA-EV-5901-01,2193956,p.G153E,c.458G>A,Kidney,NS,NS,Carcinoma,Papillary renal cell carcinoma,NS,-,543,Confirmed Somatic,Unknown,Unknown,X:41342751..41342751
+DDX3X,ENST00000399959,Yes,2434064,2434064,p.G153V,c.458G>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342751..41342751
+DDX3X,ENST00000399959,Yes,2014_Lung_sq_93_T,2744860,p.G153V,c.458G>T,Lung,NS,NS,Carcinoma,NS,NS,-,583,Confirmed Somatic,Tumour Sample,Unknown,X:41342751..41342751
+DDX3X,ENST00000399959,Yes,cSCCP6,1604869,p.G154D,c.461G>A,Skin,Scalp,NS,Carcinoma,Squamous cell carcinoma,NS,21984974,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342754..41342754
+DDX3X,ENST00000399959,Yes,TCGA-FG-8186-01,2194191,p.F160S,c.479T>C,Central nervous system,Brain,NS,Glioma,NS,NS,-,545,Confirmed Somatic,Unknown,Unknown,X:41342772..41342772
+DDX3X,ENST00000399959,Yes,TCGA-DK-A2I4-01,2193288,p.E161Q,c.481G>C,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Unknown,Unknown,X:41342774..41342774
+DDX3X,ENST00000399959,Yes,TCGA-A2-A0SY-01,1899630,p.E161E,c.483G>A,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Tumour Sample,Unknown,X:41342776..41342776
+DDX3X,ENST00000399959,Yes,869-01-2TD,2456501,p.E169fs*52,c.504delT,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41342797..41342797
+DDX3X,ENST00000399959,Yes,HKNPC-008-Tumor-SM-5ZSUY,2640106,p.P176S,c.526C>T,Upper aerodigestive tract,Pharynx,Nasopharynx,Carcinoma,Nasopharyngeal carcinoma,NS,28098136,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342819..41342819
+DDX3X,ENST00000399959,Yes,HKNPC-068-Tumor-SM-7CKAZ,2640166,p.P176S,c.526C>T,Upper aerodigestive tract,Pharynx,Nasopharynx,Carcinoma,Nasopharyngeal carcinoma,NS,28098136,-,Confirmed Somatic,Tumour Sample,Unknown,X:41342819..41342819
+DDX3X,ENST00000399959,Yes,TCGA-B6-A402-01,2262904,p.I179T,c.536T>C,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Tumour Sample,Unknown,X:41342829..41342829
+DDX3X,ENST00000399959,Yes,TCGA-B0-5709-01,1779865,p.E180Q,c.538G>C,Kidney,NS,NS,Carcinoma,Clear cell renal cell carcinoma,NS,-,416,Variant of unknown origin,Tumour Sample,Homozygous,X:41342831..41342831
+DDX3X,ENST00000399959,Yes,BICR_22,2296291,p.I191L,c.571A>C,Upper aerodigestive tract,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25275298,-,Variant of unknown origin,Cultured,Unknown,X:41343243..41343243
+DDX3X,ENST00000399959,Yes,UM-SCC-2,2296304,p.I191L,c.571A>C,Upper aerodigestive tract,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25275298,-,Variant of unknown origin,Cultured,Unknown,X:41343243..41343243
+DDX3X,ENST00000399959,Yes,CLL33_1,2776211,p.E196fs*97,c.587_591delAGCTT,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343259..41343263
+DDX3X,ENST00000399959,Yes,TCGA-HU-8602-01,2197859,p.R199C,c.595C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41343267..41343267
+DDX3X,ENST00000399959,Yes,TCGA-DI-A1NN-01,1783541,p.R199P,c.596G>C,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Confirmed Somatic,Tumour Sample,Unknown,X:41343268..41343268
+DDX3X,ENST00000399959,Yes,TCGA-DA-A3F8-06,2121583,p.Y200S,c.599A>C,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41343271..41343271
+DDX3X,ENST00000399959,Yes,GS18005,2777913,p.V206_R218del,c.615_653del39,Upper aerodigestive tract,Mouth,NS,Carcinoma,Squamous cell carcinoma,NS,30563911,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343287..41343325
+DDX3X,ENST00000399959,Yes,TCGA-BI-A0VR-01,1779766,p.V206L,c.616G>T,Cervix,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,415,Confirmed Somatic,Tumour Sample,Unknown,X:41343288..41343288
+DDX3X,ENST00000399959,Yes,ICGC_MB78,2197524,p.V206L,c.616G>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41343288..41343288
+DDX3X,ENST00000399959,Yes,TCGA-AX-A0J0-01,1783376,p.K208N,c.624G>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41343296..41343296
+DDX3X,ENST00000399959,Yes,TCGA-GF-A6C9-06,2339468,p.A210A,c.630T>C,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41343302..41343302
+DDX3X,ENST00000399959,Yes,A103-T-S13,2757416,p.P212L,c.635C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,29335443,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343307..41343307
+DDX3X,ENST00000399959,Yes,A103-T-S19,2757417,p.P212L,c.635C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,29335443,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343307..41343307
+DDX3X,ENST00000399959,Yes,A103-T-S25,2757418,p.P212L,c.635C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,29335443,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343307..41343307
+DDX3X,ENST00000399959,Yes,A103-T-S31,2757419,p.P212L,c.635C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,29335443,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343307..41343307
+DDX3X,ENST00000399959,Yes,MBRep_T63,1652923,p.I214S,c.641T>G,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,Large cell,NS,-,379,Previously Reported,Unknown,Homozygous,X:41343313..41343313
+DDX3X,ENST00000399959,Yes,MBRep_T63,1652923,p.I214S,c.641T>G,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,Large cell,NS,22832583,379,Confirmed Somatic,Unknown,Unknown,X:41343313..41343313
+DDX3X,ENST00000399959,Yes,047-0084-06TD,2385308,p.I214fs*7,c.641delT,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41343313..41343313
+DDX3X,ENST00000399959,Yes,TCGA-B5-A11R-01,1783409,p.I214M,c.642C>G,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41343314..41343314
+DDX3X,ENST00000399959,Yes,7,1723809,p.D219Y,c.655G>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,22705984,-,Variant of unknown origin,Tumour Sample,Unknown,X:41343327..41343327
+DDX3X,ENST00000399959,Yes,SJMB137,1732874,p.A222P,c.664G>C,Central nervous system,Brainstem,NS,Primitive neuroectodermal tumour-medulloblastoma,WNT subtype,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343336..41343336
+DDX3X,ENST00000399959,Yes,ATL018,2488646,p.A224G,c.671C>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Adult T cell lymphoma-leukaemia,NS,26437031,-,Confirmed Somatic,Unknown,Unknown,X:41343343..41343343
+DDX3X,ENST00000399959,Yes,12924,2478830,p.G229*,c.685G>T,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,22510280,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343742..41343742
+DDX3X,ENST00000399959,Yes,M68PT,2671699,p.T231P,c.691A>C,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343748..41343748
+DDX3X,ENST00000399959,Yes,2785191,2785191,p.A232fs*62,c.693_694delTG,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK cell leukaemia,NS,29674644,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343750..41343751
+DDX3X,ENST00000399959,Yes,MB130PT,1512956,p.F234L,c.700T>C,Central nervous system,Medulla,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,21163964,-,Confirmed Somatic,Tumour Sample,Homozygous,X:41343757..41343757
+DDX3X,ENST00000399959,Yes,CHG-2014-13450T,2634358,p.L235L,c.705G>C,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41343762..41343762
+DDX3X,ENST00000399959,Yes,2011-2347:2012-300-T,2297758,p.P237L,c.710C>T,Upper aerodigestive tract,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25056374,-,Confirmed Somatic,Tumour Sample,Homozygous,X:41343767..41343767
+DDX3X,ENST00000399959,Yes,IGC-13-1050,2662368,p.P237P,c.711C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,27923066,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343768..41343768
+DDX3X,ENST00000399959,Yes,CHC432T,2340033,p.I238M,c.714C>G,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,-,381,Confirmed Somatic,Tumour Sample,Unknown,X:41343771..41343771
+DDX3X,ENST00000399959,Yes,OSCC-GB_01030111,2340696,p.S240R,c.720T>A,Upper aerodigestive tract,Mouth,NS,Carcinoma,NS,NS,-,539,Confirmed Somatic,Tumour Sample,Unknown,X:41343777..41343777
+DDX3X,ENST00000399959,Yes,TCGA-DK-A2I4-01,2193288,p.Q241Q,c.723G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Unknown,Unknown,X:41343780..41343780
+DDX3X,ENST00000399959,Yes,394,2267366,p.G246S,c.736G>A,Oesophagus,Middle third,NS,Carcinoma,Squamous cell carcinoma,NS,25151357,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343793..41343793
+DDX3X,ENST00000399959,Yes,TCGA-B7-5816-01,2197838,p.G248G,c.744C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41343801..41343801
+DDX3X,ENST00000399959,Yes,TCGA-BR-6852-01,2197874,p.G248G,c.744C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41343801..41343801
+DDX3X,ENST00000399959,Yes,tumor_4158769,2634707,p.G248G,c.744C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41343801..41343801
+DDX3X,ENST00000399959,Yes,T335135,2658230,p.G248G,c.744C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41343801..41343801
+DDX3X,ENST00000399959,Yes,CPCG0103-P8,2121430,p.E249K,c.745G>A,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,-,537,Confirmed Somatic,Unknown,Unknown,X:41343802..41343802
+DDX3X,ENST00000399959,Yes,YUFIT,2439317,p.A253A,c.759C>T,Skin,NS,NS,Malignant melanoma,NS,NS,26214590,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41343816..41343816
+DDX3X,ENST00000399959,Yes,YUFIT,2439317,p.M254fs*19,c.761delT,Skin,NS,NS,Malignant melanoma,NS,NS,26214590,-,Confirmed Somatic,Tumour Sample,Unknown,X:41343818..41343818
+DDX3X,ENST00000399959,Yes,TCGA-G2-A3VY-01,2193250,p.M254I,c.762G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Unknown,Unknown,X:41343819..41343819
+DDX3X,ENST00000399959,Yes,CHG-2009-20710T,2634350,p.?,c.765+7G>A,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41343829..41343829
+DDX3X,ENST00000399959,Yes,2334187,1759438,p.Y260C,c.779A>G,Lung,NS,NS,Carcinoma,Small cell carcinoma,NS,22941189,-,Variant of unknown origin,Cultured,Unknown,X:41344043..41344043
+DDX3X,ENST00000399959,Yes,HUB-02-B2-042,2607096,p.R262C,c.784C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,670,Confirmed Somatic,Cultured,Unknown,X:41344048..41344048
+DDX3X,ENST00000399959,Yes,T3321,2658247,p.R262C,c.784C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41344048..41344048
+DDX3X,ENST00000399959,Yes,TCGA-B7-5816-01,2197838,p.R262H,c.785G>A,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41344049..41344049
+DDX3X,ENST00000399959,Yes,05-165O,2575080,p.R262H,c.785G>A,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,26928463,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344049..41344049
+DDX3X,ENST00000399959,Yes,05-165K5,2575184,p.R262H,c.785G>A,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,26928463,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344049..41344049
+DDX3X,ENST00000399959,Yes,TCGA-AP-A051-01,1783330,p.R263H,c.788G>A,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41344052..41344052
+DDX3X,ENST00000399959,Yes,TCGA-AP-A059-01,1783335,p.P267S,c.799C>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41344063..41344063
+DDX3X,ENST00000399959,Yes,tumor_4103570,2634754,p.L272S,c.815T>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41344079..41344079
+DDX3X,ENST00000399959,Yes,Pat_41_B,2513797,p.A273T,c.817G>A,NS,NS,NS,Malignant melanoma,NS,NS,24265153,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344081..41344081
+DDX3X,ENST00000399959,Yes,M27PT,2671697,p.T275P,c.823A>C,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344087..41344087
+DDX3X,ENST00000399959,Yes,2776469,2776469,p.T275P,c.823A>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,26053404,-,Previously Reported,Tumour Sample,Unknown,X:41344087..41344087
+DDX3X,ENST00000399959,Yes,SJMB040,1732873,p.T275M,c.824C>T,Central nervous system,Brainstem,NS,Primitive neuroectodermal tumour-medulloblastoma,WNT subtype,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344088..41344088
+DDX3X,ENST00000399959,Yes,ICGC_MB74,2197503,p.T275M,c.824C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41344088..41344088
+DDX3X,ENST00000399959,Yes,05-123E2,2575154,p.T275M,c.824C>T,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,26928463,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344088..41344088
+DDX3X,ENST00000399959,Yes,TCGA-50-5933-01,1780161,p.T275M,c.824C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,-,417,Previously Reported,Tumour Sample,Unknown,X:41344088..41344088
+DDX3X,ENST00000399959,Yes,SJMB040,2301153,p.T275M,c.824C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,Medullomyoblastoma,NS,-,640,Previously Reported,Unknown,Unknown,X:41344088..41344088
+DDX3X,ENST00000399959,Yes,MD-286,1735419,p.R276K,c.827G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22820256,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344091..41344091
+DDX3X,ENST00000399959,Yes,ICGC_MB81,2197444,p.E277Q,c.829G>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41344093..41344093
+DDX3X,ENST00000399959,Yes,IGC-10-1107,2662339,p.A279T,c.835G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,27923066,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344099..41344099
+DDX3X,ENST00000399959,Yes,WA37,1689681,p.Q281H,c.843G>C,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,22722839,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344107..41344107
+DDX3X,ENST00000399959,Yes,ICGC_MB79,2197522,p.Q281H,c.843G>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41344107..41344107
+DDX3X,ENST00000399959,Yes,TCGA-EE-A2GC-06,2121655,p.E285K,c.853G>A,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41344117..41344117
+DDX3X,ENST00000399959,Yes,BL4,2344286,p.?,c.864+2T>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Burkitt lymphoma,Sporadic type,23143595,-,Confirmed Somatic,Unknown,Homozygous,X:41344130..41344130
+DDX3X,ENST00000399959,Yes,tumor_4190495,1819103,p.?,c.864+2T>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Burkitt lymphoma,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41344130..41344130
+DDX3X,ENST00000399959,Yes,006,2640410,p.?,c.865-1G>C,Lung,NS,NS,Carcinoma,Bronchioloalveolar adenocarcinoma,NS,27545006,-,Confirmed Somatic,Unknown,Unknown,X:41344238..41344238
+DDX3X,ENST00000399959,Yes,TCGA-B0-5085-01,1779825,p.S290L,c.869C>T,Kidney,NS,NS,Carcinoma,Clear cell renal cell carcinoma,NS,-,416,Variant of unknown origin,Tumour Sample,Homozygous,X:41344243..41344243
+DDX3X,ENST00000399959,Yes,CHG-12-22220T,2634298,p.R292*,c.874C>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41344248..41344248
+DDX3X,ENST00000399959,Yes,T240,2658644,p.R292*,c.874C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41344248..41344248
+DDX3X,ENST00000399959,Yes,M645PT,2671785,p.R292*,c.874C>T,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344248..41344248
+DDX3X,ENST00000399959,Yes,TCGA-KQ-A41N-01,2457399,p.R292L,c.875G>T,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41344249..41344249
+DDX3X,ENST00000399959,Yes,TCGA-AN-A046-01,2187824,p.S293Y,c.878C>A,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Unknown,Unknown,X:41344252..41344252
+DDX3X,ENST00000399959,Yes,HCC1395,749712,p.R294T,c.881G>C,Breast,NS,NS,Carcinoma,Ductal carcinoma,NS,-,678,Confirmed Somatic,Cultured,Heterozygous,X:41344255..41344255
+DDX3X,ENST00000399959,Yes,HCC1395,1235081,p.R294T,c.881G>C,Breast,NS,NS,Carcinoma,Ductal carcinoma,NS,16959974,-,Confirmed Somatic,Cultured,Homozygous,X:41344255..41344255
+DDX3X,ENST00000399959,Yes,T93,2658444,p.R296C,c.886C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41344260..41344260
+DDX3X,ENST00000399959,Yes,CSCC-6-T,2292459,p.P297fs*52,c.887_888insT,Skin,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25303977,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41344261..41344262
+DDX3X,ENST00000399959,Yes,CSCC-6-T,2292459,p.P297L,c.890C>T,Skin,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25303977,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41344264..41344264
+DDX3X,ENST00000399959,Yes,CSCC-6-T,2292459,p.C298fs*51,c.892_893insT,Skin,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25303977,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41344266..41344267
+DDX3X,ENST00000399959,Yes,WGC067103,2549386,p.C298C,c.894C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,646,Confirmed Somatic,Tumour Sample,Unknown,X:41344268..41344268
+DDX3X,ENST00000399959,Yes,SJMB033,1732887,p.G302V,c.905G>T,Central nervous system,Cerebellum,NS,Primitive neuroectodermal tumour-medulloblastoma,SHH subtype,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344279..41344279
+DDX3X,ENST00000399959,Yes,SJMB033,2301146,p.G302V,c.905G>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,Medullomyoblastoma,NS,-,640,Previously Reported,Unknown,Unknown,X:41344279..41344279
+DDX3X,ENST00000399959,Yes,TCGA-BR-6452-01,2197940,p.G302G,c.906T>C,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41344280..41344280
+DDX3X,ENST00000399959,Yes,tumor_4179976,2634556,p.G303D,c.908G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41344282..41344282
+DDX3X,ENST00000399959,Yes,TCGA-A3-3363-01,1779788,p.A304V,c.911C>T,Kidney,NS,NS,Carcinoma,Clear cell renal cell carcinoma,NS,-,416,Variant of unknown origin,Tumour Sample,Unknown,X:41344285..41344285
+DDX3X,ENST00000399959,Yes,TCGA-D1-A103-01,1783494,p.D305N,c.913G>A,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41344287..41344287
+DDX3X,ENST00000399959,Yes,LUAD-FH5PJ,1765090,p.I306fs*42,c.914_915delAT,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22980975,-,Variant of unknown origin,Tumour Sample,Unknown,X:41344288..41344289
+DDX3X,ENST00000399959,Yes,TCGA-FP-A4BE-01,2197995,p.Q309*,c.925C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41344299..41344299
+DDX3X,ENST00000399959,Yes,TCGA-EE-A29E-06,2121636,p.R311*,c.931C>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41344305..41344305
+DDX3X,ENST00000399959,Yes,11M,2466830,p.R311*,c.931C>T,Skin,Shoulder,NS,Malignant melanoma,Desmoplastic,NS,26343386,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344305..41344305
+DDX3X,ENST00000399959,Yes,CLL18_1,2776204,p.R311*,c.931C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344305..41344305
+DDX3X,ENST00000399959,Yes,CLL18_2,2776205,p.R311*,c.931C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344305..41344305
+DDX3X,ENST00000399959,Yes,T312708,2658359,p.R311Q,c.932G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41344306..41344306
+DDX3X,ENST00000399959,Yes,LUAD-RT-S01818,1765224,p.L313S,c.938T>C,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22980975,-,Variant of unknown origin,Tumour Sample,Unknown,X:41344312..41344312
+DDX3X,ENST00000399959,Yes,2777837,2777837,p.R315fs*7,c.943_944insAC,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,27959900,-,Variant of unknown origin,Tumour Sample,Unknown,X:41344317..41344318
+DDX3X,ENST00000399959,Yes,SA031,1659934,p.G316V,c.947G>T,Breast,NS,NS,Carcinoma,Basal (triple-negative) carcinoma,NS,22495314,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344321..41344321
+DDX3X,ENST00000399959,Yes,S02400,2480926,p.G316E,c.947G>A,Lung,NS,NS,Carcinoma,Small cell carcinoma,NS,26168399,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344321..41344321
+DDX3X,ENST00000399959,Yes,CHG-14-15016T,2634332,p.C317F,c.950G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41344324..41344324
+DDX3X,ENST00000399959,Yes,TCGA-D8-A27G-01,2187781,p.V321L,c.961G>T,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Unknown,Unknown,X:41344335..41344335
+DDX3X,ENST00000399959,Yes,887-01-9TD,2456369,p.A322V,c.965C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41344339..41344339
+DDX3X,ENST00000399959,Yes,10821,2067184,p.G325R,c.973G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Hairy cell leukaemia,Variant,24241536,-,Variant of unknown origin,Tumour Sample,Unknown,X:41344347..41344347
+DDX3X,ENST00000399959,Yes,SJMB028,1732872,p.G325E,c.974G>A,Central nervous system,Brainstem,NS,Primitive neuroectodermal tumour-medulloblastoma,WNT subtype,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344348..41344348
+DDX3X,ENST00000399959,Yes,SJMB028,2301141,p.G325E,c.974G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,Medullomyoblastoma,NS,-,640,Previously Reported,Unknown,Unknown,X:41344348..41344348
+DDX3X,ENST00000399959,Yes,ICGC_MB518,1652853,p.R326C,c.976C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Tumour Sample,Homozygous,X:41344350..41344350
+DDX3X,ENST00000399959,Yes,MBRep_T28,1652895,p.R326C,c.976C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Unknown,Homozygous,X:41344350..41344350
+DDX3X,ENST00000399959,Yes,2759321,2759321,p.R326C,c.976C>T,Peritoneum,NS,NS,Mesothelioma,Epithelial,NS,27813512,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344350..41344350
+DDX3X,ENST00000399959,Yes,ICGC_MB518,1652853,p.R326C,c.976C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Tumour Sample,Unknown,X:41344350..41344350
+DDX3X,ENST00000399959,Yes,MBRep_T28,1652895,p.R326C,c.976C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Unknown,Unknown,X:41344350..41344350
+DDX3X,ENST00000399959,Yes,STC252,2404161,p.R326C,c.976C>T,Stomach,NS,NS,Carcinoma,Intestinal adenocarcinoma,NS,25042771,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344350..41344350
+DDX3X,ENST00000399959,Yes,ICGC_MB31,1652839,p.D329V,c.986A>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Variant of unknown origin,Tumour Sample,Homozygous,X:41344360..41344360
+DDX3X,ENST00000399959,Yes,ICGC_MB31,1652839,p.D329V,c.986A>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Variant of unknown origin,Tumour Sample,Unknown,X:41344360..41344360
+DDX3X,ENST00000399959,Yes,188,1630859,p.M330K,c.989T>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,22158541,-,Confirmed Somatic,Tumour Sample,Unknown,X:41344363..41344363
+DDX3X,ENST00000399959,Yes,188-01-2TD,1921446,p.M330K,c.989T>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Previously Reported,Tumour Sample,Unknown,X:41344363..41344363
+DDX3X,ENST00000399959,Yes,PDA_108,2367449,p.D339H,c.1015G>C,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,25855536,-,Confirmed Somatic,Unknown,Unknown,X:41344389..41344389
+DDX3X,ENST00000399959,Yes,31,1723833,p.C341F,c.1022G>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,22705984,-,Variant of unknown origin,Tumour Sample,Unknown,X:41344396..41344396
+DDX3X,ENST00000399959,Yes,CLL006,1897459,p.?,c.1026-1G>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,23415222,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345179..41345179
+DDX3X,ENST00000399959,Yes,ORL-214,2559747,p.?,c.1026-1G>C,Upper aerodigestive tract,Mouth,Buccal mucosa,Carcinoma,Squamous cell carcinoma,NS,27050151,-,Confirmed Somatic,Cultured,Unknown,X:41345179..41345179
+DDX3X,ENST00000399959,Yes,M9PT,2671640,p.Y343*,c.1029C>A,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345183..41345183
+DDX3X,ENST00000399959,Yes,1185828,2485093,p.V345L,c.1033G>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,26822237,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345187..41345187
+DDX3X,ENST00000399959,Yes,CLL11_1,2776193,p.L346fs*18,c.1035_1038delGTTA,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345189..41345192
+DDX3X,ENST00000399959,Yes,CLL11_2,2776194,p.L346fs*18,c.1035_1038delGTTA,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345189..41345192
+DDX3X,ENST00000399959,Yes,CLL11_3,2776195,p.L346fs*18,c.1035_1038delGTTA,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25377784,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345189..41345192
+DDX3X,ENST00000399959,Yes,2784687,2784687,p.D347Kfs*17,c.1037_1040delTAGA,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25382417,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345191..41345194
+DDX3X,ENST00000399959,Yes,ATL041,2488669,p.D347H,c.1039G>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Adult T cell lymphoma-leukaemia,NS,26437031,-,Confirmed Somatic,Unknown,Unknown,X:41345193..41345193
+DDX3X,ENST00000399959,Yes,WD_02,2688642,p.E348K,c.1042G>A,Skin,Chest,NS,Carcinoma,Squamous cell carcinoma,NS,24662767,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41345196..41345196
+DDX3X,ENST00000399959,Yes,2434070,2434070,p.E348K,c.1042G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345196..41345196
+DDX3X,ENST00000399959,Yes,TCGA-AO-A129-01,1899789,p.D350N,c.1048G>A,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Tumour Sample,Unknown,X:41345202..41345202
+DDX3X,ENST00000399959,Yes,TCGA-CS-4941-01,2194417,p.R351W,c.1051C>T,Central nervous system,Brain,NS,Glioma,NS,NS,-,545,Confirmed Somatic,Unknown,Unknown,X:41345205..41345205
+DDX3X,ENST00000399959,Yes,T1231,2658297,p.R351Q,c.1052G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41345206..41345206
+DDX3X,ENST00000399959,Yes,SJMB097,1732900,p.L353F,c.1059G>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345213..41345213
+DDX3X,ENST00000399959,Yes,MD-290,1735397,p.D354H,c.1060G>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22820256,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345214..41345214
+DDX3X,ENST00000399959,Yes,TCGA-BR-8484-01,2198033,p.D354Y,c.1060G>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41345214..41345214
+DDX3X,ENST00000399959,Yes,M50PT,2671644,p.D354Y,c.1060G>T,Pleura,NS,NS,Mesothelioma,Biphasic,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345214..41345214
+DDX3X,ENST00000399959,Yes,TCGA-18-5592-01,1780481,p.D354Y,c.1060G>T,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,418,Previously Reported,Tumour Sample,Unknown,X:41345214..41345214
+DDX3X,ENST00000399959,Yes,PATSLH,2730628,p.D354N,c.1060G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic T cell leukaemia,NS,28671688,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345214..41345214
+DDX3X,ENST00000399959,Yes,PCSI_0046_Pa_P,1653154,p.D354G,c.1061A>G,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,-,382,Previously Reported,Tumour Sample,Heterozygous,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,PCSI0046,1815626,p.D354G,c.1061A>G,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,23103869,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,PCSI_0046_Pa_P_526,2197256,p.D354G,c.1061A>G,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,-,382,Confirmed Somatic,Unknown,Unknown,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,1058,2772693,p.D354G,c.1061A>G,Urinary tract,Bladder,NS,Carcinoma,Transitional cell carcinoma,Papillary transitional cell carcinoma non invasive,29136510,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,SJMB106,1732870,p.D354V,c.1061A>T,Central nervous system,Brainstem,NS,Primitive neuroectodermal tumour-medulloblastoma,WNT subtype,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,TCGA-BL-A13I-01,1779227,p.D354V,c.1061A>T,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,PCSI_0602_Pa_P_526,2507086,p.D354V,c.1061A>T,Pancreas,NS,NS,Carcinoma,NS,NS,-,382,Confirmed Somatic,Tumour Sample,Unknown,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,PCSI_0602_Pa_X_526,2748630,p.D354V,c.1061A>T,Pancreas,NS,NS,Carcinoma,NS,NS,-,382,Confirmed Somatic,Cultured,Unknown,X:41345215..41345215
+DDX3X,ENST00000399959,Yes,LUAD-YINHD,1765263,p.G356R,c.1066G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22980975,-,Variant of unknown origin,Tumour Sample,Unknown,X:41345220..41345220
+DDX3X,ENST00000399959,Yes,TCGA-D1-A17U-01,1783537,p.F357L,c.1069T>C,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Confirmed Somatic,Tumour Sample,Unknown,X:41345223..41345223
+DDX3X,ENST00000399959,Yes,MBRep_T68,1652927,p.F357S,c.1070T>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Variant of unknown origin,Unknown,Homozygous,X:41345224..41345224
+DDX3X,ENST00000399959,Yes,MBRep_T68,1652927,p.F357S,c.1070T>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Variant of unknown origin,Unknown,Unknown,X:41345224..41345224
+DDX3X,ENST00000399959,Yes,T2197,2296103,p.E358E,c.1074G>A,Large intestine,Colon,Transverse,Carcinoma,Adenocarcinoma,NS,25344691,-,Confirmed Somatic,Unknown,Unknown,X:41345228..41345228
+DDX3X,ENST00000399959,Yes,T2197,2658299,p.E358E,c.1074G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41345228..41345228
+DDX3X,ENST00000399959,Yes,TCGA-AX-A0J0-01,1783376,p.R362C,c.1084C>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Previously Reported,Tumour Sample,Heterozygous,X:41345238..41345238
+DDX3X,ENST00000399959,Yes,410,2267382,p.R362C,c.1084C>T,Oesophagus,Middle third,NS,Carcinoma,Squamous cell carcinoma,NS,25151357,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345238..41345238
+DDX3X,ENST00000399959,Yes,TCGA-ZF-A9RD-01,2385812,p.R363K,c.1088G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41345242..41345242
+DDX3X,ENST00000399959,Yes,PT15_1,2521267,p.E366K,c.1096G>A,Skin,NS,NS,Carcinoma,Basal cell carcinoma,NS,25759019,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345250..41345250
+DDX3X,ENST00000399959,Yes,CHG-2011-508T,2634354,p.E366K,c.1096G>A,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41345250..41345250
+DDX3X,ENST00000399959,Yes,NB03C,1890073,p.D368V,c.1103A>T,Autonomic ganglia,NS,NS,Neuroblastoma,NS,NS,23202128,-,Variant of unknown origin,Cultured,Unknown,X:41345257..41345257
+DDX3X,ENST00000399959,Yes,1365-01-01TD,2456589,p.M370fs*13,c.1106_1107insA,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41345260..41345261
+DDX3X,ENST00000399959,Yes,SJMB001,1732871,p.M370R,c.1109T>G,Central nervous system,Brainstem,NS,Primitive neuroectodermal tumour-medulloblastoma,WNT subtype,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345263..41345263
+DDX3X,ENST00000399959,Yes,SJMB001,2301118,p.M370R,c.1109T>G,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,Medullomyoblastoma,NS,-,640,Previously Reported,Unknown,Unknown,X:41345263..41345263
+DDX3X,ENST00000399959,Yes,HN_63081,1560592,p.P371S,c.1111C>T,Upper aerodigestive tract,Pharynx,Oropharynx,Carcinoma,Squamous cell carcinoma,NS,21798893,-,Variant of unknown origin,Tumour Sample,Unknown,X:41345265..41345265
+DDX3X,ENST00000399959,Yes,MBRep_T35,1652900,p.R376S,c.1126C>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Unknown,Homozygous,X:41345280..41345280
+DDX3X,ENST00000399959,Yes,MBRep_T35,1652900,p.R376S,c.1126C>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Unknown,Unknown,X:41345280..41345280
+DDX3X,ENST00000399959,Yes,MD-274,1735470,p.R376C,c.1126C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22820256,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345280..41345280
+DDX3X,ENST00000399959,Yes,HUB-02-B2-045,2607109,p.H377R,c.1130A>G,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,670,Confirmed Somatic,Cultured,Unknown,X:41345284..41345284
+DDX3X,ENST00000399959,Yes,CG20,2461659,p.M380V,c.1138A>G,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26554828,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41345292..41345292
+DDX3X,ENST00000399959,Yes,ICGC_MB66,2197504,p.M380I,c.1140G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41345294..41345294
+DDX3X,ENST00000399959,Yes,ICGC_MB3,2197414,p.M380I,c.1140G>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41345294..41345294
+DDX3X,ENST00000399959,Yes,H125,2776318,p.A383P,c.1147G>C,Lung,NS,NS,Carcinoma,Mixed adenosquamous carcinoma,NS,29681454,-,Variant of unknown origin,Unknown,Unknown,X:41345301..41345301
+DDX3X,ENST00000399959,Yes,TCGA-EE-A20B-06,2121627,p.A383T,c.1147G>A,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41345301..41345301
+DDX3X,ENST00000399959,Yes,ICGC_MB82,2197521,p.T384P,c.1150A>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41345304..41345304
+DDX3X,ENST00000399959,Yes,402,2267374,p.?,c.1171-2A>T,Oesophagus,Lower third,NS,Carcinoma,Squamous cell carcinoma,NS,25151357,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345402..41345402
+DDX3X,ENST00000399959,Yes,TCGA-XF-A9T5-01,2339180,p.?,c.1171-1G>C,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41345403..41345403
+DDX3X,ENST00000399959,Yes,TCGA-33-4566-01,1781104,p.A393T,c.1177G>A,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,418,Variant of unknown origin,Tumour Sample,Unknown,X:41345410..41345410
+DDX3X,ENST00000399959,Yes,TNKTL13,2634805,p.A393D,c.1178C>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,-,673,Confirmed Somatic,Tumour Sample,Unknown,X:41345411..41345411
+DDX3X,ENST00000399959,Yes,2434067,2434067,p.F396fs*2,c.1185delT,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345418..41345418
+DDX3X,ENST00000399959,Yes,TCGA-Q1-A73O-01,2340268,p.D398H,c.1192G>C,Cervix,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,415,Confirmed Somatic,Tumour Sample,Unknown,X:41345425..41345425
+DDX3X,ENST00000399959,Yes,T578,2296255,p.E399*,c.1195G>T,Large intestine,Caecum,NS,Carcinoma,Adenocarcinoma,NS,25344691,-,Confirmed Somatic,Unknown,Unknown,X:41345428..41345428
+DDX3X,ENST00000399959,Yes,T578,2658233,p.E399*,c.1195G>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41345428..41345428
+DDX3X,ENST00000399959,Yes,TCGA-AP-A059-01,1783335,p.E399D,c.1197A>C,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41345430..41345430
+DDX3X,ENST00000399959,Yes,CHG-13-27889T,2634324,p.L403F,c.1209G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41345442..41345442
+DDX3X,ENST00000399959,Yes,2434072,2434072,p.A404P,c.1210G>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345443..41345443
+DDX3X,ENST00000399959,Yes,HUB-02-B2-087,2607141,p.G406*,c.1216G>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,670,Confirmed Somatic,Cultured,Unknown,X:41345449..41345449
+DDX3X,ENST00000399959,Yes,HN_62318,1560528,p.R407T,c.1220G>C,Upper aerodigestive tract,Pharynx,Oropharynx,Carcinoma,Squamous cell carcinoma,NS,21798893,-,Variant of unknown origin,Tumour Sample,Unknown,X:41345453..41345453
+DDX3X,ENST00000399959,Yes,328,1630886,p.S410F,c.1229C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,22158541,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345462..41345462
+DDX3X,ENST00000399959,Yes,328-01-1TD,1921483,p.S410F,c.1229C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Previously Reported,Tumour Sample,Unknown,X:41345462..41345462
+DDX3X,ENST00000399959,Yes,CLL037,1897485,p.T411fs*9,c.1230delT,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,23415222,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345463..41345463
+DDX3X,ENST00000399959,Yes,MBRep_T56,1652918,p.S412F,c.1235C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Unknown,Homozygous,X:41345468..41345468
+DDX3X,ENST00000399959,Yes,MBRep_T56,1652918,p.S412F,c.1235C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Unknown,Unknown,X:41345468..41345468
+DDX3X,ENST00000399959,Yes,TCGA-D9-A148-06,2121555,p.S412F,c.1235C>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41345468..41345468
+DDX3X,ENST00000399959,Yes,TCGA-FS-A1ZK-06,2121762,p.S412F,c.1235C>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41345468..41345468
+DDX3X,ENST00000399959,Yes,tumor_4133263,2385431,p.Q417fs*16,c.1245_1246delCA,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41345478..41345479
+DDX3X,ENST00000399959,Yes,TCGA-A2-A0YK-01,1779319,p.Q417Q,c.1251G>A,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Tumour Sample,Unknown,X:41345484..41345484
+DDX3X,ENST00000399959,Yes,ccRCC-90,1980826,p.K418*,c.1252A>T,Kidney,NS,NS,Carcinoma,Clear cell renal cell carcinoma,NS,23797736,-,Confirmed Somatic,Unknown,Unknown,X:41345485..41345485
+DDX3X,ENST00000399959,Yes,HN_62318,1560528,p.E424*,c.1270G>T,Upper aerodigestive tract,Pharynx,Oropharynx,Carcinoma,Squamous cell carcinoma,NS,21798893,-,Variant of unknown origin,Tumour Sample,Unknown,X:41345503..41345503
+DDX3X,ENST00000399959,Yes,LUAD-RT-S01831,1765212,p.R428W,c.1282C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22980975,-,Variant of unknown origin,Tumour Sample,Unknown,X:41345515..41345515
+DDX3X,ENST00000399959,Yes,CCRF-CEM,1998437,p.R428Q,c.1283G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic leukaemia,NS,23856246,-,Confirmed Somatic,Cultured,Heterozygous,X:41345516..41345516
+DDX3X,ENST00000399959,Yes,1N62-VS-1T62,2363574,p.L431L,c.1291C>T,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,25839328,-,Confirmed Somatic,Unknown,Unknown,X:41345524..41345524
+DDX3X,ENST00000399959,Yes,1N62-VS-1T62,2582891,p.L431L,c.1291C>T,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,26759717,-,Confirmed Somatic,Tumour Sample,Unknown,X:41345524..41345524
+DDX3X,ENST00000399959,Yes,1T62,2745702,p.L431L,c.1291C>T,Oesophagus,NS,NS,Carcinoma,NS,NS,-,582,Confirmed Somatic,Tumour Sample,Unknown,X:41345524..41345524
+DDX3X,ENST00000399959,Yes,TCGA-32-1991-01,2120347,p.A437E,c.1310C>A,Central nervous system,Brain,NS,Glioma,Astrocytoma Grade IV,Glioblastoma multiforme,-,329,Confirmed Somatic,Unknown,Unknown,X:41345543..41345543
+DDX3X,ENST00000399959,Yes,081T,2067133,p.?,c.1316-2A>T,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,23788652,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346227..41346227
+DDX3X,ENST00000399959,Yes,81T,2745906,p.?,c.1316-2A>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41346227..41346227
+DDX3X,ENST00000399959,Yes,TCGA-D8-A27V-01,2187780,p.D441H,c.1321G>C,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Unknown,Unknown,X:41346234..41346234
+DDX3X,ENST00000399959,Yes,2785192,2785192,p.L443V,c.1327C>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK cell leukaemia,NS,29674644,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346240..41346240
+DDX3X,ENST00000399959,Yes,2784688,2784688,p.L445*,c.1334T>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,25382417,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346247..41346247
+DDX3X,ENST00000399959,Yes,TCGA-EE-A2A1-06,2121650,p.F447L,c.1339T>C,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41346252..41346252
+DDX3X,ENST00000399959,Yes,PD4109a,1317053,p.E449*,c.1345G>T,Breast,NS,NS,Carcinoma,Ductal carcinoma,NS,22608084,385,Previously Reported,Tumour Sample,Unknown,X:41346258..41346258
+DDX3X,ENST00000399959,Yes,PD4109a,1317053,p.E449*,c.1345G>T,Breast,NS,NS,Carcinoma,Ductal carcinoma,NS,22722201,"385; 652",Confirmed Somatic,Tumour Sample,Unknown,X:41346258..41346258
+DDX3X,ENST00000399959,Yes,T3640,2658240,p.T450I,c.1349C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41346262..41346262
+DDX3X,ENST00000399959,Yes,Pat_01_B,2492838,p.K452fs*44,c.1351delA,NS,NS,NS,Malignant melanoma,NS,NS,24265153,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346264..41346264
+DDX3X,ENST00000399959,Yes,1101-01-02TD,2456686,p.K452E,c.1354A>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41346267..41346267
+DDX3X,ENST00000399959,Yes,PD7306a,1541118,p.G453S,c.1357G>A,Breast,NS,NS,Carcinoma,ER-HER-positive carcinoma,NS,-,652,Confirmed Somatic,Unknown,Unknown,X:41346270..41346270
+DDX3X,ENST00000399959,Yes,DN14065,2549222,p.G453S,c.1357G>A,Breast,NS,NS,Carcinoma,HER-positive carcinoma,NS,27406316,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346270..41346270
+DDX3X,ENST00000399959,Yes,DN11197,2549260,p.G453S,c.1357G>A,Breast,NS,NS,Carcinoma,HER-positive carcinoma,NS,-,668,Confirmed Somatic,Tumour Sample,Unknown,X:41346270..41346270
+DDX3X,ENST00000399959,Yes,2748743,2748743,p.A454A,c.1362A>C,Biliary tract,Bile duct,NS,Carcinoma,Adenocarcinoma,NS,29360550,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346275..41346275
+DDX3X,ENST00000399959,Yes,PD4109a,1317053,p.D455Y,c.1363G>T,Breast,NS,NS,Carcinoma,Ductal carcinoma,NS,22608084,385,Previously Reported,Tumour Sample,Unknown,X:41346276..41346276
+DDX3X,ENST00000399959,Yes,PD4109a,1317053,p.D455Y,c.1363G>T,Breast,NS,NS,Carcinoma,Ductal carcinoma,NS,22722201,"385; 652",Confirmed Somatic,Tumour Sample,Unknown,X:41346276..41346276
+DDX3X,ENST00000399959,Yes,2785196,2785196,p.D455_H463delDSLEDFLYH,c.1363_1389del27,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK cell leukaemia,NS,29674644,-,Variant of unknown origin,Tumour Sample,Unknown,X:41346276..41346302
+DDX3X,ENST00000399959,Yes,027-0063-01TD,1921461,p.S456fs*40,c.1367delC,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41346280..41346280
+DDX3X,ENST00000399959,Yes,SDC8,2564877,p.L457Q,c.1370T>A,Salivary gland,NS,NS,Carcinoma,Salivary duct carcinoma,NS,27103403,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346283..41346283
+DDX3X,ENST00000399959,Yes,YUSCA,2439367,p.H463Y,c.1387C>T,Skin,NS,NS,Malignant melanoma,NS,NS,26214590,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41346300..41346300
+DDX3X,ENST00000399959,Yes,LC_C9,1863690,p.G465*,c.1393G>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22975805,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346306..41346306
+DDX3X,ENST00000399959,Yes,LS411,2301999,p.C468R,c.1402T>C,Large intestine,Colon,Right,Carcinoma,Adenocarcinoma,NS,24755471,-,Variant of unknown origin,Cultured,Homozygous,X:41346315..41346315
+DDX3X,ENST00000399959,Yes,PD13802a,1914468,p.H472Y,c.1414C>T,Breast,NS,NS,Carcinoma,HER-positive carcinoma,NS,25850943,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346327..41346327
+DDX3X,ENST00000399959,Yes,MBRep_T30,1652897,p.R475C,c.1423C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Unknown,Homozygous,X:41346336..41346336
+DDX3X,ENST00000399959,Yes,MBRep_T30,1652897,p.R475C,c.1423C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Unknown,Unknown,X:41346336..41346336
+DDX3X,ENST00000399959,Yes,TCGA-EE-A3AF-06,2121697,p.R475C,c.1423C>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41346336..41346336
+DDX3X,ENST00000399959,Yes,AOCS-139-12-5,2185820,p.R475C,c.1423C>T,Ovary,NS,NS,Carcinoma,Mixed adenosquamous carcinoma,NS,-,585,Confirmed Somatic,Unknown,Unknown,X:41346336..41346336
+DDX3X,ENST00000399959,Yes,AOCS-139-1-5,2196312,p.R475C,c.1423C>T,Ovary,NS,NS,Carcinoma,Mixed adenosquamous carcinoma,NS,-,585,Confirmed Somatic,Unknown,Unknown,X:41346336..41346336
+DDX3X,ENST00000399959,Yes,1272,2772703,p.R475C,c.1423C>T,Urinary tract,Bladder,NS,Carcinoma,Transitional cell carcinoma,Papillary transitional cell carcinoma non invasive,29136510,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346336..41346336
+DDX3X,ENST00000399959,Yes,BL1,2344283,p.R475H,c.1424G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Burkitt lymphoma,Sporadic type,23143595,-,Confirmed Somatic,Unknown,Homozygous,X:41346337..41346337
+DDX3X,ENST00000399959,Yes,tumor_4182393,1819101,p.R475H,c.1424G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Burkitt lymphoma,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41346337..41346337
+DDX3X,ENST00000399959,Yes,1,2245532,p.S476F,c.1427C>T,Thyroid,NS,NS,Carcinoma,Papillary carcinoma,NS,24633422,-,Confirmed Somatic,Unknown,Unknown,X:41346340..41346340
+DDX3X,ENST00000399959,Yes,B109,2097258,p.R480K,c.1439G>A,Urinary tract,Bladder,NS,Carcinoma,Transitional cell carcinoma,NS,24121792,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346352..41346352
+DDX3X,ENST00000399959,Yes,B109-Tumor,2186179,p.R480K,c.1439G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,581,Confirmed Somatic,Unknown,Unknown,X:41346352..41346352
+DDX3X,ENST00000399959,Yes,ATL075,2488700,p.A483G,c.1448C>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Adult T cell lymphoma-leukaemia,NS,26437031,-,Confirmed Somatic,Unknown,Unknown,X:41346361..41346361
+DDX3X,ENST00000399959,Yes,2785201,2785201,p.A483G,c.1448C>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK cell leukaemia,NS,29674644,-,Previously Reported,Tumour Sample,Unknown,X:41346361..41346361
+DDX3X,ENST00000399959,Yes,OSCC-GB_00980111,2340552,p.A483A,c.1449C>G,Upper aerodigestive tract,Mouth,NS,Carcinoma,NS,NS,-,539,Confirmed Somatic,Tumour Sample,Unknown,X:41346362..41346362
+DDX3X,ENST00000399959,Yes,GS18021,2777866,p.Q486_P493del,c.1456_1479del24,Upper aerodigestive tract,Mouth,NS,Carcinoma,Squamous cell carcinoma,NS,30563911,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346369..41346392
+DDX3X,ENST00000399959,Yes,tumor_4100314,2634736,p.F487L,c.1459T>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41346372..41346372
+DDX3X,ENST00000399959,Yes,777-01-2TD,2456345,p.F487L,c.1461C>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41346374..41346374
+DDX3X,ENST00000399959,Yes,1,2233396,p.R488H,c.1463G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,24413734,-,Variant of unknown origin,Unknown,Unknown,X:41346376..41346376
+DDX3X,ENST00000399959,Yes,CSCC-15-T,2292463,p.G490E,c.1469G>A,Skin,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25303977,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41346382..41346382
+DDX3X,ENST00000399959,Yes,2729332,2729332,p.G490V,c.1469G>T,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346382..41346382
+DDX3X,ENST00000399959,Yes,2729333,2729333,p.G490V,c.1469G>T,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346382..41346382
+DDX3X,ENST00000399959,Yes,2729334,2729334,p.G490V,c.1469G>T,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346382..41346382
+DDX3X,ENST00000399959,Yes,435-06-01TD,2340364,p.L495V,c.1483T>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41346396..41346396
+DDX3X,ENST00000399959,Yes,ICGC_MB102,2197423,p.V496M,c.1486G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41346399..41346399
+DDX3X,ENST00000399959,Yes,587376,1766805,p.T498A,c.1492A>G,Large intestine,Colon,NS,Carcinoma,Adenocarcinoma,NS,22895193,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346405..41346405
+DDX3X,ENST00000399959,Yes,Pat_41_B,2513797,p.A501T,c.1501G>A,NS,NS,NS,Malignant melanoma,NS,NS,24265153,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346508..41346508
+DDX3X,ENST00000399959,Yes,LB373-MEL-D,753581,p.A502T,c.1504G>A,Skin,NS,NS,Malignant melanoma,NS,NS,-,678,Confirmed Somatic,Cultured,Heterozygous,X:41346511..41346511
+DDX3X,ENST00000399959,Yes,Case_1-Baseline,2730735,p.L505V,c.1513C>G,Skin,NS,NS,Malignant melanoma,NS,NS,27433843,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346520..41346520
+DDX3X,ENST00000399959,Yes,Case_1-Relapse,2730736,p.L505V,c.1513C>G,Skin,NS,NS,Malignant melanoma,NS,NS,27433843,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346520..41346520
+DDX3X,ENST00000399959,Yes,TCGA-BR-6452-01,2197940,p.L505L,c.1515G>A,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41346522..41346522
+DDX3X,ENST00000399959,Yes,MD-278,1735428,p.D506Y,c.1516G>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22820256,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346523..41346523
+DDX3X,ENST00000399959,Yes,pfg181T,2309688,p.I507V,c.1519A>G,Stomach,NS,NS,Carcinoma,Intestinal adenocarcinoma,NS,24816253,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41346526..41346526
+DDX3X,ENST00000399959,Yes,SJERG020306_D1,2565680,p.I507L,c.1519A>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic leukaemia,NS,27776115,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346526..41346526
+DDX3X,ENST00000399959,Yes,TCGA-Q1-A73P-01,2262726,p.S508L,c.1523C>T,Cervix,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,415,Confirmed Somatic,Tumour Sample,Unknown,X:41346530..41346530
+DDX3X,ENST00000399959,Yes,GS18007,2777889,p.S508*,c.1523C>G,Upper aerodigestive tract,Mouth,NS,Carcinoma,Squamous cell carcinoma,NS,30563911,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346530..41346530
+DDX3X,ENST00000399959,Yes,M17PT,2671693,p.S508*,c.1523C>G,Pleura,NS,NS,Mesothelioma,Epithelial,NS,26928227,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346530..41346530
+DDX3X,ENST00000399959,Yes,TCGA-ZF-AA58-01,2385842,p.V510V,c.1530G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41346537..41346537
+DDX3X,ENST00000399959,Yes,U2940,2479246,p.H512R,c.1535A>G,Haematopoietic and lymphoid,Mediastinum,NS,Lymphoid neoplasm,Diffuse large B cell lymphoma,Primary mediastinal B cell lymphoma,24531327,-,Variant of unknown origin,Cultured,Unknown,X:41346542..41346542
+DDX3X,ENST00000399959,Yes,TCGA-AD-6964-01,1651148,p.I514V,c.1540A>G,Large intestine,Caecum,NS,Carcinoma,Adenocarcinoma,NS,-,376,Confirmed Somatic,Unknown,Unknown,X:41346547..41346547
+DDX3X,ENST00000399959,Yes,T1154,2296082,p.N515D,c.1543A>G,Large intestine,Colon,Transverse,Carcinoma,Adenocarcinoma,NS,25344691,-,Confirmed Somatic,Unknown,Unknown,X:41346550..41346550
+DDX3X,ENST00000399959,Yes,IGC-03-1028,2662286,p.E524K,c.1570G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,27923066,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346577..41346577
+DDX3X,ENST00000399959,Yes,HCC22T,1566742,p.Y525C,c.1574A>G,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,-,323,Previously Reported,Tumour Sample,Heterozygous,X:41346581..41346581
+DDX3X,ENST00000399959,Yes,HX15T,1919260,p.Y525C,c.1574A>G,Liver,NS,NS,Carcinoma,NS,NS,-,323,Previously Reported,Tumour Sample,Heterozygous,X:41346581..41346581
+DDX3X,ENST00000399959,Yes,HCC22,2120818,p.Y525C,c.1574A>G,Liver,NS,NS,Carcinoma,NS,NS,-,323,Confirmed Somatic,Unknown,Unknown,X:41346581..41346581
+DDX3X,ENST00000399959,Yes,MBRep_T56,1652918,p.H527Y,c.1579C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Unknown,Homozygous,X:41346586..41346586
+DDX3X,ENST00000399959,Yes,MBRep_T56,1652918,p.H527Y,c.1579C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Unknown,Unknown,X:41346586..41346586
+DDX3X,ENST00000399959,Yes,TCGA-B5-A11E-01,1783399,p.R528C,c.1582C>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Previously Reported,Tumour Sample,Heterozygous,X:41346589..41346589
+DDX3X,ENST00000399959,Yes,HCC827R2,2015231,p.R528C,c.1582C>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,23733853,-,Confirmed Somatic,Cultured,Unknown,X:41346589..41346589
+DDX3X,ENST00000399959,Yes,ME024T,1673893,p.R528C,c.1582C>T,Skin,NS,NS,Malignant melanoma,NS,NS,22622578,-,Previously Reported,Tumour Sample,Unknown,X:41346589..41346589
+DDX3X,ENST00000399959,Yes,TCGA-BS-A0UF-01,1783473,p.R528H,c.1583G>A,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Previously Reported,Tumour Sample,Heterozygous,X:41346590..41346590
+DDX3X,ENST00000399959,Yes,MD-294,1735463,p.R528H,c.1583G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22820256,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346590..41346590
+DDX3X,ENST00000399959,Yes,Pat_05_A,2492841,p.R528H,c.1583G>A,NS,NS,NS,Malignant melanoma,NS,NS,24265153,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346590..41346590
+DDX3X,ENST00000399959,Yes,TCGA-ER-A193-06,2121705,p.I529L,c.1585A>C,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41346592..41346592
+DDX3X,ENST00000399959,Yes,1085708,2485089,p.G530C,c.1588G>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,26822237,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346595..41346595
+DDX3X,ENST00000399959,Yes,MB_Exm599,1652876,p.G530A,c.1589G>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Tumour Sample,Homozygous,X:41346596..41346596
+DDX3X,ENST00000399959,Yes,MB_Exm599,1652876,p.G530A,c.1589G>C,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Tumour Sample,Unknown,X:41346596..41346596
+DDX3X,ENST00000399959,Yes,532412,2485069,p.R531H,c.1592G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,26822237,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346599..41346599
+DDX3X,ENST00000399959,Yes,T77,2689951,p.R531H,c.1592G>A,Endometrium,NS,NS,Carcinoma,Clear cell carcinoma,NS,28485815,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346599..41346599
+DDX3X,ENST00000399959,Yes,PCSI_0083_Pa_P,2121291,p.T532A,c.1594A>G,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,-,382,Confirmed Somatic,Unknown,Unknown,X:41346601..41346601
+DDX3X,ENST00000399959,Yes,PCSI_0083_Pa_X,2121292,p.T532A,c.1594A>G,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,-,382,Confirmed Somatic,Unknown,Unknown,X:41346601..41346601
+DDX3X,ENST00000399959,Yes,TCGA-FS-A1Z3-06,2121750,p.T532A,c.1594A>G,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41346601..41346601
+DDX3X,ENST00000399959,Yes,PCSI_0083_Pa_P_526,2197226,p.T532A,c.1594A>G,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,-,382,Confirmed Somatic,Unknown,Unknown,X:41346601..41346601
+DDX3X,ENST00000399959,Yes,GS18022,2777914,p.T532M,c.1595C>T,Upper aerodigestive tract,Mouth,NS,Carcinoma,Squamous cell carcinoma,NS,30563911,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346602..41346602
+DDX3X,ENST00000399959,Yes,TCGA-Q1-A6DW-01,2193348,p.T532M,c.1595C>T,Cervix,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,415,Confirmed Somatic,Unknown,Unknown,X:41346602..41346602
+DDX3X,ENST00000399959,Yes,CN-AML-NR-03-Dx,2456280,p.T532M,c.1595C>T,Haematopoietic and lymphoid,NS,NS,Haematopoietic neoplasm,Acute myeloid leukaemia,NS,-,544,Confirmed Somatic,Tumour Sample,Unknown,X:41346602..41346602
+DDX3X,ENST00000399959,Yes,QC2-34-T2,2462812,p.T532M,c.1595C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Diffuse large B cell lymphoma,NS,26647218,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346602..41346602
+DDX3X,ENST00000399959,Yes,CN-AML-03-T,2506787,p.T532M,c.1595C>T,Haematopoietic and lymphoid,NS,NS,Haematopoietic neoplasm,Acute myeloid leukaemia,NS,-,544,Confirmed Somatic,Tumour Sample,Unknown,X:41346602..41346602
+DDX3X,ENST00000399959,Yes,MBRep_T25,1652892,p.R534S,c.1600C>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Previously Reported,Unknown,Homozygous,X:41346607..41346607
+DDX3X,ENST00000399959,Yes,MBRep_T25,1652892,p.R534S,c.1600C>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22832583,379,Confirmed Somatic,Unknown,Unknown,X:41346607..41346607
+DDX3X,ENST00000399959,Yes,ICGC_MB78,2197524,p.R534S,c.1600C>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41346607..41346607
+DDX3X,ENST00000399959,Yes,ICGC_MB68,2197422,p.R534C,c.1600C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41346607..41346607
+DDX3X,ENST00000399959,Yes,TCGA-HJ-7597-01,2197912,p.R534C,c.1600C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41346607..41346607
+DDX3X,ENST00000399959,Yes,ATL044,2488671,p.R534C,c.1600C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Adult T cell lymphoma-leukaemia,NS,26437031,-,Confirmed Somatic,Unknown,Unknown,X:41346607..41346607
+DDX3X,ENST00000399959,Yes,MD-144,1735435,p.R534H,c.1601G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22820256,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346608..41346608
+DDX3X,ENST00000399959,Yes,GHE0536,2491110,p.R534H,c.1601G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Diffuse large B cell lymphoma,NS,26608593,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346608..41346608
+DDX3X,ENST00000399959,Yes,tumor_4190929,2634726,p.R534H,c.1601G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41346608..41346608
+DDX3X,ENST00000399959,Yes,ICGC_MB61,2197508,p.G536R,c.1606G>A,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41346613..41346613
+DDX3X,ENST00000399959,Yes,2759320,2759320,p.G536R,c.1606G>C,Peritoneum,NS,NS,Mesothelioma,Epithelial,NS,27813512,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346613..41346613
+DDX3X,ENST00000399959,Yes,IGC-10-1107,2662339,p.G539R,c.1615G>C,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,27923066,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346622..41346622
+DDX3X,ENST00000399959,Yes,tumor_4178518,2634653,p.?,c.1615+1G>C,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41346623..41346623
+DDX3X,ENST00000399959,Yes,OSCC-GB_00440111,2121083,p.L540L,c.1620G>T,Upper aerodigestive tract,Mouth,NS,Carcinoma,NS,NS,-,539,Confirmed Somatic,Unknown,Unknown,X:41346863..41346863
+DDX3X,ENST00000399959,Yes,44T,2139282,p.L540L,c.1620G>T,Upper aerodigestive tract,Mouth,Gingiva,Carcinoma,Squamous cell carcinoma,NS,24292195,-,Confirmed Somatic,Unknown,Unknown,X:41346863..41346863
+DDX3X,ENST00000399959,Yes,tumor_4100636,2634720,p.A541T,c.1621G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NS,NS,-,440,Confirmed Somatic,Tumour Sample,Unknown,X:41346864..41346864
+DDX3X,ENST00000399959,Yes,292_T,2194981,p.A541V,c.1622C>T,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,583,Confirmed Somatic,Unknown,Unknown,X:41346865..41346865
+DDX3X,ENST00000399959,Yes,2434066,2434066,p.A541V,c.1622C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346865..41346865
+DDX3X,ENST00000399959,Yes,2014_Lung_sq_91_T,2744858,p.A541V,c.1622C>T,Lung,NS,NS,Carcinoma,NS,NS,-,583,Confirmed Somatic,Tumour Sample,Unknown,X:41346865..41346865
+DDX3X,ENST00000399959,Yes,PATAXS,2730538,p.A541E,c.1622C>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic T cell leukaemia,NS,28671688,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346865..41346865
+DDX3X,ENST00000399959,Yes,IMC-1,2785202,p.A541E,c.1622C>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK cell leukaemia,NS,29674644,-,Previously Reported,Cultured,Unknown,X:41346865..41346865
+DDX3X,ENST00000399959,Yes,3N08-VS-3T08,2363586,p.N546fs*8,c.1637_1638delAC,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,25839328,-,Confirmed Somatic,Unknown,Unknown,X:41346880..41346881
+DDX3X,ENST00000399959,Yes,3N08-VS-3T08,2582903,p.N546fs*8,c.1637_1638delAC,Oesophagus,NS,NS,Carcinoma,Squamous cell carcinoma,NS,26759717,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346880..41346881
+DDX3X,ENST00000399959,Yes,3T08,2745714,p.N546fs*8,c.1637_1638delAC,Oesophagus,NS,NS,Carcinoma,NS,NS,-,582,Confirmed Somatic,Tumour Sample,Unknown,X:41346880..41346881
+DDX3X,ENST00000399959,Yes,TCGA-AP-A051-01,1783330,p.N546N,c.1638C>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Previously Reported,Tumour Sample,Heterozygous,X:41346881..41346881
+DDX3X,ENST00000399959,Yes,TCGA-B7-5816-01,2197838,p.N546N,c.1638C>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,X:41346881..41346881
+DDX3X,ENST00000399959,Yes,TCGA-13-0760-01,1474815,p.R548T,c.1643G>C,Ovary,NS,NS,Carcinoma,Serous carcinoma,NS,21720365,331,Confirmed Somatic,Tumour Sample,Homozygous,X:41346886..41346886
+DDX3X,ENST00000399959,Yes,TCGA-13-0760-01,1474815,p.N551H,c.1651A>C,Ovary,NS,NS,Carcinoma,Serous carcinoma,NS,21720365,331,Confirmed Somatic,Tumour Sample,Heterozygous,X:41346894..41346894
+DDX3X,ENST00000399959,Yes,TCGA-AA-A010-01,1651109,p.D555E,c.1665T>G,Large intestine,Colon,Transverse,Carcinoma,Adenocarcinoma,NS,22810696,376,Confirmed Somatic,Unknown,Unknown,X:41346908..41346908
+DDX3X,ENST00000399959,Yes,H2347,2776270,p.D558N,c.1672G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,29681454,-,Confirmed Somatic,Unknown,Unknown,X:41346915..41346915
+DDX3X,ENST00000399959,Yes,TCGA-D9-A3Z4-01,2121562,p.L559F,c.1675C>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,X:41346918..41346918
+DDX3X,ENST00000399959,Yes,TCGA-AC-A23H-01,2187848,p.L559I,c.1675C>A,Breast,NS,NS,Carcinoma,NS,NS,-,414,Confirmed Somatic,Unknown,Unknown,X:41346918..41346918
+DDX3X,ENST00000399959,Yes,2729332,2729332,p.E566K,c.1696G>A,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346939..41346939
+DDX3X,ENST00000399959,Yes,2729333,2729333,p.E566K,c.1696G>A,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346939..41346939
+DDX3X,ENST00000399959,Yes,2729334,2729334,p.E566K,c.1696G>A,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346939..41346939
+DDX3X,ENST00000399959,Yes,CH-56-T2,2462824,p.V567M,c.1699G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Diffuse large B cell lymphoma,NS,26647218,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346942..41346942
+DDX3X,ENST00000399959,Yes,T293,2658255,p.P568S,c.1702C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41346945..41346945
+DDX3X,ENST00000399959,Yes,715-03-4TD,2456338,p.P568fs*5,c.1702_1703insTG,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41346945..41346946
+DDX3X,ENST00000399959,Yes,SJMB107,1732888,p.P568L,c.1703C>T,Central nervous system,Cerebellum,NS,Primitive neuroectodermal tumour-medulloblastoma,SHH subtype,NS,22722829,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346946..41346946
+DDX3X,ENST00000399959,Yes,MD-317,1735413,p.P568L,c.1703C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,22820256,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346946..41346946
+DDX3X,ENST00000399959,Yes,TCGA-A5-A0R9-01,1783324,p.P568L,c.1703C>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Confirmed Somatic,Tumour Sample,Unknown,X:41346946..41346946
+DDX3X,ENST00000399959,Yes,ICGC_MB125,2197417,p.P568L,c.1703C>T,Central nervous system,Brain,NS,Primitive neuroectodermal tumour-medulloblastoma,NS,NS,-,379,Confirmed Somatic,Unknown,Unknown,X:41346946..41346946
+DDX3X,ENST00000399959,Yes,PM-7,2479245,p.P568L,c.1703C>T,Haematopoietic and lymphoid,Mediastinum,NS,Lymphoid neoplasm,Diffuse large B cell lymphoma,Primary mediastinal B cell lymphoma,24531327,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346946..41346946
+DDX3X,ENST00000399959,Yes,PASKRN,2730483,p.P568L,c.1703C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic T cell leukaemia,NS,28671688,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346946..41346946
+DDX3X,ENST00000399959,Yes,LUAD-B01970,1765207,p.L571I,c.1711T>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22980975,-,Variant of unknown origin,Tumour Sample,Unknown,X:41346954..41346954
+DDX3X,ENST00000399959,Yes,PDA_084,2367425,p.A575D,c.1724C>A,Pancreas,NS,NS,Carcinoma,Ductal carcinoma,NS,25855536,-,Confirmed Somatic,Unknown,Unknown,X:41346967..41346967
+DDX3X,ENST00000399959,Yes,2729332,2729332,p.E577K,c.1729G>A,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346972..41346972
+DDX3X,ENST00000399959,Yes,2729333,2729333,p.E577K,c.1729G>A,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346972..41346972
+DDX3X,ENST00000399959,Yes,2729334,2729334,p.E577K,c.1729G>A,Ovary,NS,NS,Germ cell tumour,Teratoma,Benign,28954785,-,Confirmed Somatic,Tumour Sample,Unknown,X:41346972..41346972
+DDX3X,ENST00000399959,Yes,11-028G3,2575081,p.S588C,c.1763C>G,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,26928463,-,Confirmed Somatic,Tumour Sample,Unknown,X:41347006..41347006
+DDX3X,ENST00000399959,Yes,11-028L1,2575189,p.S588C,c.1763C>G,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,26928463,-,Confirmed Somatic,Tumour Sample,Unknown,X:41347006..41347006
+DDX3X,ENST00000399959,Yes,TCGA-UY-A78N-01,2385776,p.?,c.1769+1G>T,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41347013..41347013
+DDX3X,ENST00000399959,Yes,467-02-1TD,2385277,p.?,c.1770-1G>A,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,X:41347311..41347311
+DDX3X,ENST00000399959,Yes,TCGA-DK-AA6U-01,2385750,p.A599S,c.1795G>T,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41347337..41347337
+DDX3X,ENST00000399959,Yes,2542720,2542720,p.R603*,c.1807C>T,Haematopoietic and lymphoid,Ocular adnexa,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26773734,-,Confirmed Somatic,Tumour Sample,Unknown,X:41347349..41347349
+DDX3X,ENST00000399959,Yes,NKL,2785207,p.R603*,c.1807C>T,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK cell leukaemia,NS,29674644,-,Previously Reported,Cultured,Unknown,X:41347349..41347349
+DDX3X,ENST00000399959,Yes,TCGA-B5-A11R-01,1783409,p.Q604fs*23,c.1807_1817del11,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Variant of unknown origin,Tumour Sample,Heterozygous,X:41347349..41347359
+DDX3X,ENST00000399959,Yes,LC_S20,1863731,p.S611Y,c.1832C>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22975805,-,Confirmed Somatic,Tumour Sample,Unknown,X:41347374..41347374
+DDX3X,ENST00000399959,Yes,TCGA-XF-A9T2-01,2340582,p.S614fs*17,c.1836_1837insT,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41347378..41347379
+DDX3X,ENST00000399959,Yes,TCGA-86-8076-01,1914091,p.A618T,c.1852G>A,Lung,Right upper lobe,NS,Carcinoma,Adenocarcinoma,NS,-,417,Variant of unknown origin,Tumour Sample,Unknown,X:41347394..41347394
+DDX3X,ENST00000399959,Yes,T267922,2658244,p.R622C,c.1864C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41347406..41347406
+DDX3X,ENST00000399959,Yes,H2347,2776270,p.G624D,c.1871G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,29681454,-,Confirmed Somatic,Unknown,Unknown,X:41347413..41347413
+DDX3X,ENST00000399959,Yes,T93,2658444,p.G625R,c.1873G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,X:41347415..41347415
+DDX3X,ENST00000399959,Yes,CHG-2011-508T,2634354,p.G627V,c.1880G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,X:41347422..41347422
+DDX3X,ENST00000399959,Yes,TCGA-BG-A0LX-01,1783421,p.R632I,c.1895G>T,Endometrium,NS,NS,Carcinoma,Endometrioid carcinoma,NS,-,419,Confirmed Somatic,Tumour Sample,Unknown,X:41347437..41347437
+DDX3X,ENST00000399959,Yes,WD_02,2688642,p.R632T,c.1895G>C,Skin,Chest,NS,Carcinoma,Squamous cell carcinoma,NS,24662767,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41347437..41347437
+DDX3X,ENST00000399959,Yes,H157,2776238,p.R632T,c.1895G>C,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,29681454,-,Previously Reported,Unknown,Unknown,X:41347437..41347437
+DDX3X,ENST00000399959,Yes,TCGA-UY-A9PH-01,2457405,p.R632K,c.1895G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41347437..41347437
+DDX3X,ENST00000399959,Yes,BC50-tumour,2668148,p.G635S,c.1903G>A,Breast,NS,NS,Carcinoma,NS,NS,27535334,-,Confirmed Somatic,Tumour Sample,Heterozygous,X:41347445..41347445
+DDX3X,ENST00000399959,Yes,MBC_145,2662643,p.G635S,c.1903G>A,Breast,NS,NS,Carcinoma,ER-PR-positive carcinoma,NS,28027327,-,Confirmed Somatic,Tumour Sample,Unknown,X:41347445..41347445
+DDX3X,ENST00000399959,Yes,WGC067125,2549394,p.G640R,c.1918G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,646,Confirmed Somatic,Tumour Sample,Unknown,X:41347648..41347648
+DDX3X,ENST00000399959,Yes,Thyroid-CN-WZ030T,2635091,p.S645G,c.1933A>G,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41347663..41347663
+DDX3X,ENST00000399959,Yes,W3T,2745040,p.S645G,c.1933A>G,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41347663..41347663
+DDX3X,ENST00000399959,Yes,TCGA-XF-A9T5-01,2339180,p.G649E,c.1946G>A,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,413,Confirmed Somatic,Tumour Sample,Unknown,X:41347676..41347676
+DDX3X,ENST00000399959,Yes,I2L-P5-Tumor-Organoid,2433488,p.N653S,c.1958A>G,Large intestine,Colon,Ascending,Carcinoma,Adenocarcinoma,NS,25957691,-,Confirmed Somatic,Unknown,Heterozygous,X:41347688..41347688
+DDX3X,ENST00000399959,Yes,C608,2293720,p.Q655R,c.1964A>G,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,24211491,-,Confirmed Somatic,Unknown,Heterozygous,X:41347694..41347694
+DDX3X,ENST00000399959,Yes,LUAD-YINHD,1765263,p.Q655H,c.1965G>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,22980975,-,Variant of unknown origin,Tumour Sample,Unknown,X:41347695..41347695
+DDX3X,ENST00000399959,Yes,TCGA-BF-A1PZ-01,2263030,p.D658Y,c.1972G>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Tumour Sample,Unknown,X:41347702..41347702
+DDX3X,ENST00000399959,Yes,Thyroid-CN-WZ028T,2635089,p.D658E,c.1974C>A,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41347704..41347704
+DDX3X,ENST00000399959,Yes,W1T,2745038,p.D658E,c.1974C>A,Thyroid,NS,NS,Carcinoma,NS,NS,-,676,Confirmed Somatic,Tumour Sample,Unknown,X:41347704..41347704
+DDX3X,ENST00000399959,Yes,HN_62415,1560534,p.*663G,c.1987T>G,Upper aerodigestive tract,Larynx,NS,Carcinoma,Squamous cell carcinoma,NS,21798893,-,Variant of unknown origin,Tumour Sample,Unknown,X:41347717..41347717
+DDX3X,ENST00000399959,Yes,2434060,2434060,p.0,c.1_1989del1989,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Homozygous,-
+DDX3X,ENST00000399959,Yes,2592215,2592215,p.G11W,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Acute lymphoblastic T cell leukaemia,NS,27997762,-,Variant of unknown origin,Tumour Sample,Heterozygous,-
+DDX3X,ENST00000399959,Yes,2777266,2777266,p.S23fs*?,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777275,2777275,p.W127*,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777253,2777253,p.F151fs*?,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777277,2777277,p.I190del,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777289,2777289,p.E277K,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777225,2777225,p.G303fs*?,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777261,2777261,p.M355V,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777265,2777265,p.E366*,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777248,2777248,p.E449_T450>DP,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777213,2777213,p.R475C,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777216,2777216,p.E482*,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777283,2777283,p.E524*,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777232,2777232,p.W570S,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777221,2777221,p.K581fs*?,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-
+DDX3X,ENST00000399959,Yes,2777220,2777220,p.?,c.?,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,NK-T cell lymphoma,NS,26192917,-,Confirmed Somatic,Tumour Sample,Unknown,-

@@ -1,0 +1,66 @@
+Gene Name,Transcript,Census Tier 1,Sample Name,Sample ID,AA Mutation,CDS Mutation,Primary Tissue,Tissue Subtype 1,Tissue Subtype 2,Histology,Histology Subtype 1,Histology Subtype 2,Pubmed Id,CGP Study,Somatic Status,Sample Type,Zygosity,Genomic Co-ordinates
+DDX3Y,ENST00000360160,No,PD6755a,1503056,p.G624S,c.1870G>A,Bone,Pelvis,NS,Chondrosarcoma,Central,NS,23770606,486,Confirmed Somatic,Tumour Sample,Unknown,Y:12917509..12917509
+DDX3Y,ENST00000360160,No,G5,1867794,p.A17P,c.49G>C,Central nervous system,Brain,NS,Glioma,Astrocytoma Grade II,Fibrillary,23104868,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12907540..12907540
+DDX3Y,ENST00000360160,No,2_tFL,2225681,p.I193N,c.578T>A,Haematopoietic and lymphoid,Lymph node,NS,Lymphoid neoplasm,Diffuse large B cell lymphoma,NS,24388756,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12913758..12913758
+DDX3Y,ENST00000360160,No,595-01-1TD,2744672,p.S490G,c.1468A>G,Haematopoietic and lymphoid,NS,NS,Lymphoid neoplasm,Chronic lymphocytic leukaemia-small lymphocytic lymphoma,NS,-,340,Confirmed Somatic,Tumour Sample,Unknown,Y:12916419..12916419
+DDX3Y,ENST00000360160,No,TCGA-CJ-5678-01,1779990,p.F158L,c.474T>A,Kidney,NS,NS,Carcinoma,Clear cell renal cell carcinoma,NS,-,416,Confirmed Somatic,Tumour Sample,Unknown,Y:12912999..12912999
+DDX3Y,ENST00000360160,No,T578,2296255,p.G90V,c.269G>T,Large intestine,Caecum,NS,Carcinoma,Adenocarcinoma,NS,25344691,-,Confirmed Somatic,Unknown,Unknown,Y:12911956..12911956
+DDX3Y,ENST00000360160,No,TCGA-AZ-4315-01,1651162,p.R313H,c.938G>A,Large intestine,Caecum,NS,Carcinoma,Adenocarcinoma,NS,-,376,Confirmed Somatic,Unknown,Unknown,Y:12915146..12915146
+DDX3Y,ENST00000360160,No,TCGA-AD-6895-01,1651144,p.K385K,c.1155G>A,Large intestine,Caecum,NS,Carcinoma,Adenocarcinoma,NS,-,376,Confirmed Somatic,Unknown,Unknown,Y:12915765..12915765
+DDX3Y,ENST00000360160,No,I2L-P28-Tumor-Biopsy,2433486,p.D599V,c.1796A>T,Large intestine,Colon,Ascending,Carcinoma,Adenocarcinoma,NS,25957691,-,Confirmed Somatic,Unknown,Heterozygous,Y:12917435..12917435
+DDX3Y,ENST00000360160,No,I2L-P28-Tumor-Organoid,2433508,p.D599V,c.1796A>T,Large intestine,Colon,Ascending,Carcinoma,Adenocarcinoma,NS,25957691,-,Confirmed Somatic,Unknown,Heterozygous,Y:12917435..12917435
+DDX3Y,ENST00000360160,No,T3431,2296219,p.K253fs*18,c.756delG,Large intestine,Colon,Descending,Carcinoma,Adenocarcinoma,NS,25344691,-,Confirmed Somatic,Unknown,Unknown,Y:12914646..12914646
+DDX3Y,ENST00000360160,No,T1743,2296093,p.N642S,c.1925A>G,Large intestine,Colon,Descending,Carcinoma,Adenocarcinoma,NS,25344691,-,Confirmed Somatic,Unknown,Unknown,Y:12918064..12918064
+DDX3Y,ENST00000360160,No,T11,2411200,p.R585Q,c.1754G>A,Large intestine,Colon,NS,Carcinoma,Adenocarcinoma,NS,26071483,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12917051..12917051
+DDX3Y,ENST00000360160,No,T578,2658233,p.G90V,c.269G>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,Y:12911956..12911956
+DDX3Y,ENST00000360160,No,DLD1,2301972,p.P201L,c.602C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,24755471,-,Variant of unknown origin,Cultured,Homozygous,Y:12913782..12913782
+DDX3Y,ENST00000360160,No,HCT15,2301979,p.P201L,c.602C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,24755471,-,Variant of unknown origin,Cultured,Homozygous,Y:12913782..12913782
+DDX3Y,ENST00000360160,No,B1-CaA,2633641,p.R361H,c.1082G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,646,Confirmed Somatic,Tumour Sample,Unknown,Y:12915692..12915692
+DDX3Y,ENST00000360160,No,T593,2658231,p.R374C,c.1120C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,Y:12915730..12915730
+DDX3Y,ENST00000360160,No,WGC067167,2549399,p.A381V,c.1142C>T,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,646,Confirmed Somatic,Tumour Sample,Unknown,Y:12915752..12915752
+DDX3Y,ENST00000360160,No,2-2,2746097,p.A495T,c.1483G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,646,Confirmed Somatic,Tumour Sample,Unknown,Y:12916434..12916434
+DDX3Y,ENST00000360160,No,T073340A,2633648,p.R601Q,c.1802G>A,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,-,646,Confirmed Somatic,Tumour Sample,Unknown,Y:12917441..12917441
+DDX3Y,ENST00000360160,No,T1743,2658627,p.N642S,c.1925A>G,Large intestine,NS,NS,Carcinoma,Adenocarcinoma,NS,27149842,-,Confirmed Somatic,Unknown,Unknown,Y:12918064..12918064
+DDX3Y,ENST00000360160,No,RK187_C01,2194716,p.T530T,c.1590A>G,Liver,NS,NS,Carcinoma,NS,NS,-,322,Confirmed Somatic,Unknown,Unknown,Y:12916615..12916615
+DDX3Y,ENST00000360160,No,CHG-22T,2634255,p.C62F,c.185G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,Y:12911872..12911872
+DDX3Y,ENST00000360160,No,CHG-46T,2634267,p.R290L,c.869G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,Y:12915077..12915077
+DDX3Y,ENST00000360160,No,CHG-96T,2634278,p.G301V,c.902G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,Y:12915110..12915110
+DDX3Y,ENST00000360160,No,CHG-13-29153T,2634325,p.G305C,c.913G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,Y:12915121..12915121
+DDX3Y,ENST00000360160,No,CHG-10-51040T,2634286,p.P517T,c.1549C>A,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,Y:12916574..12916574
+DDX3Y,ENST00000360160,No,CHG-10-51040T,2634286,p.G612C,c.1834G>T,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,Y:12917473..12917473
+DDX3Y,ENST00000360160,No,CHG-2013-13037T,2634355,p.?,c.1491+5G>A,Liver,NS,NS,Other,Neoplasm,NS,-,660,Confirmed Somatic,Tumour Sample,Unknown,Y:12916447..12916447
+DDX3Y,ENST00000360160,No,HCC28T,1566750,p.G93V,c.278G>T,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,-,323,Variant of unknown origin,Tumour Sample,Heterozygous,Y:12911965..12911965
+DDX3Y,ENST00000360160,No,TCGA-MI-A75I-01,2263196,p.S101I,c.302G>T,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,-,628,Confirmed Somatic,Tumour Sample,Unknown,Y:12912747..12912747
+DDX3Y,ENST00000360160,No,CHC2029T,2340034,p.P165fs*8,c.491_492insT,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,-,381,Confirmed Somatic,Tumour Sample,Unknown,Y:12913016..12913017
+DDX3Y,ENST00000360160,No,CHC320T,1652978,p.V494A,c.1481T>C,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,-,381,Variant of unknown origin,Tumour Sample,Homozygous,Y:12916432..12916432
+DDX3Y,ENST00000360160,No,HCC28T,1566750,p.A613A,c.1839T>A,Liver,NS,NS,Carcinoma,Hepatocellular carcinoma,NS,-,323,Variant of unknown origin,Tumour Sample,Heterozygous,Y:12917478..12917478
+DDX3Y,ENST00000360160,No,IGC-13-1070,2662370,p.G79V,c.236G>T,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,27923066,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12911923..12911923
+DDX3Y,ENST00000360160,No,IGC-04-1142,2662305,p.R476K,c.1427G>A,Lung,NS,NS,Carcinoma,Adenocarcinoma,NS,27923066,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12916378..12916378
+DDX3Y,ENST00000360160,No,2881_T,2194948,p.G36R,c.106G>A,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,583,Confirmed Somatic,Unknown,Unknown,Y:12909362..12909362
+DDX3Y,ENST00000360160,No,TCGA-22-4595-01,1780846,p.G82R,c.244G>C,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,418,Confirmed Somatic,Tumour Sample,Unknown,Y:12911931..12911931
+DDX3Y,ENST00000360160,No,J73_T,2194927,p.R598T,c.1793G>C,Lung,NS,NS,Carcinoma,Squamous cell carcinoma,NS,-,583,Confirmed Somatic,Unknown,Unknown,Y:12917432..12917432
+DDX3Y,ENST00000360160,No,2014_Lung_sq_69_T,2744940,p.G36W,c.106G>T,Lung,NS,NS,Carcinoma,NS,NS,-,583,Confirmed Somatic,Tumour Sample,Unknown,Y:12909362..12909362
+DDX3Y,ENST00000360160,No,2014_Lung_sq_38_T,2744909,p.A48S,c.142G>T,Lung,NS,NS,Carcinoma,NS,NS,-,583,Confirmed Somatic,Tumour Sample,Unknown,Y:12909398..12909398
+DDX3Y,ENST00000360160,No,TCGA-55-7570-01,1914018,p.G36E,c.107G>A,Lung,Right upper lobe,NS,Carcinoma,Adenocarcinoma,NS,-,417,Variant of unknown origin,Tumour Sample,Unknown,Y:12909363..12909363
+DDX3Y,ENST00000360160,No,TCGA-HC-8266-01,2263009,p.K55E,c.163A>G,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,-,435,Confirmed Somatic,Tumour Sample,Unknown,Y:12911850..12911850
+DDX3Y,ENST00000360160,No,00-010N,2575067,p.R426Q,c.1277G>A,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,26928463,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12915995..12915995
+DDX3Y,ENST00000360160,No,TCGA-QU-A6IM-01,2263012,p.K587N,c.1761A>T,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,-,435,Confirmed Somatic,Tumour Sample,Unknown,Y:12917058..12917058
+DDX3Y,ENST00000360160,No,DA13001,2634952,p.?,c.1165-7G>A,Prostate,NS,NS,Carcinoma,Adenocarcinoma,NS,-,675,Confirmed Somatic,Tumour Sample,Unknown,Y:12915876..12915876
+DDX3Y,ENST00000360160,No,PT50,2521307,p.S652F,c.1955C>T,Skin,NS,NS,Carcinoma,Basal cell carcinoma,NS,25759019,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12918094..12918094
+DDX3Y,ENST00000360160,No,PT48,2521305,p.?,c.1020-8C>T,Skin,NS,NS,Carcinoma,Basal cell carcinoma,NS,25759019,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12915622..12915622
+DDX3Y,ENST00000360160,No,YUKAT,2439331,p.F117S,c.350T>C,Skin,NS,NS,Malignant melanoma,NS,NS,26214590,-,Confirmed Somatic,Tumour Sample,Heterozygous,Y:12912795..12912795
+DDX3Y,ENST00000360160,No,YUKAT,2439331,p.E159K,c.475G>A,Skin,NS,NS,Malignant melanoma,NS,NS,26214590,-,Confirmed Somatic,Tumour Sample,Heterozygous,Y:12913000..12913000
+DDX3Y,ENST00000360160,No,TCGA-EE-A2MR-06,2121688,p.P210S,c.628C>T,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,Y:12913808..12913808
+DDX3Y,ENST00000360160,No,TCGA-EE-A2GR-06,2121667,p.V403A,c.1208T>C,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,Y:12915926..12915926
+DDX3Y,ENST00000360160,No,TCGA-BF-A1Q0-01,2121497,p.E462K,c.1384G>A,Skin,NS,NS,Malignant melanoma,NS,NS,-,540,Confirmed Somatic,Unknown,Unknown,Y:12916335..12916335
+DDX3Y,ENST00000360160,No,YUWAND,2013707,p.S58L,c.173C>T,Skin,Mucosal,NS,Malignant melanoma,NS,NS,22842228,-,Confirmed Somatic,Cultured,Heterozygous,Y:12911860..12911860
+DDX3Y,ENST00000360160,No,CSCC-20-T,2292468,p.V373I,c.1117G>A,Skin,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25303977,-,Confirmed Somatic,Tumour Sample,Heterozygous,Y:12915727..12915727
+DDX3Y,ENST00000360160,No,TCGA-BR-8680-01,2197966,p.L233I,c.697C>A,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,Y:12914587..12914587
+DDX3Y,ENST00000360160,No,TCGA-FP-8211-01,2198042,p.G605V,c.1814G>T,Stomach,NS,NS,Carcinoma,Adenocarcinoma,NS,-,541,Confirmed Somatic,Unknown,Unknown,Y:12917453..12917453
+DDX3Y,ENST00000360160,No,TCGA-BJ-A0YZ-01,2121806,p.I106V,c.316A>G,Thyroid,NS,NS,Carcinoma,NS,NS,-,542,Confirmed Somatic,Unknown,Unknown,Y:12912761..12912761
+DDX3Y,ENST00000360160,No,PTC-7C,2185970,p.K340*,c.1018A>T,Thyroid,NS,NS,Other,Neoplasm,NS,-,589,Confirmed Somatic,Unknown,Unknown,Y:12915226..12915226
+DDX3Y,ENST00000360160,No,UD-SCC-2,2296311,p.D519N,c.1555G>A,Upper aerodigestive tract,Head neck,NS,Carcinoma,Squamous cell carcinoma,NS,25275298,-,Variant of unknown origin,Cultured,Unknown,Y:12916580..12916580
+DDX3Y,ENST00000360160,No,HN_62376,1560532,p.D184N,c.550G>A,Upper aerodigestive tract,Pharynx,Hypopharynx,Carcinoma,Squamous cell carcinoma,NS,21798893,-,Variant of unknown origin,Tumour Sample,Unknown,Y:12913730..12913730
+DDX3Y,ENST00000360160,No,OSCC-GB_01870111,2747099,p.Q14fs*8,c.39delC,Upper aerodigestive tract,Mouth,NS,Carcinoma,NS,NS,-,539,Confirmed Somatic,Tumour Sample,Unknown,Y:12904975..12904975
+DDX3Y,ENST00000360160,No,B80-3-Tumor,2186365,p.D217Y,c.649G>T,Urinary tract,Bladder,NS,Carcinoma,NS,NS,-,581,Confirmed Somatic,Unknown,Unknown,Y:12913829..12913829
+DDX3Y,ENST00000360160,No,B80-3,2097315,p.D217Y,c.649G>T,Urinary tract,Bladder,NS,Carcinoma,Transitional cell carcinoma,NS,24121792,-,Confirmed Somatic,Tumour Sample,Unknown,Y:12913829..12913829

@@ -1,0 +1,42 @@
+,ID,condition,replicate,readLength,ID,sample_name,sample_type,instrument,LoadDate,mut_details,colnames
+1,SRR387293,wt,1,107,SRR387293,Thomas,cell_line,Illumina Genome Analyzer IIx,10/07/2012,wt,wt_1
+2,SRR387392,mut,1,107,SRR387392,Gumbus,cell_line,Illumina Genome Analyzer IIx,09/07/2012,Missense,mut_1
+3,SRR387393,wt,2,107,SRR387393,BL41,cell_line,Illumina Genome Analyzer IIx,09/07/2012,wt,wt_2
+4,SRR387394,wt,3,107,SRR387394,Raji,cell_line,Illumina Genome Analyzer IIx,09/07/2012,wt,wt_3
+5,SRR387395,wt,4,107,SRR387395,Ramos,cell_line,Illumina Genome Analyzer IIx,09/07/2012,wt,wt_4
+6,SRR387396,mut,2,107,SRR387396,Namalwa,cell_line,Illumina Genome Analyzer IIx,09/07/2012,Missense,mut_2
+7,SRR387397,wt,5,107,SRR387397,EW,cell_line,Illumina Genome Analyzer IIx,09/07/2012,wt,wt_5
+8,SRR387398,mut,3,107,SRR387398,BL70,cell_line,Illumina Genome Analyzer IIx,09/07/2012,Nonsense,mut_3
+9,SRR387399,wt,6,102,SRR387399,BL30,cell_line,Illumina HiSeq 2000,09/07/2012,wt,wt_6
+10,SRR387400,wt,7,102,SRR387400,CA46,cell_line,Illumina HiSeq 2000,09/07/2012,wt,wt_7
+11,SRR387401,wt,8,102,SRR387401,Daudi,cell_line,Illumina HiSeq 2000,09/07/2012,wt,wt_8
+12,SRR387402,mut,4,102,SRR387402,BL2,cell_line,Illumina HiSeq 2000,09/07/2012,Missense,mut_4
+13,SRR387403,wt,9,102,SRR387403,BL58,cell_line,Illumina HiSeq 2000,09/07/2012,wt,wt_9
+14,SRR387404,mut,5,102,SRR387404,SLN2386,patient,Illumina HiSeq 2000,09/07/2012,Missense,mut_5
+15,SRR387405,mut,6,102,SRR387405,SLN2389,patient,Illumina HiSeq 2000,09/07/2012,Nonsense,mut_6
+16,SRR387406,wt,10,102,SRR387406,SLN2391,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_10
+17,SRR387407,wt,11,102,SRR387407,SLN2392,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_11
+18,SRR387418,wt,12,102,SRR387418,SLN2394,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_12
+19,SRR387426,wt,13,100,SRR387426,SLN2402,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_13
+20,SRR387427,wt,14,100,SRR387427,SLN2405,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_14
+21,SRR387428,wt,15,100,SRR387428,SLN2406,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_15
+22,SRR387429,wt,16,100,SRR387429,SLN2418,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_16
+23,SRR387430,wt,17,100,SRR387430,SLN2420,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_17
+24,SRR387431,wt,18,107,SRR387431,SLN2430,patient,Illumina Genome Analyzer IIx,09/07/2012,wt,wt_18
+25,SRR387432,wt,19,100,SRR387432,SLN2431,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_19
+26,SRR387433,wt,20,100,SRR387433,SLN2432,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_20
+27,SRR387434,wt,21,102,SRR387434,SLN2433,patient,Illumina HiSeq 2000,10/07/2012,wt,wt_21
+28,SRR387435,mut,7,102,SRR387435,SLN2443,patient,Illumina HiSeq 2000,09/07/2012,Missense,mut_7
+29,SRR387436,wt,22,100,SRR387436,SLN2448,patient,Illumina HiSeq 2000,09/07/2012,wt,wt_22
+30,SRR387437,mut,8,102,SRR387437,SLN2521,patient,Illumina HiSeq 2000,09/07/2012,Missense,mut_8
+31,SRR387438,wt,23,100,SRR387438,SLN2522,patient,Illumina HiSeq 2000,10/07/2012,wt,wt_23
+32,SRR387439,wt,24,107,SRR387439,SLN2523,patient,Illumina Genome Analyzer IIx,10/07/2012,wt,wt_24
+33,SRR387440,wt,25,100,SRR387440,SLN2524,patient,Illumina HiSeq 2000,10/07/2012,wt,wt_25
+34,SRR387441,wt,26,102,SRR387441,SLN2528,patient,Illumina HiSeq 2000,10/07/2012,wt,wt_26
+35,SRR387442,mut,9,102,SRR387442,SLN2531,patient,Illumina HiSeq 2000,10/07/2012,Missense,mut_9
+36,SRR387443,wt,27,100,SRR387443,SLN2532,patient,Illumina HiSeq 2000,10/07/2012,wt,wt_27
+37,SRR387444,wt,28,100,SRR387444,SLN2536,patient,Illumina HiSeq 2000,10/07/2012,wt,wt_28
+38,SRR387445,mut,10,100,SRR387445,SLN2537,patient,Illumina HiSeq 2000,10/07/2012,Nonsense,mut_10
+39,SRR387446,mut,11,100,SRR387446,SLN2538,patient,Illumina HiSeq 2000,10/07/2012,Nonsense,mut_11
+40,SRR387447,wt,29,102,SRR387447,SLN2539,patient,Illumina HiSeq 2000,10/07/2012,wt,wt_29
+41,SRR387448,mut,12,100,SRR387448,SLN2540,patient,Illumina HiSeq 2000,10/07/2012,Nonsense,mut_12

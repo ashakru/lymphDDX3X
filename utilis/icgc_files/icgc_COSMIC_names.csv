@@ -1,0 +1,87 @@
+project,explained,COSMIC
+ALL-US,Acute Lymphoblastic Leukemia,Haematopoietic and lymphoid
+AML-US,Acute Myeloid Leukemia,Haematopoietic and lymphoid
+BLCA-CN,Bladder Cancer,Urinary tract
+BLCA-US,Bladder Urothelial Cancer,Urinary tract
+BOCA-FR,Soft Tissue cancer,Other
+BOCA-UK,Bone Cancer,Other
+BPLL-FR,B,Haematopoietic and lymphoid
+BRCA-EU,Breast ER+ and HER2,Breast
+BRCA-FR,Breast Cancer,Breast
+BRCA-KR,Breast Cancer,Breast
+BRCA-UK,Breast Triple Negative/Lobular Cancer,Breast
+BRCA-US,Breast Cancer,Breast
+BTCA-JP,Biliary Tract Cancer,Biliary tract
+BTCA-SG,Biliary Tract Cancer,Biliary tract
+CCSK-US,Clear Cell Sarcomas of the Kidney,Kidney
+CESC-US,Cervical Squamous Cell Carcinoma,Cervix
+CLLE-ES,Chronic Lymphocytic Leukemia,Haematopoietic and lymphoid
+CMDI-UK,Chronic Myeloid Disorders,Haematopoietic and lymphoid
+COAD-US,Colon Adenocarcinoma,Large intestine
+COCA-CN,Colorectal Cancer,Large intestine
+DLBC-US,Lymphoid Neoplasm Diffuse Large B,Haematopoietic and lymphoid
+EOPC-DE,Early Onset Prostate Cancer,Prostate
+ESAD-UK,Esophageal Adenocarcinoma,Oesophagus
+ESCA-CN,Esophageal Cancer,Oesophagus
+GACA-CN,Gastric Cancer,Stomach
+GACA-JP,Gastirc Cancer,Stomach
+GBM-CN,Brain Cancer,Central nervous system
+GBM-US,Brain Glioblastoma Multiforme,Central nervous system
+HNSC-US,Head and Neck Squamous Cell Carcinoma,Upper aerodigestive tract
+KICH-US,Kidney Chromophobe,Kidney
+KIRC-US,Kidney Renal Clear Cell Carcinoma,Kidney
+KIRP-US,Kidney Renal Papillary Cell Carcinoma,Kidney
+LAML-CN,Leukemia,Haematopoietic and lymphoid
+LAML-KR,Acute Myeloid Leukemia,Haematopoietic and lymphoid
+LAML-US,Acute Myeloid Leukemia,Haematopoietic and lymphoid
+LGG-US,Brain Lower Grade Glioma,Central nervous system
+LIAD-FR,Benign Liver Tumour,Liver
+LICA-CN,Liver Cancer,Liver
+LICA-FR,Liver Cancer,Liver
+LIHC-US,Liver Hepatocellular carcinoma,Liver
+LIHM-FR,Liver Cancer,Liver
+LINC-JP,Liver Cancer,Liver
+LIRI-JP,Liver Cancer,Liver
+LMS-FR,Soft tissue cancer,Lung
+LUAD-US,Lung Adenocarcinoma,Lung
+LUSC-CN,Lung Cancer,Lung
+LUSC-KR,Lung Cancer,Lung
+LUSC-US,Lung Squamous Cell Carcinoma,Lung
+MALY-DE,Malignant Lymphoma,Haematopoietic and lymphoid
+MELA-AU,Skin Cancer,Skin
+NACA-CN,Nasopharyngeal cancer,Upper aerodigestive tract
+NBL-US,Neuroblastoma,Central nervous system
+NKTL-SG,Blood Cancer,Haematopoietic and lymphoid
+ORCA-IN,Oral Cancer,Upper aerodigestive tract
+OS-US,Osteosarcoma,Other
+OV-AU,Ovarian Cancer,Ovary
+OV-CN,Ovarian Cancer,Ovary
+OV-US,Ovarian Serous Cystadenocarcinoma,Ovary
+PAAD-US,Pancreatic Cancer,Pancreas
+PACA-AU,Pancreatic Cancer,Pancreas
+PACA-CA,Pancreatic Cancer,Pancreas
+PACA-CN,Pancreatic Cancer,Pancreas
+PAEN-AU,Pancreatic Cancer Endocrine neoplasms,Pancreas
+PAEN-IT,Pancreatic Endocrine Neoplasms,Pancreas
+PBCA-DE,Pediatric Brain Cancer,Central nervous system
+PBCA-US,Pediatric Brain Tumor,Central nervous system
+PEME-CA,Pediatric Medulloblastoma,Central nervous system
+PRAD-CA,Prostate Adenocarcinoma,Prostate
+PRAD-CN,Prostate Cancer,Prostate
+PRAD-FR,Prostate Cancer,Prostate
+PRAD-UK,Prostate Adenocarcinoma,Prostate
+PRAD-US,Prostate Adenocarcinoma,Prostate
+READ-US,Rectum Adenocarcinoma,Prostate
+RECA-CN,Renal Cancer,Kidney
+RECA-EU,Renal Cell Cancer,Kidney
+RT-US,Rhabdoid Tumors,Other
+SARC-US,Sarcoma,Other
+SKCA-BR,Skin Adenocarcinoma,Skin
+SKCM-US,Skin Cutaneous melanoma,Skin
+STAD-US,Gastric Adenocarcinoma,Stomach
+THCA-CN,Thyroid Cancer,Thyroid
+THCA-SA,Thyroid Cancer,Thyroid
+THCA-US,Head and Neck Thyroid Carcinoma,Upper aerodigestive tract
+UCEC-US,Uterine Corpus Endometrial Carcinoma,Endometrium
+UTCA-FR,Uterine Cancer,Endometrium
+WT-US,Wilms Tumor,Kidney
