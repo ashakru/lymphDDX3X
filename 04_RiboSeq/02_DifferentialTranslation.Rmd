@@ -1,0 +1,906 @@
+---
+title: "02 Differential Translation"
+author: "Joanna A. Krupka"
+date: "May 20, 2020"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+## Introduction 
+
+To establish how DDX3X impacts the translation of its mRNA targets we performed transcriptome-wide translational profiling (RiboSeq) in cell lines following shRNA knockdown of DDX3X.
+
+## Objectives
+
+Identification of translational targets of DDX3X with ribosome-profiling. 
+
+## Materials and methods  
+
+The cell lines were transduced with either an inducible scramble control shRNA or two shRNAs against DDX3X and were selected in puromycin until reached more than transduced. shRNAs expression was then induced by doxycycline for 24h and 48h and harvested for RNA-seq and ribosome profiling. 
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+library(tidyverse)
+library(biomaRt)
+library(RColorBrewer)
+library(pheatmap)
+library(DESeq2)
+library(GenomicFeatures)
+library(knitr)
+library(ggrepel)
+library(ggpubr)
+library(msigdbr)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(ComplexHeatmap)
+
+source("../utilis.R")
+GTF = "../../../reference/gencode.v29.annotation.gtf"
+
+# Load data and annotations
+load("../utilis/expressionData/DDX3Xsh/RiboRNASeq_counts.RData")
+load("../utilis/expressionData/regionsLength.RData")
+HUGO.RPs <- read_csv("../utilis/signatures/HUGO_ribosomal_proteins_all.csv")
+metadata <- read_csv("../utilis/expressionData/DDX3Xsh/RiboRNA_DDX3Xsh.csv")
+cdsTrimmedLengthsTab <- cdsTrimmedLengthsTab %>%
+  mutate(name = splitvec(name, "[.]", 1))
+pairwiseComp <- read_csv("data/pairwiseComp.csv")
+iCLIP <- read_csv("../03_iCLIP/results/iCLIP_targets_byCells.csv")
+
+# Annotations  
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+us_mart <- useEnsembl(biomart = "ensembl", mirror = "uswest", dataset="hsapiens_gene_ensembl")
+biomart_ensembl2name <- getBM(attributes=c('ensembl_gene_id', 
+                                           'external_gene_name', 
+                                           'entrezgene_id'), 
+                                filters = "ensembl_gene_id", 
+                                values = splitvec(CDScountsTrim$name, "[.]", 1),
+                                mart = us_mart)
+```
+
+### Differential expression analysis     
+
+In the first step the differential expression analysis is performed separately at the transcriptome and translatome level by comparing expression values measured by RNA-Seq and Ribo-Seq. Same as [Hsieh et al. 2012](https://www.nature.com/articles/nature10912), [Sendoel et al. 2017](https://www.nature.com/articles/nature21036), our analysis was performed using DESeq2 as described in the [standard workflow](http://bioconductor.org/packages/release/bioc/html/DESeq2.html). 
+
+```{r eval = T, echo = T, message = F, warning = F, cache = T, error = F}
+# DDX3X sh
+metaAll <- metadata %>% 
+  filter(Sample %in% colnames(CDScountsTrim) &
+           Sample %in% c(pairwiseComp$ctl, pairwiseComp$sh)) %>%
+  filter(!(Sample %in% c("SLX.12465.A007", "SLX.12465.A008", "SLX.12465.A009","SLX.14296.A005","SLX.14296.A006")))
+
+rownames(CDScountsTrim) <- splitvec(CDScountsTrim$name, "[.]", 1)
+
+# By cell line
+ cl <- c("Mutu", "U2932")
+ toSave <- c()
+
+for (i in 1:length(cl)){
+  # RNA-Seq
+  ## Select samples
+  if (cl[i] != "None"){
+      meta <- metaAll %>%
+      filter(Cell_line == cl[i] & Experiment == "RNA") %>%
+      mutate(group = paste(SLX, Time, sep = "_"))
+    counts <- CDScountsTrim[,match(meta$Sample, colnames(CDScountsTrim))]
+    
+    ## Low counts filtering
+    counts <- counts[rowSums(counts > 128) > ceiling(0.25*ncol(counts)),]
+    counts.rna <- counts
+
+    refList <- counts %>% rownames_to_column(var = "ensembl") %>%
+      dplyr::select(ensembl) %>%
+      left_join(biomart_ensembl2name, by = c("ensembl" = "ensembl_gene_id"))
+  
+    expressedRNA <- rownames(counts)
+  
+    if(all(colnames(counts) == meta$Sample)){
+      dds <- DESeqDataSetFromMatrix(countData = counts,
+                                    colData = meta,
+                                    design = ~ Treatment2)
+      dds$Condition <- relevel(dds$Treatment2, ref = "ctl")
+      dds <- DESeq(dds)
+      resultsNames(dds)
+      res <- DESeq2::results(dds, name = "Treatment2_sh_vs_ctl")
+
+      vst <- assay(vst(dds)) %>%
+        as.data.frame() %>%
+        rownames_to_column("ensembl_gene_version") %>%
+        mutate(ensembl_gene_id = splitvec(ensembl_gene_version, "[.]", 1)) %>%
+        left_join(biomart_ensembl2name) %>%
+        dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("SLX"))
+      norm <- counts(dds, normalized=TRUE) %>%
+        as.data.frame() %>%
+        rownames_to_column("ensembl_gene_version") %>%
+        mutate(ensembl_gene_id = splitvec(ensembl_gene_version, "[.]", 1)) %>%
+        left_join(biomart_ensembl2name) %>%
+        dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("SLX"))  %>%
+        mutate_at(vars(starts_with("SLX")), function(x){log2(x+1)})
+      assign(paste0(cl[i], "_RNAvst"), vst)
+      assign(paste0(cl[i], "_RNAnorm"), norm)
+      res_rna <- as.data.frame(res) %>%
+        rownames_to_column(var = "ensembl_gene_id") %>%
+        left_join(biomart_ensembl2name, by = "ensembl_gene_id")
+      
+    }
+  
+    # Ribo-Seq
+    ## Select samples
+    meta <- metaAll %>%
+      filter(Cell_line == cl[i] & Experiment == "Ribo")  %>%
+      mutate(group = paste(SLX, Time, sep = "_")) %>% 
+    filter(Sample %in% colnames(CDScountsTrim))
+    
+    if(cl[i] != "Mutu") {
+       design <- formula(~SLX+Treatment2)
+    } else {
+      design <- formula(~ Treatment2)
+    }
+    
+    ## Low counts filtering
+    counts <- CDScountsTrim[match(expressedRNA, rownames(CDScountsTrim)),
+                            match(meta$Sample, colnames(CDScountsTrim))]
+    counts.ribo <- counts
+  
+    if(all(colnames(counts) == meta$Sample)){
+      dds <- DESeqDataSetFromMatrix(countData = counts,
+                                    colData = meta,
+                                    design = design)
+      dds$Condition <- relevel(dds$Treatment2, ref = "ctl")
+      dds <- DESeq(dds)
+      resultsNames(dds)
+      res <- DESeq2::results(dds, name = "Treatment2_sh_vs_ctl")
+      
+      vst <- assay(vst(dds)) %>%
+        as.data.frame() %>%
+        rownames_to_column("ensembl_gene_version") %>%
+        mutate(ensembl_gene_id = splitvec(ensembl_gene_version, "[.]", 1)) %>%
+        left_join(biomart_ensembl2name) %>%
+        dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("SLX"))
+      norm <- counts(dds, normalized=TRUE) %>%
+        as.data.frame() %>%
+        rownames_to_column("ensembl_gene_version") %>%
+        mutate(ensembl_gene_id = splitvec(ensembl_gene_version, "[.]", 1)) %>%
+        left_join(biomart_ensembl2name) %>%
+        dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("SLX"))%>%
+        mutate_at(vars(starts_with("SLX")), function(x){log2(x+1)})
+      assign(paste0(cl[i], "_RiboNorm"), norm)
+      assign(paste0(cl[i], "_RiboVst"), vst)
+      res_ribo <- as.data.frame(res) %>%
+        rownames_to_column(var = "ensembl_gene_id")
+    }
+    
+      # Integrate
+    resSummarized <- res_rna %>% left_join(res_ribo, by = "ensembl_gene_id")
+    colnames(resSummarized) <- gsub("[.]x", "_RNA", colnames(resSummarized))
+    colnames(resSummarized) <- gsub("[.]y", "_Ribo", colnames(resSummarized))
+  
+    resSummarized <- resSummarized %>%
+      dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id,
+                    starts_with("baseMean"), starts_with("log2FoldChange"),
+                    starts_with("lfcSE"), starts_with("pvalue"),
+                    starts_with("padj")) %>%
+      mutate(log2FoldChangeTE_DESeq2 = log2FoldChange_Ribo - log2FoldChange_RNA)
+  
+    name <- paste0(cl[i], "_DXsumTab")
+    toSave <- c(toSave, name)
+    assign(name, resSummarized)
+   
+    write_csv(resSummarized, paste0("results/",name, ".csv"))
+    write_csv(as.data.frame(get(paste0(cl[i], "_RiboVst"))), paste0("results/", cl[i], "_RiboVst", ".csv"))
+    write_csv(as.data.frame(get(paste0(cl[i], "_RNAvst"))), paste0("results/", cl[i], "_RNAvst", ".csv"))
+    write_csv(as.data.frame(paste0(cl[i], "_RiboNorm")), paste0("results/", cl[i], "_RiboNorm", ".csv"))
+    write_csv(as.data.frame(paste0(cl[i], "_RNANorm")), paste0("results/", cl[i], "_RNANorm", ".csv"))
+
+
+  }
+  assign(paste0(cl[i], ".counts"), cbind(counts.rna, counts.ribo))
+}
+ 
+
+# Compute pairwise TE changes
+U2932.ribo.lfc <- U2932_RiboNorm %>%
+  mutate(lfc.SLX.12470.A005 = SLX.12470.A005-SLX.12470.A004,
+         lfc.SLX.12470.A006 = SLX.12470.A006-SLX.12470.A004,
+         lfc.SLX.14293.A002 = SLX.14293.A002-SLX.14293.A001,
+         lfc.SLX.14293.A003 = SLX.14293.A003-SLX.14293.A001,
+         lfc.SLX.13454.A002 = SLX.13454.A002-SLX.13454.A001,
+         lfc.SLX.13454.A003 = SLX.13454.A003-SLX.13454.A001,
+         lfc.SLX.14241.A002 = SLX.14241.A002-SLX.14241.A001,
+         lfc.SLX.14241.A003 = SLX.14241.A003-SLX.14241.A001) %>%
+  dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("lfc"))
+  
+Mutu.ribo.lfc <- Mutu_RiboNorm %>%
+  mutate(lfc.SLX.12469.A002 = SLX.12469.A002-SLX.12469.A001,
+         lfc.SLX.12469.A003 = SLX.12469.A003-SLX.12469.A001,
+         lfc.SLX.12469.A005 = SLX.12469.A005-SLX.12469.A004,
+         lfc.SLX.12469.A006 = SLX.12469.A006-SLX.12469.A004) %>%
+  dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("lfc"))
+  
+U2932.rna.lfc <- U2932_RNAnorm %>%
+  mutate(lfc.SLX.12465.A011 = SLX.12465.A011-SLX.12465.A010,
+         lfc.SLX.12465.A012 = SLX.12465.A012-SLX.12465.A010,
+         lfc.SLX.13199.A006 = SLX.13199.A006-SLX.13199.A005,
+         lfc.SLX.13199.A007 = SLX.13199.A007-SLX.13199.A005,
+         lfc.SLX.13199.A009 = SLX.13199.A009-SLX.13199.A007,
+         lfc.SLX.13199.A010 = SLX.13199.A010-SLX.13199.A007,
+         lfc.SLX.14296.A002 = SLX.14296.A002-SLX.14296.A001,
+         lfc.SLX.14296.A003 = SLX.14296.A003-SLX.14296.A001) %>%
+  dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("lfc"))
+
+Mutu.rna.lfc <- Mutu_RNAnorm %>%
+  mutate(lfc.SLX.12465.A002 = SLX.12465.A002-SLX.12465.A001,
+         lfc.SLX.12465.A003 = SLX.12465.A003-SLX.12465.A001,
+         lfc.SLX.12465.A005 = SLX.12465.A005-SLX.12465.A004,
+         lfc.SLX.12465.A006 = SLX.12465.A006-SLX.12465.A004) %>%
+  dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, starts_with("lfc"))
+  
+U2932.te.lfc <- U2932.rna.lfc %>%
+  left_join(U2932.ribo.lfc) %>%
+  mutate(lfcTE.SLX.12470.A005 = lfc.SLX.12470.A005-lfc.SLX.13199.A009,
+         lfcTE.SLX.12470.A006 = lfc.SLX.12470.A006-lfc.SLX.13199.A010,
+         lfcTE.SLX.14293.A002 = lfc.SLX.14293.A002-lfc.SLX.14296.A002,
+         lfcTE.SLX.14293.A003 = lfc.SLX.14293.A003-lfc.SLX.14296.A003,
+         lfcTE.SLX.13454.A002 = lfc.SLX.13454.A002-lfc.SLX.13199.A006,
+         lfcTE.SLX.13454.A003 = lfc.SLX.13454.A003-lfc.SLX.13199.A007,
+         lfcTE.SLX.14241.A002 = lfc.SLX.14241.A002-lfc.SLX.13199.A009,
+         lfcTE.SLX.14241.A003 = lfc.SLX.14241.A003-lfc.SLX.13199.A010) 
+
+U2932.te.lfc.mean <- U2932.te.lfc %>%
+  mutate(log2FoldChangeTE_mean = rowMeans(dplyr::select(.,starts_with("lfcTE")))) %>%
+  dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, log2FoldChangeTE_mean)
+
+
+Mutu.te.lfc <- Mutu.rna.lfc %>%
+  left_join(Mutu.ribo.lfc) %>%
+  mutate(lfcTE.SLX.12469.A002 = lfc.SLX.12469.A002-lfc.SLX.12465.A002,
+         lfcTE.SLX.12469.A003 = lfc.SLX.12469.A003-lfc.SLX.12465.A003,
+         lfcTE.SLX.12469.A005 = lfc.SLX.12469.A005-lfc.SLX.12465.A005,
+         lfcTE.SLX.12469.A006 = lfc.SLX.12469.A006-lfc.SLX.12465.A006)
+
+Mutu.te.lfc.mean <- Mutu.te.lfc %>%
+  mutate(log2FoldChangeTE_mean = rowMeans(dplyr::select(.,starts_with("lfcTE")))) %>%
+  dplyr::select(ensembl_gene_id, external_gene_name, entrezgene_id, log2FoldChangeTE_mean) 
+
+```
+
+### Identification of differentially translated genes  
+
+Genes with significant change in ribosomal footprints density (FDR < 0.1) were further analysed to identify those with translation intensity disproportional to their mRNA abundance. The differences in expression measured by Ribo-Seq and RNA-Seq per gene and per sample were adjusted for the magnitude of mean expression with `IntensityDiff` and represented as z-scores. Significance of the difference in z-scores between paired Ribo-Seq and RNA-Seq samples was tested with paired t-test and corrected for multiple testing. 
+
+```{r eval = T, echo = T, message = F, warning = F, cache = T, error = F}  
+# U2932
+U2932sumTabThresh <- U2932_DXsumTab %>%
+  left_join(U2932.te.lfc.mean) %>%
+  mutate(status = case_when(padj_Ribo < 0.1 & log2FoldChangeTE_mean < -0.3 & abs(log2FoldChange_RNA) < 0.5 ~ "TE_down",
+                            padj_Ribo < 0.1 & log2FoldChangeTE_mean >  0.3 & abs(log2FoldChange_RNA) < 0.5 ~ "TE_up",
+                            padj_RNA < 0.1 & log2FoldChange_RNA < -0.3 ~ "mRNA_down",
+                            padj_RNA < 0.1 & log2FoldChange_RNA > 0.3 ~ "mRNA_up",
+                            TRUE ~ "stable")) %>%
+  mutate(status = factor(status, levels = c("TE_down", "TE_up", "mRNA_down", "mRNA_up", "stable")),
+         iCLIP = ensembl_gene_id %in% iCLIP$ensembl_gene_id[as.logical(iCLIP$U2932)]) %>%
+  arrange(status)
+print("U2932:")
+table(U2932sumTabThresh$status)
+
+write_csv(U2932sumTabThresh, "results/SumTab5.2-U2932sumTabThresh.csv")
+
+# Mutu
+MutusumTabThresh <- Mutu_DXsumTab %>%
+  left_join(Mutu.te.lfc.mean) %>%
+  mutate(status = case_when(padj_Ribo < 0.1 & log2FoldChangeTE_mean < -0.3 & abs(log2FoldChange_RNA) < 0.5~ "TE_down",
+                            padj_Ribo < 0.1 & log2FoldChangeTE_mean  >  0.3 & abs(log2FoldChange_RNA) < 0.5~ "TE_up",
+                            padj_RNA < 0.1 & log2FoldChange_RNA < -0.3 ~ "mRNA_down",
+                            padj_RNA < 0.1 & log2FoldChange_RNA > 0.3 ~ "mRNA_up",
+                            TRUE ~ "stable")) %>%
+  mutate(status = factor(status, levels = c("TE_down", "TE_up", "mRNA_down", "mRNA_up", "stable")),
+         iCLIP = ensembl_gene_id %in% iCLIP$ensembl_gene_id[as.logical(iCLIP$Mutu)]) %>%
+  arrange(status)
+print("Mutu:")
+table(MutusumTabThresh$status)
+
+write_csv(MutusumTabThresh, "results/SumTab5.2-MutusumTabThresh.csv")
+```
+
+### Data visualisation and integration with iCLIP and MS results
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+# Fold changes plots (TE vs. expression in U2392)  
+palette <- c(brewer.pal(11, "Spectral"), "grey")
+
+labels <- c("RPS5","RPLP0","RPS16","RPS19","RPL28","RPL36","RPLP1","RPL11","RPL7A","RPS3","RPL13","RPSA","RPS9","RPL15","RPLP2","RPL37A","ODC1")
+
+U2932sumTabThresh <- U2932sumTabThresh %>%
+  mutate(label = case_when(external_gene_name %in% labels ~ external_gene_name,
+                           TRUE ~ ""))
+
+# U2392
+ggplot() +
+  geom_point(aes(x = log2(U2932sumTabThresh$baseMean_RNA[U2932sumTabThresh$status == "stable"]), 
+                 y = U2932sumTabThresh$log2FoldChangeTE_mean[U2932sumTabThresh$status == "stable"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "stable"]),
+             alpha = 0.5, size = 1.5) +
+  geom_point(aes(x = log2(U2932sumTabThresh$baseMean_RNA[U2932sumTabThresh$status == "TE_up"]), 
+                 y = U2932sumTabThresh$log2FoldChangeTE_mean[U2932sumTabThresh$status == "TE_up"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "TE_up"]), size = 2) +
+  geom_point(aes(x = log2(U2932sumTabThresh$baseMean_RNA[U2932sumTabThresh$status == "TE_down"]), 
+                 y = U2932sumTabThresh$log2FoldChangeTE_mean[U2932sumTabThresh$status == "TE_down"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "TE_down"]), size = 2) +
+  geom_text_repel(aes(x = log2(U2932sumTabThresh$baseMean_RNA), 
+                       y = U2932sumTabThresh$log2FoldChangeTE_mean,
+                       label = U2932sumTabThresh$label), force = 10) +
+  nature_point() +
+  labs(colour = "Status", x = bquote(~Log[2]~'Base Mean RNA-Seq'),
+       y = bquote(~Log[2]~'Fold Change TE')) +
+  scale_colour_manual(values = palette[c(12,10,2)])
+ggsave("plots/TEdistribution_IntensityDiff_U2932.pdf", width = 5, height = 4, useDingbats = F)
+ggsave("plots/TEdistribution_Threshold_U2932_preselected.pdf", width = 6, height = 4, useDingbats = F)
+
+toLabel <- c("DDX3X")
+RPs <- grepl("RPS", U2932sumTabThresh$external_gene_name) |  grepl("RPL", U2932sumTabThresh$external_gene_name)
+
+U2932sumTabThresh <- U2932sumTabThresh %>%
+  mutate(label = case_when(
+    external_gene_name %in% toLabel ~ external_gene_name,
+    TRUE ~ ""
+  ))
+  
+ggplot() +
+  geom_point(aes(x = U2932sumTabThresh$log2FoldChange_RNA[U2932sumTabThresh$status == "stable"], 
+                 y = U2932sumTabThresh$log2FoldChange_Ribo[U2932sumTabThresh$status == "stable"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "stable"]), 
+             alpha = 0.5, size = 1.5) +
+   geom_point(aes(x = U2932sumTabThresh$log2FoldChange_RNA[U2932sumTabThresh$status == "TE_up"], 
+                 y = U2932sumTabThresh$log2FoldChange_Ribo[U2932sumTabThresh$status == "TE_up"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "TE_up"]), size = 2) +
+   geom_point(aes(x = U2932sumTabThresh$log2FoldChange_RNA[U2932sumTabThresh$status == "TE_down"], 
+                 y = U2932sumTabThresh$log2FoldChange_Ribo[U2932sumTabThresh$status == "TE_down"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "TE_down"]), size = 2) +
+   geom_point(aes(x = U2932sumTabThresh$log2FoldChange_RNA[U2932sumTabThresh$status == "mRNA_up"], 
+                 y = U2932sumTabThresh$log2FoldChange_Ribo[U2932sumTabThresh$status == "mRNA_up"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "mRNA_up"]), size = 2) +
+   geom_point(aes(x = U2932sumTabThresh$log2FoldChange_RNA[U2932sumTabThresh$status == "mRNA_down"], 
+                 y = U2932sumTabThresh$log2FoldChange_Ribo[U2932sumTabThresh$status == "mRNA_down"], 
+                 colour = U2932sumTabThresh$status[U2932sumTabThresh$status == "mRNA_down"]), size = 2) +
+   geom_text_repel(aes(x = U2932sumTabThresh$log2FoldChange_RNA[U2932sumTabThresh$label != ""], 
+                 y = U2932sumTabThresh$log2FoldChange_Ribo[U2932sumTabThresh$label != ""], 
+                 label = U2932sumTabThresh$label[U2932sumTabThresh$label != ""]),
+                 box.padding = 0.3, nudge_y = -0.8) +
+  nature_point() +
+  labs(colour = "Status", x = bquote(~Log[2]~'Fold Chnge RNA-Seq'),
+       y = bquote(~Log[2]~'Fold Chnge Ribo-Seq')) +
+  scale_colour_manual(values = palette[c(11,1,12,10,2)]) 
+ggsave("plots/U2932_RiboRNA_Threshold_foldChanges.pdf", width = 6, height = 4, useDingbats = F)
+
+#iCLIP vs. Ribo-Seq
+freqTable <- as.data.frame(table(U2932sumTabThresh$iCLIP, U2932sumTabThresh$status))
+colnames(freqTable) <- c("iCLIP_target", "DTG_status", "N_genes")
+freqTable <- freqTable %>%
+  group_by(DTG_status) %>%
+  mutate(Freq = N_genes/sum(N_genes))
+
+# Statistics  
+stat.tab <- freqTable %>%
+  dplyr::select(-Freq) %>%
+  spread(iCLIP_target, N_genes) %>%
+  column_to_rownames("DTG_status") %>%
+  as.matrix()
+
+pairwise.test <- rcompanion::pairwiseNominalIndependence(stat.tab,
+                                    fisher = TRUE,
+                                    gtest  = FALSE,
+                                    chisq  = FALSE,
+                                    digits = 3,
+                                    method = "BH")
+pairwise.test
+
+chisq.test <- chisq.test(stat.tab)
+fisher.test(stat.tab)
+
+palette <- rev(colorRampPalette(c(divergingPal[2], "white", divergingPal[10]))(10))
+
+pdf("plots/iCLIP_DifExpr_U2932_PearsonRes_Threshold.pdf", width = 4, height = 3)
+corrplot::corrplot(chisq.test$residuals, 
+         is.cor = FALSE, 
+         method = "color",
+         col = palette,
+         cl.pos = "r",
+         tl.col = "black", 
+         #cl.lim = c(-4,8),
+         cl.cex = 0.8,
+         cl.align.text = "l")
+dev.off()
+
+ggplot(freqTable, aes(x = DTG_status, y = Freq, fill = iCLIP_target)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = N_genes), colour = "white", position = position_stack(vjust = 0.9), size = 5) +
+  coord_flip() +
+  scale_fill_manual(values = divergingPal[c(10,2)]) +
+  nature_barplot() +
+  labs(x = "DDX3X knockdown", y = "Frequency", fill ="iCLIP target", title = "U2932")
+ggsave("plots/iCLIP_DifExpr_U2932_Threshold.pdf", width = 6, height = 3)
+
+
+iCLIP_U2932_summaryGene <- read_delim("../03_iCLIP/iMaps/summary/U2932_grouped_cdna_summary_gene.tsv", delim = "\t") %>%
+  mutate(TPM = 10^9*((`cDNA #`/Length)/sum(`cDNA #`)),
+         external_gene_name = splitvec(`Gene name (Gene ID)`, " ", 1),
+         RPs = external_gene_name %in% HUGO.RPs$Approved_symbol) %>%
+  left_join(U2932sumTabThresh) %>%
+  mutate(status = factor(status, levels = c("stable", "mRNA_up", "mRNA_down", "TE_up", "TE_down"))) %>%
+  dplyr::filter(!is.na(ensembl_gene_id)) 
+  
+  
+ggplot() +
+  geom_point(aes(x = iCLIP_U2932_summaryGene$TPM, 
+                 y = iCLIP_U2932_summaryGene$log2FoldChangeTE_mean, 
+                 shape = iCLIP_U2932_summaryGene$RPs, colour = iCLIP_U2932_summaryGene$status), colour = "grey") +
+  geom_point(aes(x = iCLIP_U2932_summaryGene$TPM[iCLIP_U2932_summaryGene$status == "TE_up"], 
+                 y = iCLIP_U2932_summaryGene$log2FoldChangeTE_mean[iCLIP_U2932_summaryGene$status == "TE_up"], 
+                 shape = iCLIP_U2932_summaryGene$RPs[iCLIP_U2932_summaryGene$status == "TE_up"],
+                 color = iCLIP_U2932_summaryGene$status[iCLIP_U2932_summaryGene$status == "TE_up"])) +
+  geom_point(aes(x = iCLIP_U2932_summaryGene$TPM[iCLIP_U2932_summaryGene$status == "TE_down"], 
+                 y = iCLIP_U2932_summaryGene$log2FoldChangeTE_mean[iCLIP_U2932_summaryGene$status == "TE_down"], 
+                 shape = iCLIP_U2932_summaryGene$RPs[iCLIP_U2932_summaryGene$status == "TE_down"],
+                 color = iCLIP_U2932_summaryGene$status[iCLIP_U2932_summaryGene$status == "TE_down"])) +
+  scale_x_log10() +
+  nature_point() +
+  scale_colour_manual(values = divergingPal[c(10,2)]) +
+  labs(x = "iCLIP TPM", y = "log2 FC TE", shape = "RPs", color = "Status")
+
+ggsave("plots/iCLIP_DTGstatus_U2932_Thresholds.pdf", width = 5, height = 3, useDingbats = F)
+```
+
+
+### Gene ontology analysis   
+
+The gene ontology analysis was performed using a standard workflow from clusterProfiler R package. 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F, cache = T}  
+toSave <- c()
+ontologies <- c("BP","CC", "MF")
+
+# U2932  
+ontologyTab <- tibble()
+categories <- unique(U2932sumTabThresh$status)[-5]
+
+for (c in 1:length(categories)){
+  signifTab <- U2932sumTabThresh %>% filter(status == categories[c]) 
+  
+  # Create lists
+  universeList <- unique(c(U2932sumTabThresh$entrezgene_id, MutusumTabThresh$entrezgene_id))
+  signifList <- signifTab$entrezgene_id
+
+  for (o in 1:3){
+    goTab<- enrichGO(gene = as.character(signifList),
+                universe = as.character(universeList),
+                OrgDb = org.Hs.eg.db,
+                ont = ontologies[o],
+                pAdjustMethod = "BH",
+                pvalueCutoff = 1,
+                qvalueCutoff = 1,
+                readable = T)
+    
+      goTab <- as.data.frame(goTab) %>%
+        separate(GeneRatio, c("n", "N"), "/", remove = F) %>%
+        separate(BgRatio, c("b", "B"), "/", remove = F) %>%
+        mutate(n = as.numeric(n),
+               N = as.numeric(N),
+               b = as.numeric(b),
+               B = as.numeric(B),
+               EnrichmentScore = (n/N)/(b/B))  %>%
+        filter(n > 5,
+               b > 10)  %>% 
+        arrange(desc(EnrichmentScore)) %>%
+        mutate(group = paste("GO", ontologies[o]),
+               status = categories[c],
+               sample = "U2932") 
+          
+      toSave <- goTab
+      
+      if(nrow(ontologyTab) == 0){
+        ontologyTab <- toSave
+      } else {
+        ontologyTab <- ontologyTab %>%
+          full_join(toSave)
+      }      
+  }
+}
+
+GO_U2932 <- ontologyTab
+GO_U2932_Thres <- GO_U2932
+write_csv(ontologyTab, "results/GO_U2932_preselected_Thresholds.unfiltered.csv")
+```
+
+```{r eval = T, echo =T, message = F, warning = F, error = F, fig.width=10, fig.height=10}  
+GO_U2932 <- read_csv("results/GO_U2932_preselected_Thresholds.csv")
+# U2932
+plot_df <- GO_U2932 %>%
+  group_by(group) %>%
+  mutate(rank = rank(-EnrichmentScore)) %>%
+  filter(rank < 5) %>%
+  ungroup() %>%
+  arrange(group, p.adjust) %>%
+  mutate(Description = factor(Description, levels = Description[order(p.adjust, decreasing = T)]),
+         rank = factor(as.character(1:length(Description)), 
+                       levels = as.character(1:length(Description))))
+
+bar1 <- ggplot(plot_df, aes(x = Description, y = -log10(p.adjust))) +
+          geom_bar(aes(fill = rank), stat = "identity") +
+          geom_text(aes(label = paste(n, b, sep = "/")), 
+                    position = position_identity(), hjust = 1.2, 
+                    colour = "white") +
+          facet_grid(group ~., scales = "free", space = "free") +
+          coord_flip() +
+          nature_barplot() +
+          labs(y =  bquote(~-Log[10]~'(FDR)'), x = "", colour = "", title = "Top enriched GO terms: Ribo-Seq in U2932 TE_down") +
+          theme(legend.position = "None") +
+          scale_fill_manual(values = colorRampPalette(brewer.pal(11, "Spectral")[c(1,2,3,4,5,9,10,11,12)])(12)) +
+          theme(strip.text.y = element_text(margin = margin(2,2,2,2)))
+
+ggsave("plots/U2932_TEdown_GO_Thresholds.pdf", bar1, width = 11, height = 6, useDingbats = F)
+
+plotRiboU2932 <- GO_U2932 %>%
+  group_by(group) %>%
+  mutate(rank = rank(-EnrichmentScore))%>% 
+  mutate(model = "U2932 Ribo-Seq")
+
+# Ribo-Seq & MS
+plotMSU2932 <- read_csv("../../dxJungle/10_MS/results/MS_DXsh_U2932_GOplotDf.csv") %>%
+  mutate(model = "U2932 MS") 
+
+combinedPlotDf <- plotMSU2932 %>% 
+  full_join(plotRiboU2932) %>%
+  group_by(Description) %>%
+  filter(length(model) == 2) %>%
+  group_by(group, Description) %>%
+  mutate(meanES = mean(EnrichmentScore)) %>%
+  group_by(group, model) %>%
+  mutate(rank = rank(-meanES, ties.method = "first")) %>%
+  filter(rank < 6)
+  
+bar2 <- ggplot(combinedPlotDf, aes(x = Description, y = -log10(p.adjust))) +
+            geom_bar(aes(fill = model), stat = "identity", position = position_dodge()) +
+          #  geom_text(aes(label = paste(n, b, sep = "/")), 
+          #            position = position_identity(), hjust = 1.2, 
+          #            colour = "white") +
+            facet_grid(group ~., scales = "free", space = "free") +
+            coord_flip() +
+            nature_barplot() +
+            labs(y =  bquote(~-Log[10]~'(FDR)'), x = "", colour = "", title = "Top enriched GO terms: Ribo-Seq and MS") +
+            theme(legend.position = "bottom") +
+            scale_fill_manual(values = divergingPal[c(11,10,9)]) +
+            theme(strip.text.y = element_text(margin = margin(2,2,2,2)))
+
+ggsave("plots/All_down_GO_Thresholds.pdf", bar2, width = 12, height = 4.5, useDingbats = F)
+
+ggarrange(bar1, bar2, ncol = 1, nrow = 2)
+```
+
+```{r eval = T, echo =T, message = F, warning = F, error = F, fig.width=10, fig.height=10}  
+# Unfiltered plots to show how bad is GO in TE_up
+GO_U2932_plot <- GO_U2932 %>%
+  dplyr::filter(Count > 2) %>%
+  group_by(group, status) %>%
+  arrange(p.adjust) %>%
+  mutate(Rank = 1:length(ID)) %>%
+  dplyr::filter(Rank < 5 & grepl("TE", status))  %>%
+  ungroup() %>%
+  arrange(group, p.adjust) %>%
+  mutate(Description = factor(Description, levels = Description[order(p.adjust, decreasing = T)]))
+
+bar1 <- ggplot(GO_U2932_plot, aes(x = Description, y = -log10(p.adjust))) +
+          geom_bar(aes(fill = status), stat = "identity") +
+          facet_grid(status + group ~., scales = "free", space = "free") +
+          coord_flip() +
+          nature_barplot() +
+          labs(y =  bquote(~-Log[10]~'(FDR)'), x = "", colour = "", title = "Top enriched GO terms: TE_down and TE_up") +
+          theme(legend.position = "None") +
+          scale_fill_manual(values = divergingPal[c(10,2)]) +
+          theme(strip.text.y = element_text(margin = margin(2,2,2,2), color = "white"),
+                strip.background = element_blank()) +
+          geom_hline(yintercept = -log10(0.05))
+
+bar1
+
+bar2 <- ggplot(GO_U2932_plot, aes(x = Description, y = Count)) +
+          geom_bar(aes(fill = status), stat = "identity") +
+          facet_grid(status + group ~., scales = "free", space = "free") +
+          coord_flip() +
+          nature_barplot() +
+          labs(y =  "Number of genes", x = "", colour = "", title = "") +
+          theme(legend.position = "None") +
+          scale_fill_manual(values = divergingPal[c(10,2)]) +
+          theme(strip.text.y = element_text(margin = margin(2,2,2,2))) +
+          geom_hline(yintercept = 5) +
+          theme(axis.title.y=element_blank(),
+                axis.text.y=element_blank(),
+                axis.ticks.y=element_blank(),
+                strip.background = element_blank(),
+                strip.text.y = element_text(margin = margin(2,2,2,2)))
+all <- ggarrange(bar1, bar2, ncol = 2, nrow = 1, widths  = c(2, 0.5))
+ggsave("plots/All_GO_Thresholds_TEup.pdf", all, width = 18, height = 7, useDingbats = F)
+
+```
+
+### Heatmaps  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}  
+rps <- c("RPS5","RPLP0","RPS16","RPS19","RPL28","RPL36","RPLP1","RPL11","RPL7A","RPS3","RPL13","RPSA","RPS9","RPL15","RPLP2","RPL37A","ODC1")
+
+
+# Load MS data
+U2932_kd_ms <- read_csv("../utilis/expressionData/MS/MS_VST_U2932_DDX3Xkd.csv")
+U2932_kd_ms_res <- read_csv("../utilis/expressionData/MS/MS_DEP_U2932_DX_KD_all.csv")
+
+# Cummulative plot of ribosomal proteins
+plot_df <- U2932_kd_ms_res %>% 
+  dplyr::select(Name, log2FC) %>%
+  mutate(model = "U2932",
+         cytRP = Name %in% HUGO.RPs$Approved_symbol[HUGO.RPs$Class != "mitochondrial_ribosomal_protein"],
+         mtRP = Name %in% HUGO.RPs$Approved_symbol[HUGO.RPs$Class == "mitochondrial_ribosomal_protein"])
+
+plot_df <- plot_df %>%
+  mutate(RP = as.logical(cytRP) | as.logical(mtRP),
+         RPdetailed = case_when(
+           as.logical(cytRP) ~ "cytosolic RPs",
+           as.logical(mtRP)  ~ "mitochondrial RPs",
+           TRUE              ~ "All genes"
+         ))
+
+step2 <- ggplot(plot_df, aes(x = log2FC, color = RPdetailed)) +
+            geom_step(aes(y = ..y..), stat = "ecdf") +
+            lims(x = c(-1.5,1.5)) +
+            labs(y = "Cummulative density", x = expression("Protein log"[2]*" Fold Change"), color = "", title = "U2932") +
+            scale_colour_manual(values = divergingPal[c(2,10,11)], labels = c("All genes", "Ribosomal proteins (cytosolic)",
+                                                                         "Ribosomal proteins (mitochondrial)")) +
+            nature_point()
+
+ggsave("plots/CummulativePlots_MS_merged_RPdetailed_IntensityDiff.pdf", step2, width = 6, height = 4, useDingbats = F)
+```
+
+#### Heatmap (Fig. 5G) 
+
+Heatmap showing fold changes in mRNA abundance, ribosome footprint density, and translational efficiency across eight replicate knockdowns for all differentially translated genes.  Changes in protein abundance from mass spectrometry are shown. Direct DDX3X targets identified from iCLIP and genes encoding ribosomal proteins are indicated by purple or red bands respectively.   
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}  
+U2932sumTabThresh <- U2932sumTabThresh %>%
+  mutate(RPs = external_gene_name %in% HUGO.RPs$Approved_symbol) %>%
+  arrange(status, pvalue_Ribo)
+
+# Complex Heatmap  
+genes <- U2932sumTabThresh$ensembl_gene_id[U2932sumTabThresh$status %in% c("TE_down", "TE_up")]
+names(genes) <- U2932sumTabThresh$external_gene_name[U2932sumTabThresh$status %in% c("TE_down", "TE_up")]
+
+Mutu.lfcTE.deg <-  Mutu.te.lfc[match(genes, Mutu.te.lfc$ensembl_gene_id),] %>%
+  dplyr::select(starts_with("lfcTE")) %>%
+  as.matrix()
+Mutu.lfcTE.deg[is.na(Mutu.lfcTE.deg)] <- 0
+
+Mutu.lfcRNA.deg <-  Mutu.rna.lfc[match(genes, Mutu.rna.lfc$ensembl_gene_id),] %>%
+  dplyr::select(starts_with("lfc.SLX")) %>%
+  as.matrix()
+Mutu.lfcRNA.deg[is.na(Mutu.lfcRNA.deg)] <- 0
+
+Mutu.lfcRibo.deg <-  Mutu.ribo.lfc[match(genes, Mutu.ribo.lfc$ensembl_gene_id),] %>%
+  dplyr::select(starts_with("lfc.SLX")) %>%
+  as.matrix()
+Mutu.lfcRibo.deg[is.na(Mutu.lfcRibo.deg)] <- 0
+
+
+U2932.lfcTE.deg <-  U2932.te.lfc[match(genes, U2932.te.lfc$ensembl_gene_id),] %>%
+  dplyr::select(starts_with("lfcTE"))  %>%
+  as.matrix()
+
+U2932.lfcRNA.deg <-  U2932.rna.lfc[match(genes, U2932.rna.lfc$ensembl_gene_id),] %>%
+  dplyr::select(starts_with("lfc.SLX")) %>%
+  as.matrix()
+U2932.lfcRNA.deg[is.na(U2932.lfcRNA.deg)] <- 0
+
+U2932.lfcRibo.deg <-  U2932.ribo.lfc[match(genes, U2932.ribo.lfc$ensembl_gene_id),] %>%
+  dplyr::select(starts_with("lfc.SLX")) %>%
+  as.matrix()
+U2932.lfcRibo.deg[is.na(U2932.lfcRibo.deg)] <- 0
+
+U2932.lfcMS.deg <- U2932_kd_ms[match(names(genes), U2932_kd_ms$Name),] %>%
+  dplyr::select(-Name) %>% as.matrix()
+U2932.lfcMS.deg[is.na(U2932.lfcMS.deg)] <- 0
+U2932.lfcMS.deg <- U2932.lfcMS.deg %>% as.data.frame() %>%
+  mutate(lfc1 = sh_1 - ctl_1,
+         lfc2 = sh_2 - ctl_2) %>%
+  dplyr::select(lfc1, lfc2) %>%
+  as.matrix()
+
+# Heatmap parameters 
+col_fun <- circlize::colorRamp2(c(-1, 0, 1), c(divergingPal[10], "white", divergingPal[2]))
+groups <- U2932sumTabThresh$status[U2932sumTabThresh$status %in% c("TE_down", "TE_up")]
+
+RPs <- as.character(names(genes) %in% rps)
+names(RPs) <- names(genes)
+col_RPs = c("TRUE" = divergingPal[2], "FALSE" = divergingPal[12])
+
+iCLIPs <- as.character(unname(genes) %in% iCLIP$ensembl_gene_id[as.logical(iCLIP$U2932)])
+names(iCLIPs) <- names(genes)
+col_iCLIPs = c("TRUE" = divergingPal[11], "FALSE" = divergingPal[12])
+
+# Heatmap annotations
+lfcTE.Mutu <- columnAnnotation(Cell_line = rep("Mutu", 4),
+                           Time = rep(c("24","48"), each = 2),
+                           Sh = rep(c("Sh1","Sh2"),2),
+                           col = list(Cell_line = c("Mutu" = divergingPal[10]),
+                                       Time = c("24" = divergingPal[3], "48" = divergingPal[4]),
+                                       Sh = c("Sh1" = divergingPal[8], "Sh2" = divergingPal[9]),
+                                      Group = c("lfcTE" = divergingPalFull[16])),
+                           Group = rep("lfcTE", 4),
+                           show_annotation_name = F)
+
+lfcRNA.Mutu <- columnAnnotation(Cell_line = rep("Mutu", 4),
+                           Time = rep(c("24","48"), each = 2),
+                           Sh = rep(c("Sh1","Sh2"),2),
+                           col = list(Cell_line = c("Mutu" = divergingPal[10]),
+                                       Time = c("24" = divergingPal[3], "48" = divergingPal[4]),
+                                       Sh = c("Sh1" = divergingPal[8], "Sh2" = divergingPal[9]),
+                                      Group = c("lfcRNA" = divergingPalFull[14])),
+                           Group = rep("lfcRNA", 4),
+                           show_annotation_name = T, annotation_name_side = "left")
+
+lfcRibo.Mutu <- columnAnnotation(Cell_line = rep("Mutu", 4),
+                           Time = rep(c("24","48"), each = 2),
+                           Sh = rep(c("Sh1","Sh2"),2),
+                           col = list(Cell_line = c("Mutu" = divergingPal[10]),
+                                       Time = c("24" = divergingPal[3], "48" = divergingPal[4]),
+                                       Sh = c("Sh1" = divergingPal[8], "Sh2" = divergingPal[9]),
+                                      Group = c("lfcRibo" = divergingPalFull[12])),
+                           Group = rep("lfcRibo", 4),
+                           show_annotation_name = F)
+
+lfcTE.U2932 <- columnAnnotation(Cell_line = rep("U2932", 8),
+                            Time = rep(c("24","24","48","48"), 2),
+                            Sh = rep(c("Sh1","Sh2"),4),
+                            col = list(Cell_line = c("U2932" = divergingPal[11]),
+                                       Time = c("24" = divergingPal[3], "48" = divergingPal[4]),
+                                       Sh = c("Sh1" = divergingPal[8], "Sh2" = divergingPal[9]),
+                                      Group = c("lfcTE" = divergingPalFull[16])),
+                           Group = rep("lfcTE", 8),
+                           show_annotation_name = F, annotation_name_side = "right")
+
+lfcRNA.U2932 <- columnAnnotation(Cell_line = rep("U2932", 8),
+                            Time = rep(c("48","48","24","24"), 2),
+                            Sh = rep(c("Sh1","Sh2"),4),
+                            col = list(Cell_line = c("U2932" = divergingPal[11]),
+                                       Time = c("24" = divergingPal[3], "48" = divergingPal[4]),
+                                       Sh = c("Sh1" = divergingPal[8], "Sh2" = divergingPal[9]),
+                                      Group = c("lfcRNA" = divergingPalFull[14])),
+                           Group = rep("lfcRNA", 8),
+                           show_annotation_name = F, annotation_name_side = "left")
+
+lfcRibo.U2932 <- columnAnnotation(Cell_line = rep("U2932", 8),
+                            Time = rep(c("48","48","24","24"), 2),
+                            Sh = rep(c("Sh1","Sh2"),4),
+                            col = list(Cell_line = c("U2932" = divergingPal[11]),
+                                       Time = c("24" = divergingPal[3], "48" = divergingPal[4]),
+                                       Sh = c("Sh1" = divergingPal[8], "Sh2" = divergingPal[9]),
+                                       Group = c("lfcRibo" = divergingPalFull[12])),
+                           Group = rep("lfcRibo", 8),
+                           show_annotation_name = F, annotation_name_side = "left")
+
+lfcMS.U2932 <- columnAnnotation(Cell_line = rep("U2932", 2),
+                            Time = rep("24", 2),
+                            Sh = c("Sh1", "Sh1"),
+                            col = list(Cell_line = c("U2932" = divergingPal[11]),
+                                       Time = c("24" = divergingPal[3]),
+                                       Sh = c("Sh1" = divergingPal[8]),
+                                       Group = c("MS" = divergingPalFull[10])),
+                           Group = rep("MS", 2),
+                           show_annotation_name = F, annotation_name_side = "left")
+
+
+
+H.Mutu.lfcTE.deg <- Heatmap(Mutu.lfcTE.deg, col = col_fun, cluster_rows = F, 
+                            row_split = groups, row_title = c("TE down", "TE up"),
+                            top_annotation = lfcTE.Mutu, show_heatmap_legend = F,
+                            show_column_names = F, show_row_names = F)
+H.Mutu.lfcRNA.deg <- Heatmap(Mutu.lfcRNA.deg, col = col_fun, cluster_rows = F, 
+                            row_split = groups, row_title = c("TE down", "TE up"),
+                            top_annotation = lfcRNA.Mutu, show_heatmap_legend = F,
+                            show_column_names = F, show_row_names = F)
+H.Mutu.lfcRibo.deg <- Heatmap(Mutu.lfcRibo.deg, col = col_fun, cluster_rows = F, 
+                            row_split = groups, row_title = c("TE down", "TE up"),
+                            top_annotation = lfcRibo.Mutu, show_heatmap_legend = F,
+                            show_column_names = F, show_row_names = F)
+
+H.U2932.lfcTE.deg <- Heatmap(U2932.lfcTE.deg, col = col_fun, cluster_rows = F, 
+                             row_split = groups, row_title = c("TE down", "TE up"),
+                             top_annotation = lfcTE.U2932,
+                             show_column_names = F, show_row_names = F)
+H.U2932.lfcRNA.deg <- Heatmap(U2932.lfcRNA.deg, col = col_fun, cluster_rows = F, 
+                            row_split = groups, row_title = c("TE down", "TE up"),
+                            top_annotation = lfcRNA.U2932, show_heatmap_legend = F,
+                            show_column_names = F, show_row_names = F)
+H.U2932.lfcRibo.deg <- Heatmap(U2932.lfcRibo.deg, col = col_fun, cluster_rows = F, 
+                            row_split = groups, row_title = c("TE down", "TE up"),
+                            top_annotation = lfcRibo.U2932, show_heatmap_legend = F,
+                            show_column_names = F, show_row_names = F)
+
+H.U2932.MS.deg <- Heatmap(U2932.lfcMS.deg, col = col_fun, cluster_rows = F, 
+                            row_split = groups, row_title = c("TE down", "TE up"),
+                            top_annotation = lfcMS.U2932, show_heatmap_legend = F,
+                            show_column_names = F, show_row_names = F)
+
+
+labels <- names(RPs)
+labels[RPs == "FALSE"] <- ""
+
+H.iCLIP <- Heatmap(iCLIPs, name = "iCLIP", col = col_iCLIPs, show_row_names = F,
+                            height = 1)
+H.RPs <- Heatmap(RPs, name = "RPs", col = col_RPs, 
+                 show_row_names = T, row_labels = labels,     row_names_gp = gpar(fontsize = 6))
+
+H.Mutu.lfcRNA.deg + H.Mutu.lfcRibo.deg + H.Mutu.lfcTE.deg + H.U2932.lfcRNA.deg + H.U2932.lfcRibo.deg + H.U2932.lfcTE.deg + H.U2932.MS.deg + H.iCLIP + H.RPs
+
+
+pdf("plots/Heatmap_TEchanges_iCLIPhits_Thesholds.pdf", width = 15, height = 8)
+H.Mutu.lfcRNA.deg + H.Mutu.lfcRibo.deg + H.Mutu.lfcTE.deg + H.U2932.lfcRNA.deg + H.U2932.lfcRibo.deg + H.U2932.lfcTE.deg + H.U2932.MS.deg + H.iCLIP + H.RPs
+dev.off()
+```
+
+#### Input for GSEA analysis  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}  
+# U2932
+metaU2932 <- metadata %>%
+  filter(Experiment == "RNA" & Cell_line == "U2932" & Sample %in% c("SLX.12465.A011", "SLX.14296.A003",
+                                                                    "SLX.12465.A012", "SLX.14296.A002",
+                                                                    "SLX.13199.A009",
+                                                                    "SLX.12465.A007", "SLX.13199.A005",
+                                                                    "SLX.14296.A001","SLX.12465.A010",
+                                                                    "SLX.13199.A008")) %>%
+  filter(Sample %in% colnames(RNAvst))
+
+#ExpressionSet construction
+norm_counts <- U2932_RNAvst %>%
+  as.data.frame() %>%
+  rownames_to_column("ensembl_gene_id") %>%
+  gather(sample, VST, -ensembl_gene_id) %>%
+  filter(sample %in% metaU2932$Sample) %>%
+  mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1)) %>%
+  left_join(biomart_ensembl2name) %>%
+  group_by(sample, external_gene_name) %>%
+  summarize(VST = mean(VST)) %>%
+  filter(!duplicated(external_gene_name)) %>%
+  na.omit() %>%
+  ungroup() %>%
+  spread(sample, VST) %>%
+  remove_rownames() %>%
+  column_to_rownames("external_gene_name")
+
+#AnnotatedDataFrame with metadata
+meta <- data.frame(labelDescription= colnames(metaU2932[,c(1,10)]),
+                   row.names=colnames(metaU2932[,c(1,10)]))
+pD <- metaU2932[,c(1,10)] %>% as.data.frame()
+pD <- pD %>%
+  arrange(Sample)
+rownames(pD) <- pD$Sample
+phenoData <- new("AnnotatedDataFrame", data=pD, varMetadata=meta)
+
+#AnnotatedDataFrame with features data
+features <- biomart_ensembl2name[,c(1,2)][match(rownames(norm_counts), biomart_ensembl2name$external_gene_name),]
+rownames(features) <- rownames(norm_counts)
+meta <- data.frame(labelDescription= colnames(features),
+                       row.names=colnames(features))
+featureData <- new("AnnotatedDataFrame", data=features, varMetadata=meta)
+
+#ExpressionSet object
+exampleSet <- ExpressionSet(assayData = as.matrix(norm_counts), 
+                            phenoData = phenoData, 
+                            featureData = featureData)
+
+#create GSEA files
+ArrayTools::createGSEAFiles(mydir = paste(getwd(), "GSEA_sh", sep="/"), exampleSet, "Treatment2")
+```
+
+## Conclusions
+
+1. Overall, 90 genes showed decreased TE (TE-down) and 70 genes increased TE (TE-up) after knockdown of DDX3X in the WT cell line U2932
+2. TE-down genes were strongly enriched for transcripts encoding components of the core translational machinery 
+3. TE was reduced for almost all transcripts encoding protein subunits of the ribosome

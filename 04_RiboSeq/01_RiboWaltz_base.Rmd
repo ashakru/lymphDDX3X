@@ -1,0 +1,314 @@
+---
+title: "01 Ribo-Seq QC"
+author: "Joanna Krupka"
+date: "July 11, 2019"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+### Introduction  
+
+Quality control of Ribo-Seq dataset
+
+### Materials and methods  
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+library(tidyverse)
+library(biomaRt)
+library(RColorBrewer)
+library(ggrepel)
+library(riboWaltz)
+
+source("../utilis.R")
+
+# Global Parameters
+META = "data/ribowaltz_metadata.csv"
+FASTA = "/home/JAK75/Documents/reference-genome/gencode_v29_annotations/gencode.v29.transcripts_newHeaders.fa"
+GTF = "../../../reference/gencode.v29.annotation.gtf"
+LENGTHRANGE = 28:30
+
+# Load metadata and annotations
+metadata <- read_csv(META)
+
+annotations <- create_annotation(gtfpath = GTF,
+                                txdb = NULL,
+                                dataSource = "gencode29",
+                                organism = "Homo sapiens")
+```
+
+### Analysis 
+
+We used Ribowaltz package to extract and compute metric of a P-sites (eg. 3-nt periodicity, 
+frame preference)
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+# Ribowaltz base - wrapper function
+ribowaltz <- function(meta, lengthRange, annotation, start_nts, stop_nts, length_filter){
+  
+  # Move all samples to tmp folder
+  dir.create("tmp",showWarnings = F)
+  file.copy(paste0("bam/", meta$bam ), "tmp")
+   
+   print("Loading BAM file")
+   reads_list <- bamtolist(bamfolder = "tmp", annotation = annotation)
+   names <- names(reads_list) <- meta$name
+   
+   # QC
+   lengthDistrib <- data.frame()
+   periodicityLength <- data.frame()
+   
+   
+   for (n in 1:length(names)){
+     lengths <- rlength_distr(reads_list, sample = names[n])
+     lengths$dt$sample <-  names[n]
+     lengthDistrib <- bind_rows(lengthDistrib, lengths$dt)
+     
+     periodicities <- rends_heat(reads_list, annotation, names[n], cl = 85, 
+                                 utr5l = 25, cdsl = 40, utr3l = 25)
+     periodicities$dt$sample <- names[n]
+     periodicityLength <- bind_rows(periodicityLength, periodicities$dt)
+   }
+   
+   
+   print("Filtering BAM file")
+   filtered_list <- length_filter(data = reads_list, 
+                                  length_filter_mode = "custom", 
+                                  length_filter_vector = length_filter)
+   reads_list <- c()
+   print("Calculating Psites")
+   psite_offset <- psite(filtered_list, 
+                        flanking = 6, 
+                        extremity = "5end", 
+                        plot = T, 
+                        cl = 95)
+   
+   reads_psite_list <- psite_info(filtered_list, psite_offset)
+   
+   # Rename
+   names(reads_psite_list) <- names(filtered_list) <- meta$name
+   return <- list(lengthDistrib = lengthDistrib,
+                  periodicityLength = periodicityLength,
+                  filtered_list = filtered_list, 
+                  psite_offset = psite_offset, 
+                  reads_psite_list = reads_psite_list)
+                  
+    # Clean tmp directory 
+  file.remove(list.files("tmp", full.names = T))
+  file.remove("tmp")
+  
+   return(return)
+}
+
+
+# Ribowaltz QC - wrpper function
+ribowaltz_Psite_qc <- function(reads_psite_list, annotation, 
+                         fasta, transcripts = NULL){
+  names <- names(reads_psite_list)
+  transcripts <- transcripts
+   
+  # Empty dfs
+  codon_usage_tab <- data.frame()
+  frames_tab <- data.frame()
+  frames_stratified_tab <- data.frame()
+  #psite_region_tab <- data.frame()
+  heatmap_tab <- data.frame()
+  
+  for (n in 1:length(names)){
+    # Codon usage
+    codon_usage_n <- codon_usage_psite(reads_psite_list,
+                                       annotation,
+                                       sample = names[n],
+                                       fastapath = fasta,
+                                       dataSource = "gencode29",
+                                       fasta_genome = FALSE,
+                                       transcripts = transcripts,
+                                       frequency_normalization = TRUE)
+    
+    # Frames 
+    frames <- frame_psite(reads_psite_list,
+                        sample = names[n],
+                        region = "all")
+
+    # Frames stratified
+    frames_stratified <- frame_psite_length(reads_psite_list,
+                                          sample = names[n],
+                                          region = "all",
+                                          cl = 90)
+
+    # Psite region
+    #psite_region <- region_psite(reads_psite_list,
+    #                           annotation,
+    #                           sample = names[n], 
+    #                           transcripts = NULL)
+
+    # 3-nt periodicity
+    heatmap <- rends_heat(reads_psite_list,
+                        annotation,
+                        sample = names[n],
+                        cl = 85,
+                        utr5l = 25,
+                        cdsl = 40,
+                        utr3l = 25)
+
+    # Concentrate
+    codon_usage_n <- codon_usage_n$dt
+    codon_usage_n$sample <- names[n]
+    codon_usage_tab <- rbind(codon_usage_tab, codon_usage_n)
+
+    frames_tab <- rbind(frames_tab, frames$dt)
+    frames_stratified_tab <- rbind(frames_stratified_tab, frames_stratified$dt)
+    #psite_region_tab <- rbind(psite_region_tab, psite_region$dt)
+
+    heatmap <- heatmap$dt
+    heatmap$sample <- names[n]
+    heatmap_tab <- rbind(heatmap_tab, heatmap)
+  
+  }
+  
+  return(list(codon_usage = codon_usage_tab,
+              frames = frames_tab, 
+              frames_stratified = frames_stratified_tab,
+              #psites = psite_region_tab, 
+              periodicity = heatmap_tab))
+}
+
+selectLengthRange <- function(bam, sampleName, annotation, lengthFilter){
+  
+  file.remove(list.files("tmp", full.names = T))
+  dir.create("tmp", showWarnings = F)
+  file.copy(paste0(bam), "tmp")
+   
+  print(paste("Loading BAM file", sampleName))
+  reads_list <- bamtolist(bamfolder = "tmp", annotation = annotation)
+  nrows <- nrow(reads_list[[1]])
+  if (nrows > 10^7){
+    select <- round(runif(10^7, min = 1, max = nrows))
+    reads_list[[1]] <- reads_list[[1]][select,]
+  }
+  
+  names(reads_list) <- sampleName
+  
+  periodicityLength <- data.frame()
+  
+  print("Filtering BAM file")
+  filtered_list <- length_filter(data = reads_list, 
+                                 length_filter_mode = "custom", 
+                                 length_filter_vector = lengthFilter)
+  reads_list <- c()
+  print("Calculating Psites")
+  psite_offset <- psite(filtered_list, 
+                        flanking = 6, 
+                        extremity = "5end", 
+                        plot = F, 
+                        cl = 95)
+   
+  reads_psite_list <- psite_info(filtered_list, psite_offset)
+  
+  print("Calculating periodicity and frames enrichment")
+  heatmap <- rends_heat(reads_psite_list,
+                        annotation,
+                        sample = sampleName,
+                        cl = 85,
+                        utr5l = 25,
+                        cdsl = 60,
+                        utr3l = 25)
+  heatmap <- heatmap$dt
+  heatmap$sample <- sampleName
+  
+  frames <- frame_psite(reads_psite_list,
+                        sample = sampleName,
+                        region = "all")
+  frames <- frames$dt
+  frames$sample <- sampleName
+
+  frames_stratified <- frame_psite_length(reads_psite_list,
+                                          sample = sampleName,
+                                          region = "all",
+                                          cl = 90)
+  frames_stratified <- frames_stratified$dt
+  frames_stratified$sample <- sampleName
+  
+  resList <- list(periodicity = heatmap,
+                  frames = frames,
+                  framesStratified = frames_stratified)
+  
+  print("Done!")
+  
+  # Clean tmp directory 
+  file.remove(list.files("tmp", full.names = T))
+  file.remove("tmp")
+  return(resList)
+}
+```
+
+#### Finding read length threshold  
+
+We iterate over Ribo-Seq bam files and examine 3-nt periodicity around start codon in order to 
+identify read lengths most likely corresponding to ribosomal footprints. 
+
+```{r eval = F, echo = T, message = F, warning = F, cache = F, error = F}
+# Iterate through all Ribo-Seq files
+bams <- paste0("bams/multimapFull/transcriptome/", metadata$bam)
+
+for (b in 1:length(bams)){
+  resTabs <- selectLengthRange(bams[b], metadata$name[b], annotations, 15:32)
+  
+  if (b == 1){
+    periodicityTab <- resTabs[[1]]
+    framesTab <- resTabs[[2]]
+    framesStratifiedTab <- resTabs[[3]]
+  } else {
+    periodicityTab <- rbind(periodicityTab, resTabs[[1]])
+    framesTab <- rbind(framesTab, resTabs[[2]])
+    framesStratifiedTab <- rbind(framesStratifiedTab, resTabs[[3]])
+  }
+}
+
+save(periodicityTab, framesTab, framesStratifiedTab, b, file = "data/periodicity.RData")
+```
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+load("data/periodicity.RData")
+# Visualize
+## Heatmap
+palette <- colorRampPalette(brewer.pal(11, "BuPu"))
+
+plot_df <- periodicityTab %>%
+  filter(end == "5' end" & length > 20) %>%
+  group_by(sample) %>%
+  mutate(readFraq = scale(count)) %>%
+  group_by(region, length, dist) %>%
+  summarize(meanFraq = mean(readFraq))
+
+ggplot(plot_df) +
+  geom_tile(aes(x = dist, y = length, fill = meanFraq),
+            colour = "white") +
+  nature_barplot() +
+  scale_fill_gradientn(colours = palette(100)) +
+  facet_grid(. ~ region, scales = "free") +
+  scale_y_continuous(breaks = seq(20,32, by = 2)) +
+  labs(fill = "Reads density", y = "Read length", x ="")
+ 
+ggsave(file.path("plots", "QC_Periodicity_heatmap.pdf"),
+           width = 10, height = 4)
+
+## Frames stratified  
+plot_df <- framesStratifiedTab %>%
+  filter(length %in% 28:30)
+
+ggplot(plot_df) +
+  geom_tile(aes(x = frame, y = length, fill = percentage),
+            colour = "white") +
+  nature_barplot() +
+  scale_fill_gradientn(colours = palette(100)) +
+  facet_grid(. ~ region, scales = "free")
+
+ggsave(file.path("plots", "QC_PeriodicityByRegion_heatmap.pdf"),
+           width = 8, height = 4)
+```
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}  
+sessionInfo()
+```

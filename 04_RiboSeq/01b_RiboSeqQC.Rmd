@@ -1,0 +1,379 @@
+---
+title: "01b Ribo-Seq QC"
+author: "Joanna Krupka"
+date: "1 August 2019"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+### Introduction  
+
+Quality control of Ribo-Seq dataset
+
+### Materials and methods  
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+library(tidyverse)
+library(RColorBrewer)
+library(biomaRt)
+
+source("../utilis.R")
+#source("../solarisFunctions.R")
+
+# Global Parameters
+QCFOLDER = "ribowaltz/results"
+META = "../utilis/expressionData/DDX3Xsh/RiboRNA_DDX3Xsh.csv"
+GTF = "../../../reference/gencode.v29.annotation.gtf"
+metadata <- read_csv(META)
+qcFiles <- list.files(QCFOLDER, full.names = T)
+bams <- c(list.files("bam", "trim.bam", full.names = T),
+          list.files("bam", "prealigned.bam", full.names = T))
+
+# # FUNCTIONS # #
+
+# Aggregate all QC results
+# codon_usage <- data.frame()
+# frames <- data.frame()
+# frame_stratified <- data.frame()
+# psites <- data.frame()
+# periodicity <- data.frame()
+# 
+# metaToApped <- metadata %>% 
+#   dplyr::select(Sample, Cell_line, Treatment, Time, Treatment2, Corresponding)
+# 
+# for (i in 1:length(qcFiles)){
+#   files <- load(qcFiles[i])
+#   codon_usage <- bind_rows(codon_usage, get(files)[[1]]) 
+#   frames <- bind_rows(frames, get(files)[[2]])
+#   frame_stratified <- bind_rows(frame_stratified, get(files)[[3]])
+#   psites <- bind_rows(psites, get(files)[[4]])
+#   periodicity <- bind_rows(periodicity, get(files)[[5]])
+# }
+# 
+# codon_usage <- codon_usage %>%
+#     full_join(metaToApped, by = c("sample" = "Sample")) %>% na.omit()
+# frames <- frames %>%
+#     full_join(metaToApped, by = c("sample" = "Sample")) %>% na.omit()
+# frame_stratified <- frame_stratified %>%
+#     full_join(metaToApped, by = c("sample" = "Sample")) %>% na.omit()
+# psites <- psites %>%
+#     full_join(metaToApped, by = c("sample" = "Sample")) %>% na.omit()
+# periodicity <- periodicity %>%
+#     full_join(metaToApped, by = c("sample" = "Sample")) %>% na.omit()
+```
+
+### Analysis
+
+####  Reads length and genomic regions distribution  
+
+We iterate over Ribo-Seq bam files to extract basic read metrics and alisgment site 
+
+```{r eval = F, echo = T, message = F, warning = F, cache = F, error = F}
+# Download annotations, create gene models
+txdb <- makeTxDbFromGFF(GTF, format = "gtf")
+allRegionsUnion <- buildModels(txdb, 
+                               mode = "union", 
+                               by = "gene",
+                               reduced = F,
+                               regions = c("genes", "exons", "introns",
+                                           "cds", "utr3", "utr5"))
+
+allRegionsReduced <- buildModels(txdb, 
+                                 mode = "union", 
+                                 by = "gene",
+                                 reduced = T,
+                                 regions = c("genes", "exons", "introns",
+                                           "cds", "utr3", "utr5"))
+
+# Bam filtering criteria
+filterBam <- ScanBamParam(flag = scanBamFlag(isUnmappedQuery = F,
+                                             isSecondaryAlignment = F),
+                          mapqFilter = 255)
+
+# Tables produced
+readLengths <- data.frame()        # Read lengths by sample
+genomicRegionsFraq <- data.frame() # Genomic regions fractions by biotype
+genomicRegionsSum <- data.frame()  # Genomic sums fractions by biotype
+
+regionsTabsbyGene <- list()        # Regions Tabs by sample
+regionsBySample <- data.frame()    # Summarized Regions Tabs by sample
+
+samplesVec <- c() # Vector with samples names
+
+for (b in 1:length(bams)){
+  # Get sampleID
+  sampleID <- splitvec(splitvec(bams[b], "/", 2), "[.]", 1:2, ".")
+  sampleID <- gsub("-", ".", sampleID)
+  sampleInfo <- metadata %>% filter(Sample == sampleID)
+  samplesVec <- c(samplesVec, sampleID)
+  
+  # Load BAM file
+  bf <- readGAlignments(bams[b], param = filterBam)
+  
+  # Read length distribution
+  if (b == 1){
+    readLengths <- as.data.frame(table(qwidth(bf)))
+    colnames(readLengths) <- c("Length", sampleID)
+  } else {
+    toAppend <- as.data.frame(table(qwidth(bf)))
+    colnames(toAppend) <- c("Length", sampleID)
+    readLengths <- full_join(readLengths, toAppend, by = "Length")
+  }
+  
+  # Compute regions occupancy
+  
+  if (sampleInfo$Experiment == "RNA"){
+    minOverlap <- rep(26,6)
+  } else {
+    minOverlap <- rep(12,6)
+  }
+  
+  # Regions by Gene
+  regionsTab <- countReadsByRegion(allRegionsUnion, bf, minOverlap = minOverlap, summarize = F)
+  regionsTabsbyGene[[b]] <- regionsTab
+  
+  ## Filter genes by low expression  
+  regionsTabFiltered <- regionsTab %>% 
+  filter(genes > 10) %>%
+  mutate(genesTotal = exons + introns,
+         fraqExons = exons/genesTotal,
+         fraqIntrons = introns/genesTotal,
+         fraqCDS = cds/exons,
+         fraqUTR3 = utr3/exons,
+         fraqUTR5 = utr5/exons)
+  ## Compute fraction per gene
+  regionsTabFraq <- regionsTabFiltered %>% 
+  dplyr::select(name, biotype, starts_with("fraq")) %>%
+  gather(key, value, -name, -biotype) %>%
+  mutate(group = case_when(
+    grepl("CDS", key) ~ "by_CDS",
+    grepl("UTR", key) ~ "by_CDS",
+    TRUE ~ "by_Exons"
+  )) %>%
+    group_by(key, biotype) %>%
+    summarize(meanFraq = median(value, na.rm = T)) %>%
+    ungroup()
+  ## Compute sums
+  regionsTabSum <- regionsTabFiltered %>% 
+  dplyr::select(name, biotype, genes, exons, introns, cds, utr5, utr3) %>%
+  gather(key, value, -name, -biotype) %>%
+  mutate(group = case_when(
+    grepl("CDS", key) ~ "by_CDS",
+    grepl("UTR", key) ~ "by_CDS",
+    TRUE ~ "by_Exons"
+  )) %>%
+    group_by(key, biotype) %>%
+    summarize(Sum = sum(value, na.rm = T)) %>%
+    ungroup() 
+  
+   ## Concentrate
+  if (b == 1){
+    genomicRegionsFraq <- regionsTabFraq
+    colnames(genomicRegionsFraq) <- c("Class", "Biotype", sampleID)
+    
+    genomicRegionsSum <- regionsTabSum
+    colnames(genomicRegionsSum) <- c("Class", "Biotype", sampleID)
+    
+  } else {
+    toAppend <- regionsTabFraq
+    colnames(toAppend) <-  c("Class", "Biotype", sampleID)
+    genomicRegionsFraq <- left_join(genomicRegionsFraq, toAppend, by = c("Class", "Biotype"))
+    
+    toAppend <- regionsTabSum
+    colnames(toAppend) <-  c("Class", "Biotype", sampleID)
+    genomicRegionsSum <- left_join(genomicRegionsSum, toAppend, by = c("Class", "Biotype"))
+    
+  }
+  
+  # Regions total
+  regionsSummarized <- countReadsByRegion(allRegionsReduced, bf, minOverlap = minOverlap, summarize = T)
+  
+  ## Concentrate
+  if (b == 1){
+    regionsBySample <- regionsSummarized
+    colnames(regionsSummarized) <- c("region", sampleID)
+    
+  } else {
+    toAppend <- regionsSummarized
+    colnames(toAppend) <-  c("region", sampleID)
+    regionsBySample  <- left_join(regionsBySample, toAppend, by = c("region"))
+    
+  }
+}
+
+names(regionsTabsbyGene) <- samplesVec
+
+save(readLengths, genomicRegionsFraq, genomicRegionsSum, 
+     regionsTabsbyGene, regionsBySample, 
+     file = "data/QC_GRegionsLength.RData")
+```
+
+#### Visualisation  
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+# Visualisation
+load("data/QC_GRegionsLength.RData")
+
+# Gather data frames
+gatheredDfbyBiotype <- genomicRegionsSum %>% 
+  gather(key, value, -Class, -Biotype) %>% 
+  dplyr::filter(Class != "genes") %>%
+  left_join(dplyr::select(metadata, Experiment, Cell_line, Treatment, Treatment2, SLX, Time, Sample), 
+            by = c("key" = "Sample")) %>%
+  dplyr::filter(Cell_line != "BL41") %>%
+  mutate(group = case_when(
+    grepl("cds", Class) ~ "by_CDS",
+    grepl("utr", Class) ~ "by_CDS",
+    TRUE ~ "by_Exons"
+  )) 
+gatheredDfbyBiotype$Class <- factor(gatheredDfbyBiotype$Class, levels = c("cds", "utr3", "utr5", "exons", "introns"))
+
+colnames(regionsBySample)[2] <- "SLX.12465.A001"
+gatheredDfbySample <- regionsBySample %>% 
+  gather(key, value, -region) %>% 
+  left_join(dplyr::select(metadata, Experiment, Cell_line, Treatment, Treatment2, SLX, Time, Sample), 
+            by = c("key" = "Sample")) %>%
+  dplyr::filter(Cell_line != "BL41") %>%
+  mutate(group = case_when(
+    grepl("cds", region) ~ "by_CDS",
+    grepl("utr", region) ~ "by_CDS",
+    grepl("genes", region) ~ "by_Genes",
+    grepl("intergenic", region) ~ "by_Genes",
+    TRUE ~ "by_Exons"
+  )) 
+gatheredDfbySample$region <- factor(gatheredDfbySample$region, levels = c("cds", "utr3", "utr5", 
+                                                                          "exons", "introns", 
+                                                                          "intergenic", "genes"))
+# Reads length distribution  
+gatheredDfLength <- readLengths %>%
+  gather(key, value, -Length) %>%
+  mutate(value = as.numeric(value)) %>%
+  mutate(value = case_when(is.na(value) ~ 0,
+                           TRUE         ~ value)) %>%
+  left_join(dplyr::select(metadata, Experiment, Cell_line, Treatment, Treatment2, SLX, Time, Sample), 
+            by = c("key" = "Sample")) %>%
+  dplyr::filter(Cell_line != "BL41") %>%
+  group_by(key) %>%
+  mutate(Fraq = value/sum(value))
+
+ ggplot(gatheredDfLength) + 
+        geom_freqpoly(aes(x = Length, y = Fraq, color = Cell_line, group = key), stat = "identity") +
+        nature_barplot() +
+   facet_grid(.~Experiment) +
+   theme(axis.text.x = element_text(color="black", size=15, angle = 90)) +
+   scale_colour_manual(values = brewer.pal(4, "BuPu")[-1]) +
+   labs(x = "", y = "Density", colour = "Cell line") +
+   scale_x_discrete(breaks = seq(15,50, by =5))
+   
+
+ ggsave(file.path("plots", paste("QC_ReadsLength_AllSamples_density.pdf", sep = "_")),
+           width = 8, height = 4)
+ 
+ 
+ plot_df <- gatheredDfLength %>% 
+   filter(Cell_line == "U2932" & Experiment == "Ribo")
+ ggplot(plot_df) + 
+        geom_freqpoly(aes(x = Length, y = Fraq, color = Treatment, group = key), stat = "identity") +
+        nature_barplot() +
+   theme(axis.text.x = element_text(color="black", size=15, angle = 90)) +
+   scale_colour_manual(values = brewer.pal(4, "BuPu")[-1]) +
+   labs(x = "", y = "Density", colour = "Cell line") +
+   scale_x_discrete(breaks = seq(15,50, by =5))
+ 
+# Reads by biotype/experiment, samples summarized
+plot_df <- gatheredDfbyBiotype %>%
+  group_by(key, group, Cell_line) %>%
+  dplyr::filter(Cell_line != "BL41") %>%
+  mutate(Frac = value/sum(value)) %>%
+  ungroup() %>%
+  dplyr::select(Biotype, Experiment, value, Cell_line) %>% 
+  group_by(Biotype, Experiment, Cell_line) %>%
+  summarize(MeanReads = mean(value, na.rm =T)) %>%
+  mutate(MeanReads = case_when(is.nan(MeanReads) ~ 0,
+                               TRUE ~ MeanReads)) %>%
+  ungroup() %>%
+  group_by(Experiment) %>%
+  mutate(MeanFraq = MeanReads/sum(MeanReads))
+      
+  ggplot(plot_df) + 
+        geom_bar(aes(x = Experiment, y = MeanFraq, fill = Biotype),
+               stat = "identity") +
+        nature_barplot() +
+         theme(axis.text.x = element_text(color="black", size=15, angle = 90)) +
+        scale_fill_manual(values = divergingPalFull) +
+        labs(x = "", y = "Number of reads") 
+    
+  ggsave(file.path("plots", paste("QC_Biotypes_AllSamples_frac.pdf", sep = "_")),
+           width = 10, height = 6)
+  
+  # Reads by region
+  plot_df <- gatheredDfbySample %>% 
+    group_by(group, Experiment, region, Cell_line) %>%
+    dplyr::filter(Cell_line != "BL41") %>%
+    summarize(MeanReads = mean(value)) %>%
+    ungroup() %>%
+    group_by(Experiment, Cell_line, group) %>%
+    mutate(MeanFraq = MeanReads/sum(MeanReads))
+
+colours <- c(brewer.pal(9,"BuPu")[c(2,5,9)], brewer.pal(11,"Spectral")[c(11,10,9,8)])
+  
+    ggplot(plot_df) + 
+        geom_bar(aes(x = Experiment, y = MeanFraq, fill = region),
+               stat = "identity") +
+    facet_grid(Cell_line~group) +
+        nature_barplot() +
+         theme(axis.text.x = element_text(color="black", size=15, angle = 90)) +
+        scale_fill_manual(values = colours) +
+        labs(x = "", y = "Number of reads") 
+    
+  ggsave(file.path("plots", paste("QC_Regions_AllSamples_frac.pdf", sep = "_")),
+           width = 8, height = 6)
+  
+# Plots samples, experiment separately 
+exp <- unique(gatheredDfbySample$Experiment)
+cl <-  unique(gatheredDfbySample$Cell_line)
+
+for (e in 1:length(exp)){
+  for (c in 1:length(cl)){
+    plot_df <- gatheredDfbyBiotype %>%
+      filter(Cell_line == cl[c] &
+               Experiment == exp[e]) %>%
+      na.omit()
+    
+    # Reads by biotype
+    ggplot(plot_df) + 
+      geom_bar(aes(x = key, y = value, fill = Biotype),
+             stat = "identity") +
+      nature_barplot() +
+       theme(axis.text.x = element_text(color="black", size=15, angle = 90)) +
+      scale_fill_manual(values = divergingPalFull) +
+      labs(x = "", y = "Number of reads") +
+      ggtitle(paste(exp[e], cl[c]))
+    
+    ggsave(file.path("plots", paste("QC_Biotypes", exp[e], cl[c], "identity.pdf", sep = "_")),
+           width = 10, height = 6)
+    
+    # Reads by region
+    plot_df <- gatheredDfbySample %>%
+      filter(Cell_line == cl[c] &
+               Experiment == exp[e]) %>%
+      group_by(group, key) %>%
+      mutate(fraq = value/sum(value))
+
+    ggplot(plot_df) +
+      geom_bar(aes(x = key, y = fraq, fill = region),
+             stat = "identity") +
+      nature_barplot() +
+      facet_grid(group~.) +
+       theme(axis.text.x = element_text(color="black", size=15, angle = 90)) +
+      scale_fill_manual(values = divergingPal_long[c(4,3,2,6,8,9,10)]) +
+      labs(x = "", y = "Number of reads") +
+      ggtitle(paste(exp[e], cl[c]))
+
+    ggsave(file.path("plots", paste("QC_Regions", exp[e], cl[c], "frac.pdf")),
+           width = 6, height = 6)
+  }
+}
+```

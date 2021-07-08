@@ -1,0 +1,69 @@
+R version 4.0.3 (2020-10-10)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: Fedora 30 (Workstation Edition)
+
+Matrix products: default
+BLAS/LAPACK: /home/JAK75/anaconda3/envs/rbase4/lib/libopenblasp-r0.3.12.so
+
+locale:
+ [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C               LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+ [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8    LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+ [1] grid      parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] ComplexHeatmap_2.6.2        org.Hs.eg.db_3.12.0         clusterProfiler_3.18.1     
+ [4] msigdbr_7.2.1               ggpubr_0.4.0                ggrepel_0.9.1              
+ [7] knitr_1.30                  GenomicFeatures_1.42.1      AnnotationDbi_1.52.0       
+[10] DESeq2_1.30.0               SummarizedExperiment_1.20.0 Biobase_2.50.0             
+[13] MatrixGenerics_1.2.0        matrixStats_0.57.0          GenomicRanges_1.42.0       
+[16] GenomeInfoDb_1.26.2         IRanges_2.24.1              S4Vectors_0.28.1           
+[19] BiocGenerics_0.36.0         pheatmap_1.0.12             RColorBrewer_1.1-2         
+[22] biomaRt_2.46.3              forcats_0.5.0               stringr_1.4.0              
+[25] dplyr_1.0.2                 purrr_0.3.4                 readr_1.4.0                
+[28] tidyr_1.1.2                 tibble_3.0.4                ggplot2_3.3.3              
+[31] tidyverse_1.3.0            
+
+loaded via a namespace (and not attached):
+  [1] tidyselect_1.1.0         RSQLite_2.2.2            BiocParallel_1.24.1      scatterpie_0.1.5        
+  [5] munsell_0.5.0            codetools_0.2-18         preprocessCore_1.52.1    withr_2.4.2             
+  [9] colorspace_2.0-0         GOSemSim_2.16.1          rstudioapi_0.13          DescTools_0.99.40       
+ [13] ggsignif_0.6.0           rcompanion_2.3.27        DOSE_3.16.0              ArrayTools_1.50.0       
+ [17] GenomeInfoDbData_1.2.4   polyclip_1.10-0          farver_2.0.3             bit64_4.0.5             
+ [21] downloader_0.4           vctrs_0.3.6              generics_0.1.0           TH.data_1.0-10          
+ [25] xfun_0.20                BiocFileCache_1.14.0     R6_2.5.0                 clue_0.3-58             
+ [29] graphlayouts_0.7.1       locfit_1.5-9.4           bitops_1.0-6             cachem_1.0.1            
+ [33] fgsea_1.16.0             DelayedArray_0.16.0      assertthat_0.2.1         scales_1.1.1            
+ [37] multcomp_1.4-16          ggraph_2.0.4             enrichplot_1.10.2        rootSolve_1.8.2.1       
+ [41] gtable_0.3.0             Cairo_1.5-12.2           affy_1.68.0              multcompView_0.1-8      
+ [45] lmom_2.8                 tidygraph_1.2.0          sandwich_3.0-0           rlang_0.4.10            
+ [49] EMT_1.1                  genefilter_1.72.0        GlobalOptions_0.1.2      splines_4.0.3           
+ [53] rtracklayer_1.50.0       rstatix_0.6.0            broom_0.7.3              BiocManager_1.30.10     
+ [57] yaml_2.2.1               reshape2_1.4.4           abind_1.4-5              modelr_0.1.8            
+ [61] backports_1.2.1          qvalue_2.22.0            tools_4.0.3              affyio_1.60.0           
+ [65] ellipsis_0.3.1           Rcpp_1.0.6               plyr_1.8.6               progress_1.2.2          
+ [69] zlibbioc_1.36.0          RCurl_1.98-1.2           prettyunits_1.1.1        openssl_1.4.3           
+ [73] GetoptLong_1.0.5         viridis_0.6.1            cowplot_1.1.1            zoo_1.8-8               
+ [77] cluster_2.1.1            haven_2.3.1              fs_1.5.0                 magrittr_2.0.1          
+ [81] data.table_1.13.6        DO.db_2.9                openxlsx_4.2.3           circlize_0.4.12         
+ [85] lmtest_0.9-38            reprex_0.3.0             mvtnorm_1.1-1            hms_0.5.3               
+ [89] evaluate_0.14            xtable_1.8-4             XML_3.99-0.5             rio_0.5.16              
+ [93] readxl_1.3.1             gridExtra_2.3            shape_1.4.5              compiler_4.0.3          
+ [97] shadowtext_0.0.7         crayon_1.3.4             htmltools_0.5.1.1        geneplotter_1.68.0      
+[101] libcoin_1.0-8            expm_0.999-6             Exact_2.1                lubridate_1.7.9.2       
+[105] DBI_1.1.0                tweenr_1.0.1             corrplot_0.84            dbplyr_2.0.0            
+[109] MASS_7.3-53              rappdirs_0.3.1           boot_1.3-26              Matrix_1.3-2            
+[113] car_3.0-10               cli_3.0.0                igraph_1.2.6             pkgconfig_2.0.3         
+[117] rvcheck_0.1.8            GenomicAlignments_1.26.0 coin_1.4-1               foreign_0.8-81          
+[121] xml2_1.3.2               annotate_1.68.0          XVector_0.30.0           rvest_0.3.6             
+[125] digest_0.6.27            Biostrings_2.58.0        rmarkdown_2.6            cellranger_1.1.0        
+[129] fastmatch_1.1-0          nortest_1.0-4            gld_2.6.2                curl_4.3                
+[133] Rsamtools_2.6.0          modeltools_0.2-23        rjson_0.2.20             lifecycle_1.0.0         
+[137] jsonlite_1.7.2           carData_3.0-4            viridisLite_0.4.0        askpass_1.1             
+[141] limma_3.46.0             pillar_1.4.7             lattice_0.20-41          fastmap_1.1.0           
+[145] httr_1.4.2               survival_3.2-7           GO.db_3.12.1             glue_1.4.2              
+[149] zip_2.1.1                png_0.1-7                bit_4.0.4                ggforce_0.3.2           
+[153] class_7.3-18             stringi_1.5.3            blob_1.2.1               memoise_2.0.0           
+[157] e1071_1.7-4             
