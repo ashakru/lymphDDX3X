@@ -1,0 +1,32 @@
+name,genomic_start,genomic_end,cds_start,cds_end,n_mut,category,function
+Q,41343267,41343294,199,207,0,motif,ATP binding motif
+I,41343342,41343759,224,234,0,motif,ATP binding motif
+Ia,41344078,41344110,272,282,0,motif,RNA binding motif
+Ib,41344278,41344283,302,302,0,motif,RNA binding motif
+Ic,41344335,41344361,321,329,0,motif,RNA binding motif
+II,41345187,41345210,345,352,1,motif,ATP binding motif
+III,41345295,41345309,381,385,0,motif,ATP binding motif
+IV,41346246,41346269,445,451,2,motif,RNA binding motif
+IVa,41346327,41346327,472,481,3,motif,RNA binding motif
+V,41346396,41346410,495,499,0,motif,RNA binding motif
+Va,41346511,41346558,502,517,0,motif,ATP binding motif
+VI,41346580,41346609,525,534,4,motif,ATP binding motif
+exon1,41333398,41334297,1,15,1,exon,exon
+exon2,41337408,41337465,16,34,0,exon,exon
+exon3,41339036,41339083,35,50,1,exon,exon
+exon4,41341484,41341616,51,95,1,exon,exon
+exon5,41342495,41342653,96,148,0,exon,exon
+exon6,41342737,41342836,149,181,0,exon,exon
+exon7,41343216,41343351,182,226,1,exon,exon
+exon8,41343737,41343822,227,255,0,exon,exon
+exon9,41344030,41344128,256,288,0,exon,exon
+exon10,41344239,41344399,289,342,2,exon,exon
+exon11,41345180,41345324,343,390,0,exon,exon
+exon12,41345404,41345548,391,438,0,exon,exon
+exon13,41346229,41346410,439,499,10,exon,exon
+exon14,41346505,41346622,500,538,4,exon,exon
+exon15,41346859,41347012,539,590,0,exon,exon
+exon16,41347312,41347451,591,636,0,exon,exon
+exon17,41347640,41350274,637,662,0,exon,exon
+C_helicase,41335442,41335442,414,575,,domain,C_helicase
+N_helicase,41334833,41335411,211,403,,domain,N_helicase

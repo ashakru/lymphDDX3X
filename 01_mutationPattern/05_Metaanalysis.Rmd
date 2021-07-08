@@ -1,0 +1,79 @@
+---
+title: "05 Meta analysis"
+author: "Joanna A. Krupka"
+date: "May 6, 2020"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+## Introduction  
+
+DDX3X is known to escape chromosome X inactivation and is commonly mutated in male-skewed cancers. 
+
+## Objectives  
+
+The aim of this meta analysis is to compare the frequency of DDX3X mutation between males and females  
+
+## Materials and methods  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+library(tidyverse)
+library(knitr)
+library(meta)
+
+source("../utilis.R")
+
+metaTab <- read_csv("data/DXsexDistrib.csv") %>%
+  na.omit()
+```
+
+### Analysis  
+
+#### All studies
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+m.bin <- metabin(Ee,
+                 Ne,
+                 Ec,
+                 Nc,
+                 data = metaTab,
+                 studlab = paste(Author),
+                 comb.fixed = FALSE,
+                 comb.random = TRUE,
+                 method.tau = "SJ",
+                 hakn = TRUE,
+                 prediction = TRUE,
+                 incr = 0.1,
+                 sm = "RR")
+
+m.bin
+
+# Visualisation
+labbe.metabin(x = m.bin,
+              bg = "#3288BD",
+              studlab = TRUE,
+              col.random = "#D53E4F")
+forest(m.bin, comb.random=FALSE, hetstat=FALSE,text.fixed="MH estimate")
+
+
+
+
+# Save plots
+pdf("plots/metaAnalysisDotPlot_updated.pdf", useDingbats = F) 
+labbe.metabin(x = m.bin,
+              bg = "#3288BD",
+              studlab = TRUE,
+              col.random = "#D53E4F")
+dev.off() 
+
+pdf("plots/metaAnalysisForrestPlot_updated.pdf", useDingbats = F) 
+forest(m.bin, comb.random=FALSE, hetstat=FALSE,text.fixed="MH estimate")
+dev.off() 
+```
+
+### Conclusions  
+
+There is statistically significant relationship between having DDX3X mutation and being male. 
+

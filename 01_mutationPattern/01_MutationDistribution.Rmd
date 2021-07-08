@@ -1,0 +1,336 @@
+---
+title: "01 Frequency of DDX3X mutations in BL"
+author: "Joanna A. Krupka"
+date: "01 July 2019"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+## Background  
+
+The aim of the analysis is to compute the frequency of DDX3X mutations across different studies 
+
+## Objectives   
+
+1. Compute the frequency of mutations in targeted sequencing of 39 BL patients  
+2. Compare the frequency of DDX3X mutation between already published studies  
+3. Examine the distribution of DDX3X mutations in different cancer types (COSMIC data) 
+4. Generate a lollipop plot showing the density of DDX3X mutation across conserved DDX3X domains 
+comparing BL and DLBCL    
+
+## Materials and methods  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(ggpubr)
+library(AnnotationHub)
+library(EnsDb.Hsapiens.v86)
+library(trackViewer)
+
+source("../utilis.R")
+
+DXTX <- "ENST00000644876" # Reference DDX3X transcript
+genes <- c("ENSG00000215301", "ENSG00000067048") # DDX3X and DDX3Y ID
+BL_drivers <- c("MYC", "ID3", "TP53", "CCND3", "DDX3X", "ARID1A", "FOXO1",
+                "SMARCA4", "TET2", "TCF3", "BCL7A", "FBXO11", "GNA13", "PTEN", 
+                "HIST1H1E")
+
+# Results of the targeted panel sequencing
+targeted.panel <- read_excel("../utilis/SupplTable1.xlsx", 
+                             sheet = 1, skip = 1)
+
+# Mutations from other studies
+#DXmut_integrated <-read_csv("data/01_Supplementary_Table.csv") 
+
+# DDX3X mutations from different BL and DLBCL studies
+studies <- read_excel("../utilis/SupplTable1.xlsx", 
+                      sheet = 3, skip = 1)
+```
+
+## Analysis  
+
+### Targeted sequencing panel of 39 BL patients 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# Compute the frequency of mutation in each gene
+targeted.panel.freq <- targeted.panel %>%
+  group_by(Gene) %>%
+  summarise(Freq = 100*length(unique(Pt_ID))/39) %>%
+  arrange(desc(Freq)) %>%
+  mutate(fill = Gene == "DDX3X",
+         Gene = factor(Gene, levels = BL_drivers)) %>%
+  dplyr::filter(Gene %in% BL_drivers)
+
+# Plot the frequency of BL driver genes
+ggplot(targeted.panel.freq, aes(x = Gene, y = Freq, fill = fill)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  theme_pubr() +
+  scale_fill_manual(values = divergingPal[c(10,2)]) +
+  scale_y_continuous(limits = c(0,70), breaks = seq(0,70,by = 10), labels = seq(0,70,by = 10)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+  
+ggsave("plots/Targeted_panel_BLdrivers.pdf", width = 7, height = 6)
+```
+
+### Distribution of DDX3X mutations in different cancer types 
+
+```{r eval = F, echo = F, message = F, warning = F, error = F}
+# DDX3X muattions collected from COSMIC (accession date 02/07/2019)
+ddx3x_cosmic <- read_csv("../utilis/cosmic_files/DDX3X_COSMIC_02072019.csv")
+
+## ICGC
+icgc_project <- read_csv("../utilis/icgc_files/icgc_COSMIC_names.csv")
+
+## Functions: agregate icgc tables and filter on geneID
+aggregateICGC <- function(toAggregate, filter_mut = F, genes = NULL){
+  require(tidyverse)
+  
+  full_tab <- data.frame()
+  
+  #Filter only 
+  if(filter_mut){
+    for (i in 1:length(toAggregate)){
+      tab <- read_delim(toAggregate[i], delim = "\t") %>%
+        dplyr::filter(gene_affected %in% genes)
+      full_tab <- rbind(full_tab, tab)
+      }
+  } else {
+    for (i in 1:length(toAggregate)){
+      tab <- read_delim(toAggregate[i], delim = "\t")
+      full_tab <- rbind(full_tab, tab)
+      }
+  }
+  return(full_tab)
+}
+
+donorsTab <- aggregateICGC(list.files("../utilis/icgc_files", "donor", full.names = T)) %>%
+  group_by(project_code) %>%
+  mutate(COSMIC = icgc_project$COSMIC[match(project_code, icgc_project$project)])
+
+mutTab <- aggregateICGC(list.files("icgc_files", "../utilis/somatic_mutation", full.names = T), T, genes)
+
+save(donorsTab, mutTab, ddx3x_cosmic, file = "mutationsData.RData")
+```
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# DDX3X Mutations tissue distribution
+load("data/mutationsData.RData")
+
+## ICGC (downloaded with run_icgcDownload.py)
+ddx3x_icgc_filtered <- mutTab %>% 
+  dplyr::filter(gene_affected == genes[1] &
+           !is.na(aa_mutation) &
+           consequence_type != "synonymous_variant") %>%
+  group_by(icgc_donor_id) %>%
+  mutate(COSMIC = donorsTab$COSMIC[match(icgc_donor_id, donorsTab$icgc_donor_id)],
+         Source = "ICGC",
+         chromosome = "X") %>%
+  ungroup() %>%
+  dplyr::select(Source, icgc_donor_id, COSMIC, chromosome, 
+                chromosome_start, chromosome_end, aa_mutation, 
+                cds_mutation, consequence_type)
+## COSMIC 
+ddx3x_cosmic_filtered <- ddx3x_cosmic %>% 
+  mutate(Source = "COSMIC",
+         chromosome = "X",
+         `AA Mutation` = splitvec(`AA Mutation`, "[.]", 2),
+         consequence_type = "Unknown",
+         Primary_tissue = gsub("NS", "Other", `Primary Tissue`)) %>%
+  separate(`Genomic Co-ordinates`, c(NA, "condensed"), sep = ":") %>%
+  separate(condensed, c("chromosome_start", NA, "chromosome_end"), sep = "[.]") %>%
+  dplyr::select(Source, `Sample ID`, Primary_tissue, chromosome,
+                chromosome_start, chromosome_end, `AA Mutation`,
+                `CDS Mutation`, consequence_type)
+
+#Integrate
+colnames <- c("Source", "Sample_ID", "Primary_tissue", "Chromosome",
+              "Chromosome_start", "Chromosome_End", "AA_Mutation",
+              "CDS_Mutation", "Consequence_init")
+
+colnames(ddx3x_cosmic_filtered) <- colnames(ddx3x_icgc_filtered) <- colnames
+ddx3x_integrated <- rbind(ddx3x_cosmic_filtered, ddx3x_icgc_filtered)
+
+ddx3x_integrated <- ddx3x_integrated %>%
+  group_by(AA_Mutation) %>%
+  mutate(Consequence = case_when(
+    grepl("fs", AA_Mutation)     ~ "Frameshift",
+    grepl("[*]", AA_Mutation)    ~ "Nonsense",
+    grepl("del", AA_Mutation)    ~ "Nonsense",
+    grepl("[?]", AA_Mutation)    ~ "Unclassified",
+    TRUE ~ "Missense"))
+
+#Reorder
+orderOrigin <- tableOrder(ddx3x_integrated$Primary_tissue)
+orderMut <- c("Missense", "Nonsense", "Frameshift", "Unclassified")
+
+ddx3x_integrated <- ddx3x_integrated %>%
+  mutate(Primary_tissue = factor(Primary_tissue, levels = orderOrigin),
+         Consequence = factor(Consequence, levels = orderMut))
+write_csv(ddx3x_integrated, "DDX3Xmut_COSMIC_ICGC_nonsynonymous.csv")
+
+# Total number of mutations
+palette <- divergingPal[c(11,10,9,8)]
+ggplot(ddx3x_integrated, aes(x = Primary_tissue, y = ..count.., fill = Consequence)) +
+  geom_bar() +
+ 
+  nature_barplot() +
+   coord_flip() +
+  scale_fill_manual(values = palette) +
+  labs(x = "Primary tissue", y = "Count", fill = "Mutation type")
+
+ggsave("plots/DX_mutDistibution_totalCount.pdf", height = 6, width = 10)
+
+#Ratio
+ggplot(ddx3x_integrated, aes(x = Primary_tissue, y = ..count.., fill = Consequence)) +
+  geom_bar(position = "fill") +
+  nature_barplot() +
+   coord_flip() +
+  scale_fill_manual(values = palette) +
+  labs(x = "Primary tissue", y = "Count", fill = "Mutation type")
+
+ggsave("plots/DX_mutDistibution_ratio.pdf", height = 6, width = 10)
+```
+
+### Distribution of DDX3X mutations over functional domains and motifs 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# DDX3X mutations from BL papers
+ddx3x_regions <- read_csv("data/DDX3X_regions.csv")
+
+#Convert hg19 coordinates to hg38 coordinates
+DXmut_hg19 <- studies %>%
+  dplyr::filter(Hg == "hg19")
+
+hg19_mut <- GRanges("chrX", IRanges(start=DXmut_hg19$Start, width=1))
+
+#Get Hg19 -> Hg38 annotation chain
+ahub <- AnnotationHub()
+ahub.chain <- subset(ahub, rdataclass == "ChainFile" & species == "Homo sapiens")
+chain <- ahub.chain[ahub.chain$title == "hg19ToHg38.over.chain.gz"]
+chain <- chain[[1]]
+
+hg38_mut  <- liftOver(hg19_mut, chain)
+DXmut_hg38 <- DXmut_hg19 %>%
+  mutate(Hg = "hg38",
+         Start = as.numeric(start(hg38_mut))) %>%
+  full_join(studies) %>%
+  dplyr::filter(Hg == "hg38")
+
+mutations_gr <- GRanges(seqnames = "X",
+                        IRanges(start = DXmut_hg38$Start, width = 1))
+# Map to protein coordinates
+edbx <- ensembldb::filter(EnsDb.Hsapiens.v86, filter = ~ seq_name == "X") 
+gnm_pr <- genomeToProtein(mutations_gr, edbx) 
+
+exonsDf <- ddx3x_regions %>%
+  dplyr::filter(`function` == "exon") %>%
+  dplyr::select(name, cds_start, cds_end, genomic_start, genomic_end) %>%
+  gather(class, position, -name) %>%
+  as.data.frame() %>%
+  separate(class, c("level", "end")) %>%
+  spread(level, position)
+
+PositionsG <- as.numeric(exonsDf$genomic)
+PositionsC <- as.numeric(exonsDf$cds)
+
+gnm_pr_unList <- unlist(gnm_pr)
+
+gnm_pr_df <- as.data.frame(gnm_pr) 
+gnm_pr_df <- gnm_pr_df[,-9]
+gnm_pr_df <- gnm_pr_df %>%
+  mutate(tx_id = elementMetadata(gnm_pr_unList)$tx_id,
+         cds_ok = elementMetadata(gnm_pr_unList)$cds_ok,
+         exon_id = elementMetadata(gnm_pr_unList)$exon_id,
+         exon_rank = elementMetadata(gnm_pr_unList)$exon_rank,
+         seq_start = elementMetadata(gnm_pr_unList)$seq_start) %>%
+  dplyr::select(-group_name) %>%
+  dplyr::filter(tx_id == "ENST00000629496" | is.na(exon_id)) %>%
+  mutate(mutStatus = DXmut_hg38$Type,
+         Disease = DXmut_hg38$Lymphoma,
+         Label = DXmut_hg38$AA_change,
+         CDS_start = as.numeric(`start`)) %>%
+  rownames_to_column("ID") %>%
+  group_by(`ID`) %>%
+  mutate(PositionCDS  = case_when(`CDS_start` > 0 ~ `CDS_start`,
+                        `CDS_start` < 0 ~  PositionsC[which(abs(`seq_start` - PositionsG) ==  
+                                                              min(abs(`seq_start` - `PositionsG`)))][1])) 
+
+# Full, summarized mutations table
+gnm_pr_df_summary <- gnm_pr_df %>%
+  group_by(PositionCDS, mutStatus, Disease) %>%
+  summarize(Score = length(PositionCDS)) %>%
+  dplyr::filter(!is.na(mutStatus)) %>%
+  mutate(Label = case_when(Score > 1 ~ as.character(PositionCDS),
+                           TRUE ~ ""))
+
+# Lolipop plot  
+## Data
+mut_loc <- GRanges("chrX", IRanges(start=gnm_pr_df_summary$PositionCDS, width=1))
+mut_types <- factor(gnm_pr_df_summary$mutStatus)
+
+# Mutations: colors
+colors <- divergingPal[c(3,1,10,2,11)]
+names(colors) <- levels(mut_types)
+mut_loc$color <- colors[mut_types]
+mut_loc$score <- gnm_pr_df_summary$Score*99
+mut_loc$disease <- gnm_pr_df_summary$Disease
+
+# Mutations: legend
+legends <- list(list(labels=levels(mut_types), fill=colors))
+
+BL_mut <- mut_loc[mut_loc$disease == "BL"]
+BL_mut$SNPsideID <- "top"
+DLBCL_mut <- mut_loc[mut_loc$disease == "DLBCL"]
+DLBCL_mut$SNPsideID <- "bottom"
+
+all_mut <- c(BL_mut, DLBCL_mut)
+all_mut$lwd <- .2
+all_mut$size <- .05
+
+# DDX3X core: regions
+core <- GRanges("chrX", IRanges(start=1, end=662)) 
+core$fill <- "grey"
+core$height <- 0.01
+
+# DDX3X regioins  & motifs
+## Helicse domain
+select <- ddx3x_regions$category == "domain"
+helicase <- GRanges("chrX", IRanges(start=ddx3x_regions$cds_start[select], 
+                                    end=ddx3x_regions$cds_end[select],
+                                    names = factor(ddx3x_regions$`function`[select]))) 
+helicase$fill <- divergingPal[c(8,9)]
+helicase$height <- 0.03
+
+## Motifs
+select <- ddx3x_regions$category == "motif"
+motifs <- GRanges("chrX", IRanges(start=ddx3x_regions$cds_start[select], 
+                                  end=ddx3x_regions$cds_end[select],
+                                  names = factor(ddx3x_regions$`function`[select]))) 
+colors <- divergingPal[c(11,10)]
+names(colors) <- unique(names(motifs))
+motifs$fill <- colors[names(motifs)]
+motifs$height <- 0.03
+
+pdf('plots/Lolipop_BL_DLBCL_new.pdf', useDingbats =F)
+lolliplot(list(all_mut)[[1]], 
+          #features = c(core, helicase, motifs),
+          features = c(core, helicase),
+          xaxis = TRUE, 
+          legend = legends, 
+          yaxis=TRUE,  cex=.4,
+          jitter = "label")
+dev.off()
+```
+
+## Conclusions  
+
+1. The most frequently mutated genes found in the targeted sequencing panel of 
+39 Burkitt Lymphoma cases were MYC, ID3, TP53, CCND3, DDX3X, ARID1A, FOXO1 and SMARCA4    
+2. The frequency of DDX3X mutation was consistent with previous studies   
+3. Almost all mutations in BL and DLBCL patients were clustered in C-terminal helicase domain  
+4. In contrast to medulloblastoma, another cancer with frequent DDX3X mutations, lymphoma mutations
+were frequently disruptive (nonsense or frameshift).  

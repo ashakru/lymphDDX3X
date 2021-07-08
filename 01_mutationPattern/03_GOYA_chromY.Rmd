@@ -1,0 +1,410 @@
+---
+title: "03 Determination of chromosome Y expression in GOYA samples"
+author: "Joanna A. Krupka"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+## Introduction  
+
+Identification of chromosome Y expression in GOYA samples. 
+
+## Objectives  
+
+The objective of this analysis is to use a classification algorithm (random trees)  
+to identify samples expressing chromosome Y.
+
+## Materials and methods  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+library(tidyverse) 
+library(biomaRt)
+library(matrixStats)
+library(rpart)
+library(rpart.plot)
+library(caret)
+library(ROCR)
+library(MLmetrics)
+
+source("../utilis.R")
+
+# Global vars
+GTExData <- "../../dxJungle/expression_data/GTex/GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_reads.gct"
+GTExDataClean <- "../../dxJungle/expression_data/GTex/GTEx_cleanData.RData"
+GTExSubject <- "../../dxJungle/expression_data/GTex/GTEx_v7_Annotations_SubjectPhenotypesDS.txt"
+GTExSample <- "../../dxJungle/expression_data/GTex/GTEx_v7_Annotations_SubjectPhenotypesDS.txt"
+
+TCGAdata <- "../../dxJungle/expression_data/TCGA/TCGAcountsAll.RData"
+TCGAmeta <- "../../dxJungle/expression_data/TCGA_metadata.csv"
+TCGAclean <- "../../dxJungle/expression_data/TCGA/TCGA_cleanData.RData"
+
+GOYAdata <- "../utilis/GOYA/GOYA_TMM.RData"
+GOYAmeta <- "../utilis/GOYA/GOYA_metadata.csv"
+GOYAclean <- "../../dxJungle/expression_data/GOYA_cleanData.RData"
+
+# Load data
+GTExSample <- read_delim(GTExSample, delim = "\t", skip = 0)
+TCGAmeta <- read_csv(TCGAmeta)
+GOYAmeta <- read_csv(GOYAmeta)
+
+load(GOYAdata)
+
+# # FUNCTIONS:
+# Scale data for the analysis  
+scaleExpr <- function(exprTab, annotationColumns){
+  toScale <- as.matrix(exprTab[,-annotationColumns])
+  scaled <- t(scale(t(toScale)))
+  scaled <- cbind(exprTab[,annotationColumns], scaled)
+  dim(toScale)
+  return(scaled)
+}
+
+# Download annotations: localised on chrom Y
+ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart <- getBM(attributes=c("ensembl_gene_id",
+                              "chromosome_name",
+                              "external_gene_name",
+                              "gene_biotype"), 
+                 #host="aug2017.archive.ensembl.org",
+                 filters = "chromosome_name", 
+                 values = c("Y", "X"), 
+                 mart = ensembl)
+```
+
+Composition of chromosome X and Y in humans 
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Visualise sex chromosomes composition
+plot_df <- biomart %>%
+  group_by(chromosome_name, gene_biotype) %>%
+  summarize(n_genes = length(gene_biotype))
+
+total <- ggplot(plot_df, aes(x = chromosome_name, y = n_genes, fill = gene_biotype)) +
+  geom_bar(stat = "identity") +
+  nature_barplot() +
+  scale_fill_manual(values = divergingPal_long[1:18]) +
+  theme(legend.position = "none")
+
+frac <- ggplot(plot_df, aes(x = chromosome_name, y = n_genes, fill = gene_biotype)) +
+  geom_bar(stat = "identity", position="fill") +
+  nature_barplot() +
+  scale_fill_manual(values = divergingPal_long[1:18]) +
+  scale_y_continuous(labels = scales::percent_format()) 
+
+cowplot::plot_grid(total, frac, ncol=2, align="h", rel_widths = c(1,2))
+ggsave("plots/chromSex_composition.pdf", width = 15, height = 5)
+```
+
+The model was trained using RNA-Seq data from Genotype-Tissue Expression (GTEx) 
+Project, which includes gene expression samples from 54 tissue sites in non-diseased 
+individuals (11688 samples in total). 
+
+Raw RNA-Seq counts were filtered and TMM normalised. Per gene scaled gene expression 
+values were used as an input. The GTEx data were randomly split into a training and 
+test set comprising, respectively, 80% (9333 samples) and 20% (2355) of the data. 
+
+```{r eval = F, echo = T, message = F, warning = F, error = F}
+# Data cleaning
+# Reformat data and integrate with metadata 
+## GTEx
+GTEx_clean <- t(GTEx_tmm[,-1:-2])
+colnames(GTEx_clean) <- GTEx_tmm$Name
+rownames <- rownames(GTEx_clean)
+
+GTEx_clean <- GTEx_clean %>% as.data.frame() %>%
+  mutate(sampleID = rownames,
+         indivID = splitvec(sampleID, "-", 1:2, "-"))
+
+select <- match(GTEx_clean$indivID, GTExSample$SUBJID)
+
+GTEx_clean <- GTEx_clean %>% 
+  mutate(sex = GTExSample$SEX[select],
+         ageGroup = GTExSample$AGE[select]) %>%
+  mutate(sex = case_when(
+    sex == 2 ~ "F",
+    sex == 1 ~ "M"
+  )) %>%
+  dplyr::select(sampleID, indivID, sex, starts_with("ENSG"))
+
+# Modify column names
+toCut <- splitvec(colnames(GTEx_clean)[-1:-3], "[.]", select = 1)
+colnames(GTEx_clean) <- c(colnames(GTEx_clean)[1:3], toCut)
+
+## TCGA
+TCGA_clean <- t(TCGA_tmm[,-1:-2])
+colnames(TCGA_clean) <- TCGA_tmm$ensembl
+rownames <- rownames(TCGA_clean)
+
+select <- match(rownames, TCGAmeta$barcode)
+
+TCGA_clean <- TCGA_clean %>% as.data.frame() %>%
+  mutate(sampleID = rownames,
+         sex = TCGAmeta$gender[select]) %>%
+  mutate(sex = case_when(
+    sex == "female" ~ "F",
+    sex == "male"   ~ "M"
+  )) %>%
+  dplyr::select(sampleID, sex, starts_with("ENSG"))
+
+## GOYA
+GOYA_clean <- t(GOYA_tmm[,-1:-2])
+colnames(GOYA_clean) <- GOYA_tmm$ensembl_gene_id
+rownames <- rownames(GOYA_clean)
+GOYA_clean <- GOYA_clean[,unique(colnames(GOYA_clean))]
+
+GOYA_clean <- GOYA_clean %>% as.data.frame() %>%
+  mutate(sampleID = rownames) %>%
+  dplyr::select(sampleID, starts_with("ENSG"))
+GOYA_clean$sex <- "X"
+```
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+load(GTExDataClean)
+load(TCGAclean)
+load(GOYAclean)
+
+GOYA_clean$sex <- "X"
+
+# Select overlapping genes (with GOYA data)
+common <- c("sampleID", "sex",
+            intersect(intersect(colnames(GTEx_clean)[-1:-2], 
+                                colnames(TCGA_clean))[-1:-2], 
+                      colnames(GOYA_clean))) 
+
+# Download annotations
+ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart <- getBM(attributes=c("ensembl_gene_id",
+                              "chromosome_name",
+                              "external_gene_name"),
+                 filters = "ensembl_gene_id", 
+                 values = as.character(common), 
+                 mart = ensembl)
+
+# Scale data (expression z-scores acroos samples)
+GTEx_clean <- GTEx_clean[,common]
+GTEx_scaled <- scaleExpr(GTEx_clean, 1:2)
+
+TCGA_clean <- TCGA_clean[,common] 
+TCGA_scaled <- scaleExpr(TCGA_clean, 1:2) %>% na.omit()
+
+GOYA_clean <- GOYA_clean[,common]
+GOYA_scaled <- scaleExpr(GOYA_clean, 1:2)
+
+common[!(common %in% colnames(GOYA_clean))]
+# Train GTEx
+set.seed(2)
+
+assignment <- sample(1:2, size = nrow(TCGA_scaled), prob = c(0.8,0.2), replace = T)
+train_TCGA <- TCGA_scaled[assignment == 1,-1]
+test1_TCGA <- TCGA_scaled[assignment == 2,]
+
+dim(train_TCGA)
+dim(test1_TCGA)
+assignment <- sample(1:2, size = nrow(GTEx_scaled), prob = c(0.8,0.2), replace = T)
+train_GTEx <- GTEx_scaled[assignment == 1,-1]
+test1_GTEx <- GTEx_scaled[assignment == 2,]
+
+dim(train_GTEx)
+dim(test1_GTEx)
+```
+
+The algorithm running on default parameters achieved high performance: 
+F1 score = 0.9973, AUC = 0.9973, 
+8 males were misclassified. 
+KDM5D, DDX3Y, USP9Y, RPS4Y1, TXLNGY, XIST were identified as classifying genes. 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+set.seed(2)
+## GTEx train
+model1_norm <- rpart(formula = sex ~.,
+                data = train_GTEx,
+                method = "class")
+
+### Test & validation
+probs <- as.numeric(test1_GTEx$sex == "F")
+pred1_probs <- prediction(predict(object = model1_norm,
+                              newdata = test1_GTEx[,-1:-2],
+                              type = "prob")[,1],
+                      probs)
+
+testGTExonGTEx <- predict(object = model1_norm,
+                          newdata = test1_GTEx[,-1:-2],
+                          type = "class")
+ 
+confusionMatrix(data = testGTExonGTEx,
+                reference = factor(test1_GTEx$sex))
+### F1 score
+MLmetrics::F1_Score(test1_GTEx$sex == "F", testGTExonGTEx == "F")
+
+### AUC
+performance1 <- performance(pred1_probs, measure = "tpr", x.measure="fpr")
+auc1 <- performance(pred1_probs, 'auc')
+slot(auc1, 'y.values')
+```
+
+In order to assess the ability of the algorithm to classify cancer samples, GTEx trained model was benchmarked against cancer dataset. TCGA gene expression data (RNA-Seq only) were downloaded using TCGAbiolinks, the Bioconductor package. 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+set.seed(2)
+## TCGA train
+model2_norm <- rpart(formula = sex ~.,
+                data = train_TCGA,
+                method = "class")
+
+probs <- as.numeric(test1_TCGA$sex == "F")
+pred2_probs <- prediction(predict(object = model2_norm,
+                              newdata = test1_TCGA[,-1:-2],
+                              type = "prob")[,1],
+                      probs)
+
+testTCGAonTCGA <- predict(object = model2_norm,
+                          newdata = test1_TCGA[,-1:-2],
+                          type = "class")
+
+confusionMatrix(data = testTCGAonTCGA,
+                reference = factor(test1_TCGA$sex))
+
+### F1 score
+MLmetrics::F1_Score(test1_TCGA$sex == "F", testTCGAonTCGA == "F")
+
+### AUC
+performance2 <- performance(pred2_probs, measure = "tpr", x.measure="fpr")
+auc2 <- performance(pred2_probs, 'auc')
+slot(auc2, 'y.values')
+```
+
+Similarly, the dataset was split into a training (80%, 9198 samples) and test set (20%, 2336 samples). The algorithm achieved lower performance than in GTEx data: F1 score = 0.9624, AUC = 0.9779, 46 males and 37 females were misclassified on default parameters. 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+### GTEx train, TCGA test
+testGTExonTCGA <- predict(object = model1_norm,
+                          newdata = test1_TCGA[,-1:-2],
+                          type = "class")
+
+test1_TCGA <- test1_TCGA %>%  mutate(pred = testGTExonTCGA)
+
+confusionMatrix(data = testGTExonTCGA,
+                reference = factor(test1_TCGA$sex))
+
+
+# Check overall chromosome Y expression
+ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart <- getBM(attributes=c("ensembl_gene_id",
+                              "chromosome_name",
+                              "external_gene_name",
+                              "gene_biotype"), 
+                 #host="aug2017.archive.ensembl.org",
+                 filters = "chromosome_name", 
+                 values = c("X", "Y"), 
+                 mart = ensembl)
+
+checkTab <- TCGA_clean %>%
+  dplyr::select(sampleID, sex, one_of(biomart$ensembl_gene_id)) %>%
+  dplyr::filter(sampleID %in% test1_TCGA$sampleID) %>%
+  left_join(dplyr::select(test1_TCGA, sampleID, pred)) %>%
+  gather(ensembl_gene_id, TMM, -sampleID, -sex, -pred) %>%
+  left_join(biomart) %>%
+  mutate(class = case_when(
+    pred == "F" & sex == "F" ~ "Female",
+    pred == "M" & sex == "M" ~ "Male",
+    pred == "M" & sex == "F" ~ "Misidentified Female",
+    pred == "F" & sex == "M" ~ "Misidentified Male"
+  )) %>%
+  mutate(class = factor(class, levels = c("Female", "Misidentified Female",
+                                          "Male", "Misidentified Male")))
+  
+ggplot(checkTab) +
+  geom_boxplot(aes(x = chromosome_name, y = log2(TMM+01), colour = class), outlier.size = 0.3) +
+  nature_barplot() +
+  scale_colour_manual(values = divergingPal[c(2,3,10,11)])
+
+ggsave("plots/SexChromosomeExpression.pdf", width = 6, height = 4)
+
+## F1 score
+MLmetrics::F1_Score(test1_TCGA$sex == "F", testGTExonTCGA == "F")
+
+### Important features
+importantGTEx <- summary(model1_norm)$variable.importance
+
+biomart <- getBM(attributes=c("ensembl_gene_id",
+                              "chromosome_name",
+                              "external_gene_name",
+                              "gene_biotype"), 
+                 #host="aug2017.archive.ensembl.org",
+                 filters = "ensembl_gene_id", 
+                 values = names(importantGTEx), 
+                 mart = ensembl)
+```
+
+When the GTEx trained model was tested on the TCGA test dataset, the number of misclassified females and males was 2 and 295, respectively. The 295 males classified as females showed remarkably lower expression of genes localised on chromosome Y, which could reflect previously reported loss of chromosome Y during oncogenesis
+
+# Plots
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+### Plot
+# GTEx
+GTEx_clGenes <- GTEx_clean %>%
+  filter(sampleID %in% test1_GTEx$sampleID) %>%
+  dplyr::select(sampleID, sex, names(importantGTEx)) %>%
+  na.omit() %>%
+  gather(ensembl_gene_id, TMM, -sampleID, -sex) %>%
+  left_join(biomart)
+
+ggplot(GTEx_clGenes) +
+  geom_freqpoly(aes(x = log2(TMM), colour = sex)) +
+  facet_grid(. ~ external_gene_name, scales = "free") +
+  nature_barplot() +
+  scale_colour_manual(values = divergingPal[c(2,10)]) +
+  lims(x = c(-10,20))
+
+ggsave("plots/GTEx_classyfyingGenes.pdf", width = 8, height = 3)
+
+# TCGA
+TCGA_clGenes <- TCGA_clean %>%
+  dplyr::select(sampleID, sex, names(importantGTEx))  %>%
+  na.omit() %>%
+  gather(ensembl_gene_id, TMM, -sampleID, -sex) %>%
+  left_join(biomart)
+  
+ggplot(TCGA_clGenes) +
+  geom_freqpoly(aes(x = log2(TMM), colour = sex)) +
+  facet_grid(. ~ external_gene_name, scales = "free") +
+  nature_barplot() +
+  scale_colour_manual(values = divergingPal[c(2,10)]) +
+  lims(x = c(-10,20))
+
+ggsave("plots/TCGA_classyfyingGenes.pdf", width = 8, height = 3)
+```
+
+In order to obtain high-confidence set of male DLBCL patient samples with chromosome Y expression, the GTEx trained model was used to classify samples in the GOYA dataset. 
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+## GOYA 
+GOYA_prediction <- predict(object = model1_norm,
+                            newdata = GOYA_scaled[,-1:-2],
+                            type = "class")
+
+GOYA_scaled$sex <- GOYA_prediction
+
+GOYA_valid <- GOYA_clean %>%
+  dplyr::select(sampleID, names(importantGTEx), -sex) %>%
+  left_join(dplyr::select(GOYA_scaled, sampleID, sex)) %>% 
+  gather(ensembl_gene_id, TMM, -sex, -sampleID) %>%
+  left_join(biomart)
+  
+ggplot(GOYA_valid) +
+  geom_freqpoly(aes(x = log2(TMM), colour = sex)) +
+  facet_grid(. ~ external_gene_name, scales = "free") +
+  nature_barplot() +
+  scale_colour_manual(values = divergingPal[c(2,10)]) +
+  scale_x_continuous(breaks = c(-5,0,5), ) +
+  lims(x = c(-10,20))
+
+ggsave("plots/GOYA_classyfyingGenes.pdf", width = 8, height = 3)
+
+GOYA_classification <- GOYA_scaled[,1:2]
+GOYAmeta <- full_join(GOYAmeta, GOYA_classification, by = c("Run" = "sampleID"))
+write_csv(GOYAmeta, "../utilis/GOYA/GOYA_metadataGenderClassified.csv")
+```

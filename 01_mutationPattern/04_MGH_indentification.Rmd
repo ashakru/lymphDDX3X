@@ -1,0 +1,333 @@
+---
+title: "04 MHG Subtype identification"
+author: "Joanna Krupka"
+date: "30 July 2019"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+## Introduction  
+
+DLBCL is a highly heterogenous diseases which can be classified into subtypes based on gene expression profile. 
+DDX3X mutation was recently noted to be enriched amongst the MHG transcriptional subtype of DLBCL (Sha et al., 2019). 
+
+## Objectives
+
+The aim of this analysis is to classify patients enrolled into GOYA clinical trial into DLBCL transcriptional subtypes (cell-of-origin + Molecular High Grade) and compare the frequency of DDX3X mutations between the groups. 
+
+## Materials and methods 
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+library(tidyverse)
+library(biomaRt)
+library(pheatmap)
+library(limma)
+library(HGNChelper)
+library(e1071)
+library(matrixStats)
+library(car)
+library(ggpubr)
+library(corrplot)
+
+source("../utilis.R")
+
+GOYAMETA <- "data/GOYA_metadataFull.csv"
+GOYAMUT <- "../utilis/GOYA/GOYA_DDX3X_mutation.csv"
+COO_SIGN <-  "../utilis/signatures/COO_DLBCL_signatureDave2018.csv"
+MHG_SIGN <- "../utilis/signatures/MHG_DLBCL_signatureSha2018.csv"
+BDCPACKAGE <- "../utilis/pipelines/BDC/BDC/R"
+BDCDATA <- "../utilis/pipelines/BDC/BDC/data"
+
+# Load BDC package
+sapply(list.files(BDCPACKAGE, full.names = T), source, .GlobalEnv)
+sapply(list.files(BDCDATA, ".rda", full.names = T), load, .GlobalEnv)
+classifierGene <- Gene
+
+# Load GOYA expression data
+load("../utilis/GOYA/GOYAcountsFull.RData")
+load("../utilis/GOYA/GOYA_TMM.RData")
+
+GOYA_meta <- read_csv(GOYAMETA)
+
+MHG_tab <- read_csv(MHG_SIGN)
+COO_tab <- read_csv(COO_SIGN)
+
+# Annotations
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl", host = "http://jul2019.archive.ensembl.org")
+biomart_ensembl2name <- getBM(attributes=c('ensembl_gene_id', 
+                                           'external_gene_name', 
+                                           'entrezgene_id'), 
+                                filters = "ensembl_gene_id", 
+                                values = splitvec(countsGOYA$geneID, "[.]", 1),
+                                mart = ens)
+
+```
+
+Classification of GOYA trial cases into four transcriptomic subtypes: ABC, GCB, Unclassified and Molecular High Grade (MHG) DLBCL was performed as previously described (Reddy et al., 2017, 2017; Sha et al., 2019). Briefly, read counts were TMM normalised, log2 transformed and z-scores were computed across the genes. The subtype score was obtained per sample by subtracting mean z-scores of ABC-signature genes (ABC score) from mean z-scores of GCB-signature genes (GCB score). Each sample was assigned to a subtype according to the following criteria: ABC - subtype score > 0.25 and GCB score < 0.75; GCB - subtype score < −0.25 and ABC score < 0.75; Unclasssified - not assigned to ABC or GCB subtype. MHG cases were identified among the GCB group using BDC R package.  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# Normalize (lower low counts filtering criteria to capture all the genes in the classifier)
+GOYA_filtered <- remove_low(countsGOYA, 20, 0.1) %>% na.omit()
+GOYA_norm <- log2(tmm(as.matrix(GOYA_filtered[,-1] + 1)))
+GOYA_norm  <- cbind(GOYA_filtered[,1], GOYA_norm)%>% as.tibble() %>%
+  mutate(V1 = splitvec(V1, "[.]", 1)) %>%
+  mutate_at(vars(2:554), as.numeric)
+colnames(GOYA_norm)[1] <- "ensembl" 
+
+DDX3X_expr <- GOYA_norm %>%
+  dplyr::filter(ensembl == "ENSG00000215301") %>%
+  gather(Run, DDX3Xexpr, -ensembl) %>%
+  mutate(DDX3Xexpr = scale(DDX3Xexpr))
+
+# 
+GOYA_COO <- COO_tab  %>%
+  left_join(dplyr::select(GOYA_norm, ensembl, starts_with("SRR")), 
+            by = c("ensembl_ID" = "ensembl")) %>%
+  gather(key, value, -name, -COO, -ensembl_ID) %>%
+  group_by(ensembl_ID) %>%
+  mutate(value = scale(as.numeric(value)))
+
+MHG_tab <- MHG_tab %>% 
+  left_join(biomart_ensembl2name, by = c("name" = "external_gene_name")) %>%
+  dplyr::filter(name %in% GOYA_tmm$external_gene_name) 
+
+# Scaled values for heatmap
+GOYA_plotValues <- data.frame(ensembl = c(COO_tab$ensembl_ID, 
+                                          MHG_tab$ensembl_gene_id),
+                              name = c(COO_tab$name, MHG_tab$name)) %>%
+  left_join(dplyr::select(GOYA_norm, ensembl, starts_with("SRR")), 
+            by = "ensembl")
+
+rowNames = GOYA_plotValues$name
+GOYA_plotValues <- GOYA_plotValues %>%
+  dplyr::select(starts_with("SRR"))
+
+# ABC/GCB scores and RNA-Seq based classification (Reddy et al. Cell 2018)
+GOYA_COOscores <- GOYA_COO %>%
+  ungroup() %>%
+  group_by(key, COO) %>%
+  summarize(score = sum(value)/length(value)) %>%
+  spread(COO, score) %>%
+  mutate(RNAseqSubtypeScore = ABC-GCB) %>%
+  mutate(RNAseqSubtype = case_when(
+    RNAseqSubtypeScore > 0.25 ~  "ABC",
+    RNAseqSubtypeScore < -0.25 ~ "GCB",
+    TRUE ~ "Unclassified"
+  )) %>%
+  left_join(DDX3X_expr, by = c("key" ="Run"))
+
+GCBsamples <- GOYA_COOscores$key[GOYA_COOscores$RNAseqSubtype == "GCB"]
+
+# MHG classification (Care M. paper)
+testData <- GOYA_norm[,GCBsamples]
+testDataGene <- biomart_ensembl2name$external_gene_name[match(GOYA_norm$ensembl, biomart_ensembl2name$ensembl_gene_id)]
+
+pred = Classify(testData, testDataGene,  classifierGene="Gene26")
+mhgPred <- data.frame(Run = colnames(testData),
+                      pred = pred$prediction)
+
+SubtypesOrder <- c("MHG", "GCB", "Unclassified", "ABC")
+GOYA_COOscores <- GOYA_COOscores %>%
+  left_join(mhgPred, by =c("key" = "Run")) %>%
+  mutate(PredSubtype = case_when(
+    pred.class == "BL" ~ "MHG",
+    RNAseqSubtypeScore > 0.25 ~  "ABC",
+    RNAseqSubtypeScore < -0.25 ~ "GCB",
+    TRUE ~ "Unclassified"
+  )) %>%
+  left_join(dplyr::select(GOYA_meta, key, sex, DDX3X_status)) %>%
+  arrange(match(PredSubtype, SubtypesOrder))
+
+#write_csv(GOYA_COOscores, "../utilis/GOYA/GOYA_metadataUpdatedSuptypes.csv")
+
+# Barblot
+plot_df <- table(GOYA_COOscores$PredSubtype) %>%
+  as.data.frame() %>%
+  mutate(Subtype = factor(Var1, levels = c("MHG", "GCB", "Unclassified", "ABC")))
+
+ggplot(plot_df, aes(x = Subtype, y = Freq, fill = Subtype)) +
+  geom_bar(stat = "identity") +
+  nature_barplot()+
+  coord_flip() +
+  scale_fill_manual(values = rev(divergingPal[c(8,9,10,11)]))
+
+ggsave("plots/GOYA_Subtype.pdf", width = 5, height = 2)
+
+# Heatmap  
+plot_df <- GOYA_plotValues[,GOYA_COOscores$key] %>%
+  distinct()
+
+## Annotations
+annotation_col <- data.frame(Subtype = GOYA_COOscores$PredSubtype,
+                             DDX3Xmut = GOYA_COOscores$DDX3X_status,
+                             DDX3Xexpr = round(GOYA_COOscores$DDX3Xexpr, digits = 1),
+                             stringsAsFactors = F) %>%
+  mutate(DDX3Xexpr = case_when(
+    DDX3Xexpr > 2.5  ~  2.5,
+    DDX3Xexpr < -2.5 ~ -2.5,
+    TRUE ~ DDX3Xexpr),
+    DDX3Xmut = case_when(
+    DDX3Xmut == "MUT_WhiteList"      ~ "Mutated",
+    DDX3Xmut == "MUT_Valid_Helicase" ~ "Mutated",
+    DDX3Xmut == "LowExpr"         ~ "Not expressed",
+    TRUE                          ~ "Wild-type"))
+
+rownames(annotation_col) <- GOYA_COOscores$key
+
+Var1 = brewer.pal(11, "Spectral")[c(11,10,9,8)]
+names(Var1) = unique(annotation_col$Subtype) 
+Var2 = c(brewer.pal(11, "Spectral")[c(2,10)], "grey")[c(1,3,2)]
+names(Var2) = unique(annotation_col$DDX3Xmut) 
+Var4 = rev(colorRampPalette(brewer.pal(11, "RdBu")[c(1,2,3,8,9,10)])(length(unique(annotation_col$DDX3Xexpr))))
+names(Var4) = unique(annotation_col$DDX3Xexpr) 
+
+ann_colors = list(Subtype = Var1,
+                  DDX3Xmut = Var2,
+                  DDX3Xexpr = Var4) 
+
+## Heatmap graph parameters
+colors <- c(-3, seq(-2.5,2.5,by=0.01),3) 
+col <- brewer.pal(5,"RdBu")[c(1,5)]
+palette <- rev(colorRampPalette(c(col[1], "white", col[2]))(n = length(colors)))
+#palette <- rev(colorRampPalette(brewer.pal(11,"RdBu"))(n = length(colors)))
+
+dih <- pheatmap(as.matrix(plot_df),
+                scale = "row",  #scale by row
+                color = palette, #colors of the heatmap
+                breaks = colors, #spread of colors
+                cluster_cols = F, 
+                cluster_rows = F,
+                labels_row = rowNames,
+                show_colnames = F,
+                show_rownames = T,
+                fontsize_row = 6, 
+                cellwidth = 0.4, 
+                cellheight = 5,
+                clustering_method = "complete", #clustering parameter (see hclust function)
+                annotation_col = annotation_col, 
+                annotation_colors = ann_colors,
+                main = "GOYA",
+                #filename = paste0("plots/Heatmap_GOYA_DXmut_SubtypeUpdtaed.pdf"),
+                border_color = NA,
+                legend = T,
+                annotation_legend = T)
+```
+
+### Statistical analysis of DDX3X mutations frequency in DLBCL subtypes (GOYA)  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# Clean the data  
+GOYA_COOscores <- GOYA_COOscores %>%
+  mutate(Subtype = factor(PredSubtype, levels = SubtypesOrder),
+         DDX3Xmut = case_when(
+           DDX3X_status == "MUT_WhiteList"      ~ "Mutated",
+           DDX3X_status == "MUT_Valid_Helicase" ~ "Mutated",
+           DDX3X_status == "LowExpr"            ~ "Not expressed",
+           TRUE                             ~ "Wild-type"))
+
+# Visualise DDX3X mutation distribution
+freqTab <- table(GOYA_COOscores[,13:14]) %>%
+  as.data.frame() 
+
+# Correct on one mutation that should be a wt
+freqTab[2,3] <- 16
+freqTab[10,3] <- 181
+
+freqTab <- freqTab %>%
+  group_by(Subtype) %>%
+  mutate(FreqNorm = Freq/sum(Freq),
+         DDX3Xmut = factor(DDX3Xmut, levels = c( "Wild-type", "Not expressed", "Mutated")))
+
+ggplot(freqTab) +
+  geom_bar(aes(x = Subtype, y = FreqNorm, fill = DDX3Xmut), stat = "identity") +
+  nature_barplot() +
+  coord_flip() +
+  scale_fill_manual(values = c(brewer.pal(11, "Spectral")[c(2,10)], "grey")[c(2,3,1)]) +
+  labs(y = "Frequency", x = "", fill = "DDX3X status")
+
+ggsave("plots/DXmut_Subtype_barplot.pdf", width = 7, height = 2)
+
+# Chi-square test
+freqTab <- freqTab %>%
+  dplyr::select(Subtype, DDX3Xmut, Freq) %>%
+  spread(DDX3Xmut, Freq) %>%
+  column_to_rownames("Subtype") 
+
+chisq <- chisq.test(freqTab)
+chisq
+chisq$observed
+chisq$expected
+
+# Pearson's residuals
+col <- brewer.pal(5,"RdBu")[c(1,5)]
+palette <- rev(colorRampPalette(c(col[1], "white", col[2]))(100))
+
+pdf("plots/DXmut_Subtype_PearsonRes.pdf")
+corrplot(chisq$residuals, 
+         is.cor = FALSE, 
+         method = "color",
+         col = palette,
+         tl.col = "black", 
+         cl.lim = c(-2,4),
+         cl.cex = 0.8)
+dev.off()
+
+# Contribution
+contrib <- 100*chisq$residuals^2/chisq$statistic
+corrplot(contrib, is.cor = FALSE)
+```
+
+### Statistical analysis of DDX3X mutations frequency in DLBCL subtypes (REMODEL-B)  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# Load data
+remodelBdf <- read_csv("data/REMODELB_mutFreq.csv") %>%
+  filter(Study != "GOYA" & Subtype != "Unclassified") %>%
+  dplyr::select(Subtype, Mutated, Wild_type) %>%
+  gather(DDX3X_status, Freq, -Subtype) %>%
+  group_by(Subtype) %>%
+  mutate(FreqNorm = Freq/sum(Freq),
+         DDX3Xmut = factor(DDX3X_status, levels = c( "Wild_type", "Mutated"))) %>%
+  ungroup() %>%
+  mutate(Subtype = factor(Subtype, levels = c("MHG", "GCB", "ABC")))
+
+#Barplot  
+ggplot(remodelBdf) +
+  geom_bar(aes(x = Subtype, y = FreqNorm, fill = DDX3Xmut), stat = "identity") +
+  nature_barplot() +
+  coord_flip() +
+  scale_fill_manual(values = c(brewer.pal(11, "Spectral")[c(10,2)])) +
+  labs(y = "Frequency", x = "", fill = "DDX3X status")
+
+ggsave("plots/DXmut_SubtypeREMODEL_barplot.pdf", width = 5.5, height = 1.5)
+
+remodelBdf <- read_csv("data/REMODELB_mutFreq.csv") %>%
+  filter(Study != "GOYA" & Subtype != "Unclassified") %>%
+  dplyr::select(Subtype, Mutated, Wild_type) %>%
+  column_to_rownames("Subtype")
+  
+chisq <- chisq.test(remodelBdf)
+chisq
+chisq$observed
+chisq$expected
+
+# Pearson's residuals
+col <- brewer.pal(5,"RdBu")[c(1,5)]
+palette <- rev(colorRampPalette(c(col[1], "white", col[2]))(100))
+
+pdf("plots/DXmut_Subtype_PearsonRes.pdf")
+corrplot(chisq$residuals, 
+         is.cor = FALSE, 
+         method = "color",
+         col = palette,
+         tl.col = "black", 
+         cl.lim = c(-2,4),
+         cl.cex = 0.8)
+dev.off()
+```
+
+## Conclusion
+
+DDX3X mutation is enriched in in MHG DLBCL subtype. 

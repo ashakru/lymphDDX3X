@@ -1,0 +1,343 @@
+---
+title: "02 DDX3X mutations in GOYA datases"
+author: "Joanna A. Krupka"
+date: "01 July 2019"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: show
+---
+
+## Introduction  
+
+Analysis of publicly available RNA-seq from 553 DLBCL patients enrolled in the GOYA trial.
+
+## Objectives  
+
+The aim of this analysis is to identify samples with DDX3X mutation or with low DDX3X expression
+
+## Materials and methods  
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+library(tidyverse)
+library(VariantAnnotation)
+library(Rsamtools)
+library(GenomicFeatures)
+library(biomaRt)
+library(rtracklayer)
+library(trackViewer)
+library(AnnotationHub)
+library(pheatmap)
+library(limma)
+library(HGNChelper)
+library(e1071)
+library(matrixStats)
+library(car)
+library(ggpubr)
+library(corrplot)
+
+source("../utilis.R")
+
+# Make DDX3X models
+DDX3X_REGION = c(41333284,41364472)
+DDX3X_ENSEMBL <- "ENST00000644876.1"
+WHITELIST = "data/missense_whitelist.csv" # List of recurrent DDX3X mutation in BL
+DX <- GRanges("chrX", IRanges(start = DDX3X_REGION[1],
+                              end = DDX3X_REGION[2]))
+
+REFGENOME = "~/Documents/reference-genome/hg38_NCBI/hg38.fa"
+GTF = "~/Documents/reference-genome/gencode_v29_annotations/gencode.v29.basic.annotation.gtf"
+EXACdb <- "data/exac_ENSG00000215301_2019_10_30_15_34_40.csv"
+VCFFOLDER = "data/mutationsCalling/vcf_filtered"
+GOYAMETA <- "../utilis/GOYA/GOYA_metadata.csv"
+GOYACOUNTS <- "../utilis/GOYA/GOYAcountsFull.RData"
+
+# Load annotations
+txdb <- makeTxDbFromGFF(GTF, "gtf", organism = "Homo sapiens")
+genome <- FaFile(REFGENOME, index=sprintf("%s.fai", REFGENOME))
+whitelist <- read_csv(WHITELIST)
+```
+
+## Analysis  
+
+### Identify DDX3X mutated cases by SNVs calling from aligned RNA-Seq reads   
+
+The workflow follows GATK best practices. Conda environments needed to run the code below were
+saved in .yml files in this folder.  
+
+```{bash eval = F, echo = T, message = F, warning = F, error = F}
+# Activate the environment
+conda activate picard
+
+# Add read groups
+./scripts/run_picardReadGroups.sh     
+# Deduplicate
+./scripts/run_picardMarkDuplicates.sh
+
+# Reference sequence dictionary
+picard CreateSequenceDictionary \
+R=~/Documents/reference-genome/hg38_NCBI/hg38.fa \
+O=~/Documents/reference-genome/hg38_NCBI/hg38.dict \
+
+# Reorder deduplicated bam files to match reference sequence contigs 
+./scripts/run_reorderBam.sh
+
+# FASTA index 
+samtools faidx ~/Documents/reference-genome/hg38_NCBI/hg38.fa -o ~/Documents/reference-genome/hg38_NCBI/hg38.fa.fai
+
+# Index reordered bam
+ls *dedup_reordered.bam | parallel samtools index '{}'
+
+# Reassign mapping qualities
+./scripts/run_gathSplitNCigarReads.sh
+
+# Call Haplotypes
+./scripts/run_gathSplitNCigarReads.sh
+
+# Variant Filtering
+./scripts/run_gatkVariantFiltering.sh
+
+# Compress and index VCF files
+conda activate gatk
+
+rsync -avP mutationsCalling/vcf_filtered/*  mutationsCalling/vcf_filteredCompressed/
+cd mutationsCalling/vcf_filteredCompressed/
+ls *.vcf | parallel "bgzip < {} > {}.gz && tabix {}.gz"
+```
+
+### Select DDX3X variants and predict consequences  
+
+DDX3X mutated samples will be identified according to the following criteria:  
+
+- presence of distruptive mutations: nonsense or frameshift  
+- non-synonymous SNVs with the ratio of variant to reference coverage > 0.2 localised
+in DDX3X helicase domain and not previously reported in the ExAC database of common population variants 
+
+```{r eval = F, echo = T, message = F, warning = F, error = F}
+# List VCF files
+files <- list.files("mutationsCalling/vcf_filteredCompressed", "*.vcf.gz$", full.names = T)
+
+# Iterate through vcf files
+DXmut <- list()
+DXstatus <- data.frame(sampleID = c(),
+                       DDX3Xmut_any = c())
+DXloc <- GRanges()
+DXconseq <- GRanges()
+n <- 1
+
+for (i in 1:length(files)){
+  tab <- TabixFile(files[i])
+  vcf <- readVcf(tab, "hg38")
+  chroms <- as.character(unique(seqnames(rowRanges(vcf))))
+  sampleName <- splitvec(splitvec(files[i], "/", 3), "_", 1)
+  
+  if("chrX" %in% chroms){
+    vcf <- readVcf(tab, "hg38", param = DX)
+    
+    if(length(rowRanges(vcf)) > 0){
+      #Save vcf
+      DXmut[[n]] <- vcf
+      DXstatus[i,1] <- sampleName
+      DXstatus[i,2] <- "VAR"
+      
+      # Extract Variants depth
+      snpMatrix <- genotypeToSnpMatrix(vcf, uncertain = F)
+      
+      # Predict consequences and save GRanges objects
+      object <- rowRanges(vcf)
+      object$SAMPLE <- sampleName
+      object$depthREF <- unlist(lapply(geno(vcf)$AD, function(x){x[1]}))
+      object$depthALT <- unlist(lapply(geno(vcf)$AD, function(x){x[2]}))
+      refallele <- ref(vcf)
+      altallele <- alt(vcf)
+      eltROWS <- elementNROWS(altallele)
+      rd_exp <- rep(object, eltROWS)
+      coding <- VariantAnnotation::predictCoding(object, txdb, seqSource=genome, unlist(altallele))
+      
+      DXloc <- append(DXloc, object)
+      DXconseq <- append(DXconseq, coding)
+      n <- n +1
+      
+  } else {
+    DXstatus[i,1] <- sampleName
+    DXstatus[i,2] <- "WT"
+    
+    }
+  }
+}
+
+DXstatus <- DXstatus %>% na.omit()
+
+#Collapse all samples to one GRanges object 
+names(DXconseq) <- paste(names(DXconseq), 1:length(DXconseq), sep = "_")
+DXconseq_tab <- as.data.frame(DXconseq)
+txTab <- transcripts(txdb) %>% as.data.frame()
+
+DXconseq_tabClean <- DXconseq_tab %>% 
+  mutate(ensembl_transcript = txTab$tx_name[match(TXID, txTab$tx_id)]) %>%
+  filter(ensembl_transcript == DDX3X_ENSEMBL) %>%
+  dplyr::select(GENEID, seqnames, start, end, SAMPLE, QUAL, FILTER, REF, varAllele, 
+                ensembl_transcript, CONSEQUENCE, REFCODON, VARCODON, REFAA, VARAA, CDSLOC.start, CDSLOC.end, PROTEINLOC, 
+                depthREF, depthALT)
+
+write_csv(DXconseq_tabClean, "mutationsCalling/DDX3X_mutations.csv")
+```
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# Visualise DDX3X mutations
+# TABLES
+DXconseq_tab <- read_csv("mutationsCalling/DDX3X_mutations.csv") %>%
+  mutate(ID = 1:length(REF))
+
+# Select only PASS (quality filtered)
+DXpassed_tab <- DXconseq_tab %>% dplyr::filter(FILTER == "PASS") 
+DXpassed_tab$CONSEQUENCE[DXpassed_tab$REF == "TCCG"] <- "frameshift"
+DXpassed_all <- DXpassed_tab %>% 
+  mutate(PROTEINLOC = splitvec(PROTEINLOC, ":", 1)) %>%
+  mutate(PROTEINLOC = as.numeric(PROTEINLOC),
+         Class = case_when(
+           PROTEINLOC %in% whitelist$Protein_loc | 
+           CONSEQUENCE %in% c("frameshift", "nonsense")  ~ "MUT_WhiteList",
+           CONSEQUENCE %in% c("synonymous")              ~ "VAR_Synonymous",
+           TRUE                                          ~ "MUT_qualityPass"))
+write_csv(DXpassed_all, "mutationsCalling/DDX3Xmut_ALLidentified.csv")
+
+# Select only nonsynonymous
+DXnonSyn_tab <- DXpassed_tab %>% 
+  mutate(PROTEINLOC = splitvec(PROTEINLOC, ":", 1)) %>%
+  mutate(PROTEINLOC = as.numeric(PROTEINLOC),
+         whiteList = PROTEINLOC %in% whitelist$Protein_loc | 
+           CONSEQUENCE %in% c("frameshift", "nonsense")) %>%
+  mutate(DepthFrac = depthALT/(depthALT+depthREF),
+         Helicase = PROTEINLOC %in% c(211:403,414:575),
+         Valid = (CONSEQUENCE %in% c("frameshift", "nonsense")) |
+  (DepthFrac >= 0.2 & Helicase)) 
+
+
+# EXAC database crosscheck
+EXACdata <- read_csv(EXACdb) %>%
+  mutate(Position = as.numeric(Position))
+
+# Hg19 to hg38 chain
+hg19_exac <- GRanges("chrX", IRanges(start=EXACdata$Position, width=1))
+
+#Get Hg19 -> Hg38 annotation chain
+ahub <- AnnotationHub()
+ahub.chain <- subset(ahub, rdataclass == "ChainFile" & species == "Homo sapiens")
+chain <- ahub.chain[ahub.chain$title == "hg19ToHg38.over.chain.gz"]
+chain <- chain[[1]]
+
+hg38_exac  <- liftOver(hg19_exac, chain)
+EXACdata$PositionHG38 <- as.numeric(start(hg38_exac))
+
+DXnonSyn_tab <- DXnonSyn_tab  %>%
+  left_join(dplyr::select(EXACdata, Position, Consequence),
+            by = c("start" = "Position"))
+
+write_csv(DXnonSyn_tab, "mutationsCalling/DDX3Xmut_identified.csv")
+
+# PLOTS
+# Graphical settings
+palette <- c(brewer.pal(9, "GnBu")[(9:5)],
+             brewer.pal(9, "YlOrBr")[(4:9)])
+palette5 <- rev(palette[c(1,3,5,7,9)])
+
+# Number of variants found 
+ggplot(DXnonSyn_tab) +
+  geom_bar(aes(x = CONSEQUENCE, fill = Valid), stat = "count", position = "stack") +
+  nature_barplot() +
+  scale_fill_manual(values = divergingPal[c(9,10)]) +
+  labs(x = "", y = "Quality", fill = "Valid") +
+  coord_flip() +
+  theme(axis.text.x = element_text(color="black", size=15, angle = 90))
+
+ggsave("plots/GOYA_DXmutPASSED_HistConsequences.pdf", width = 5, height = 3)
+
+# Mutations composition
+ggplot(DXnonSyn_tab) +
+  geom_bar(aes(x = CONSEQUENCE, fill = CONSEQUENCE), stat = "count", position = "stack") +
+  nature_barplot() +
+  scale_fill_manual(values = palette5) +
+  labs(x = "", y = "Quality", fill = "Type") +
+  theme(axis.text.x = element_text(color="black", size=15, angle = 90)) +
+  lims(y = c(0,60))
+
+ggsave("plots/GOYA_DXmutSignif_Hist.pdf", width = 5, height = 4)
+```
+
+Identify samples with very low or no expression of DDX3X   
+
+```{r eval = T, echo = T, message = F, warning = F, error = F}
+# Load GOYA expression data
+load(GOYACOUNTS)
+GOYA_meta <- read_csv(GOYAMETA)
+
+GOYA_filtered <- remove_low(countsGOYA, 128, 0.25) 
+GOYA_tmm <- tmm(GOYA_filtered[,-1])
+GOYA_tmm <- cbind(GOYA_filtered[,1], GOYA_tmm) %>%
+  as_tibble()
+colnames(GOYA_tmm) <- c("ensembl_gene_id_version", colnames(GOYA_tmm)[-1])
+GOYA_tmm <- GOYA_tmm %>%
+  mutate(ensembl_gene_id = splitvec(GOYA_tmm$ensembl_gene_id_version, "[.]", 1))
+
+# Annotations  
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart_ensembl2name <- getBM(attributes=c('ensembl_gene_id', 
+                                           'external_gene_name', 
+                                           'entrezgene_id'), 
+                                filters = "ensembl_gene_id", 
+                                values = GOYA_tmm$ensembl_gene_id,
+                                mart = ens)
+GOYA_tmm <- GOYA_tmm %>%
+  full_join(biomart_ensembl2name) %>%
+  dplyr::select(ensembl_gene_id, external_gene_name, starts_with("SRR"))
+
+save(GOYA_tmm, file = "../utilis/GOYA/GOYA_TMM.RData")
+```
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Select genes
+select <- c("DDX3X")
+GOYA_selected <- GOYA_tmm %>% 
+  dplyr::filter(external_gene_name %in% select) %>%
+  gather(key, value, -ensembl_gene_id, -external_gene_name) %>%
+  dplyr::mutate(DDX3X_mut = key %in% DXnonSyn_tab$SAMPLE,
+         DDX3X_status = DXnonSyn_tab$CONSEQUENCE[match(key, DXnonSyn_tab$SAMPLE)],
+         value = as.numeric(value))
+
+GOYA_selected$DDX3X_status[is.na(GOYA_selected$DDX3X_status)] <- "WT"
+
+# DDX3X expression histogram
+plot_df <- GOYA_selected %>%
+  dplyr::filter(external_gene_name == "DDX3X")
+
+ggplot(plot_df) +
+  geom_histogram(aes(x = value, fill = DDX3X_status), color = "darkgrey") +
+  scale_fill_manual(values = divergingPal[c(3,1,10,6,12)]) +
+  nature_barplot() +
+  geom_vline(xintercept = 75, alpha = 0.6, linetype = "longdash")
+
+ggsave("plots/GOYA_DDX3Xexpr_Hist.pdf", width = 6, height = 4)
+
+# Mark low DDX3X
+GOYA_selected <- GOYA_selected %>%
+  mutate(LowExpr = DDX3X_status == "WT" & external_gene_name == "DDX3X" & value < 75)
+
+# Update GOYA metadata with DDX3X status
+GOYA_meta <- GOYA_meta %>%
+  mutate(GOYA_meta = case_when(
+    Run %in% DXnonSyn_tab$SAMPLE[DXnonSyn_tab$Valid & DXnonSyn_tab$whiteList]   ~ "MUT_WhiteList",
+    Run %in% DXnonSyn_tab$SAMPLE[DXnonSyn_tab$Valid & DXnonSyn_tab$Helicase]    ~ "MUT_Valid_Helicase",
+    Run %in% DXnonSyn_tab$SAMPLE[DXnonSyn_tab$Valid]                            ~ "MUT_Valid",
+    Run %in% GOYA_selected$key[GOYA_selected$LowExpr]                           ~ "LowExpr",
+    TRUE ~ "WT"))
+
+write_csv(GOYA_meta,"../utilis/GOYA/GOYA_metadataUpdated.csv" )
+```
+
+## Conclusions  
+
+Among 553 samples from GOYA trial I identified 18 samples with mutations known as 
+recurrent in BL, 16 samples with mutations in the helicase domain and 3 samples 
+with DDX3X expression below detection.  
+
