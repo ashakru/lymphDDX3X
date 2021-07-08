@@ -1,0 +1,33 @@
+producer_class	xtools.gsea.Gsea
+producer_timestamp	1573947440360
+param	collapse	false
+param	cls	/Users/joannakrupka/Dropbox (Cambridge University)/phd/ss08/DDX3X_paper/dxJungle/07_BLpatients/GSEA_BL/Result/BLpatients.phenotype.cls#mut_versus_wt
+param	plot_top_x	20
+param	norm	meandiv
+param	save_rnd_lists	false
+param	median	false
+param	num	100
+param	scoring_scheme	weighted
+param	make_sets	true
+param	mode	Max_probe
+param	gmx	ftp.broadinstitute.org://pub/gsea/gene_sets/h.all.v7.0.symbols.gmt
+param	gui	false
+param	metric	Signal2Noise
+param	rpt_label	BLpatients_H
+param	help	false
+param	order	descending
+param	out	/Users/joannakrupka/Dropbox (Cambridge University)/phd/ss08/DDX3X_paper/dxJungle/07_BLpatients/GSEA_BL
+param	create_svgs	false
+param	permute	gene_set
+param	rnd_type	no_balance
+param	set_min	15
+param	include_only_symbols	true
+param	sort	real
+param	create_gcts	false
+param	rnd_seed	timestamp
+param	nperm	1000
+param	zip_report	false
+param	set_max	500
+param	res	/Users/joannakrupka/Dropbox (Cambridge University)/phd/ss08/DDX3X_paper/dxJungle/07_BLpatients/GSEA_BL/Result/BLpatients.probe.gct
+
+file	/Users/joannakrupka/Dropbox (Cambridge University)/phd/ss08/DDX3X_paper/dxJungle/07_BLpatients/GSEA_BL/BLpatients_H.Gsea.1573947440360/index.html

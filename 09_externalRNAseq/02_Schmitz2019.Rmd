@@ -1,0 +1,181 @@
+---
+title: "02 Analysis of BL patient dataset from Grande et al. Blood 2019"
+author: "Joanna Krupka"
+date: "03/05/2020"
+output: html_document
+---
+
+## Introduction
+
+We used RNA-Seq datasets from Grande et al., 2019 to examine gene expression pattern associated with DDX3X mutation
+
+## Objectives
+
+Perform differential expression and GSEA analysis of BL patients RNA-Seq data
+
+## Material & Methods
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+library(tidyverse)
+library(DESeq2)
+library(biomaRt)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(ComplexHeatmap)
+library(ReactomePA)
+library(pheatmap)
+library(msigdbr)
+library(enrichplot)
+
+source("../utilis.R")
+
+# Load data
+blood2019.meta_details <- read_csv("../utilis/Grande2019/DDX3Xmutations_combined.csv")
+blood2019.patients <- read_csv("../utilis/Grande2019/blood2019_Grande_S2.csv")
+blood2019.drivers <- read_csv("../utilis/Grande2019/blood2019_Grande_S9.csv")
+
+# Load metadata & clean it
+blood2019.meta <- read_delim("../utilis/Grande2019/metadata.rna_seq_samples.tsv", delim = "\t") %>%
+  dplyr::select(biospecimen_id, patient_barcode, tissue, tissue_status, ff_or_ffpe, cell_sorted) %>%
+  left_join(blood2019.patients, by = c("patient_barcode" = "Patient barcode")) %>%
+  dplyr::filter(tissue_status == "Tumor" & `Clinical variant` == "Sporadic BL") %>%
+  mutate(DDX3X = patient_barcode %in% blood2019.drivers$`Patient barcode`[blood2019.drivers$DDX3X == 1],
+         DDX3X = case_when(DDX3X ~ "MUT",
+                               TRUE ~ "WT")) 
+colnames(blood2019.meta) <- gsub(" ", "_", colnames(blood2019.meta))
+write_csv(blood2019.meta,"results/Grande2019_DEG_metadata.csv")
+
+# Load counts
+blood2019.counts <- read_delim("../utilis/Grande2019/expression_matrix.counts.tsv", delim = "\t")
+counts <- blood2019.counts[,blood2019.meta$biospecimen_id]
+rownames(counts) <- blood2019.counts$gene
+```
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl", host = "http://jul2019.archive.ensembl.org")
+biomart_ensembl2name <- getBM(attributes=c('ensembl_gene_id', 
+                                             'external_gene_name', 
+                                             'entrezgene_id'), 
+                                filters = "external_gene_name", 
+                                values = blood2019.counts$gene, 
+                                mart = ensembl)
+entrezIDs.tab <- biomart_ensembl2name %>%
+  dplyr::select(external_gene_name, entrezgene_id) %>%
+  distinct()
+```
+
+## Analysis 
+
+### Subgroups: DDX3X MUT vs WT by Clinical variant
+
+```{r}
+metadata.sporadic <- blood2019.meta %>%
+  dplyr::filter(grepl("Sporadic", Clinical_variant))
+
+counts.sporadic <- remove_low(blood2019.counts[,c("gene", metadata.sporadic$biospecimen_id)], 128, 0.25, annotcolumns = 1)
+counts.sporadic <- counts.sporadic %>%
+  column_to_rownames("gene")
+
+colnames(counts.sporadic) == metadata.sporadic$biospecimen_id
+
+# Basic DESeq2  
+dds <- DESeqDataSetFromMatrix(counts.sporadic, 
+                              metadata.sporadic, 
+                              ~  Sex+EBV_status+DDX3X) 
+dds$DDX3X <- relevel(dds$DDX3X, ref = "WT")
+dds <- DESeq(dds)
+vst.sporatic <- assay(vst(dds, blind = F))
+resultsNames(dds)
+res <- results(dds, name = "DDX3X_MUT_vs_WT")
+resLFC <- lfcShrink(dds, coef="DDX3X_MUT_vs_WT", type="normal")
+res.tab <- resLFC %>% as.data.frame() %>%
+  rownames_to_column("external_gene_name") %>% 
+  na.omit() %>%
+  left_join(entrezIDs.tab) %>%
+  mutate(status = case_when(log2FoldChange > 0.5 & padj < 0.05 ~ "mRNA_up",
+                            log2FoldChange < -0.5 & padj < 0.05 ~ "mRNA_down", 
+                            TRUE ~ "stable"))
+
+res.sporadic <- res.tab 
+vst.sporadic.tab <- as.data.frame(vst.sporatic)
+vst.sporadic.tab$external_gene_name <- rownames(vst.sporatic)
+write_csv(vst.sporadic.tab, "results/Grande2019_DESeq2_DDX3X_MUTvsWT_sporadicBL_VST.csv")
+write_csv(res.tab, "results/Grande2019_DESeq2_DDX3X_MUTvsWT_sporadicBL.csv")
+```
+
+### GSEA
+
+```{r}
+# BL patients
+#ExpressionSet construction
+norm_counts <- vst.sporatic %>%
+  as.data.frame() %>%
+  rownames_to_column("external_gene_name") %>%
+  gather(sample, VST, -external_gene_name) %>%
+  #mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1)) %>%
+  #left_join(biomart_ensembl2name) %>%
+  group_by(sample, external_gene_name) %>%
+  summarize(VST = mean(VST)) %>%
+  filter(!duplicated(external_gene_name)) %>%
+  na.omit() %>%
+  ungroup() %>%
+  spread(sample, VST) %>%
+  remove_rownames() %>%
+  column_to_rownames("external_gene_name")
+
+norm_counts <- norm_counts[,metadata.sporadic$biospecimen_id]
+
+#AnnotatedDataFrame with metadata
+meta <- data.frame(labelDescription= colnames(metadata.sporadic[,c(1,18)]),
+                   row.names=colnames(metadata.sporadic[,c(1,18)]))
+pD <- metadata.sporadic[,c(1,18)] %>% as.data.frame()
+rownames(pD) <- metadata.sporadic$biospecimen_id
+phenoData <- new("AnnotatedDataFrame", data=pD, varMetadata=meta)
+
+#AnnotatedDataFrame with features data
+features <- biomart_ensembl2name[,c(1,2)][match(rownames(norm_counts), biomart_ensembl2name$external_gene_name),]
+rownames(features) <- rownames(norm_counts)
+meta <- data.frame(labelDescription= colnames(features),
+                       row.names=colnames(features))
+featureData <- new("AnnotatedDataFrame", data=features, varMetadata=meta)
+
+#ExpressionSet object
+exampleSet <- ExpressionSet(assayData = as.matrix(norm_counts), 
+                            phenoData = phenoData, 
+                            featureData = featureData)
+
+#create GSEA files
+ArrayTools::createGSEAFiles(mydir = paste(getwd(), "GSEA_BL", sep="/"), exampleSet, "DDX3X")
+```
+
+#### BL patients  
+
+```{r}
+mSigH <- msigdbr(species = "Homo sapiens", category = "H")  %>% 
+  dplyr::select(gs_name, entrez_gene)
+
+# Load pre-ranked genes
+rankedList <- read_csv("GSEA_Grande2019/rankedGenes1.csv") %>%
+  left_join(biomart_ensembl2name, by = c("NAME" = "external_gene_name")) %>%
+  na.omit()
+
+geneList <- rankedList$SCORE
+names(geneList) <- as.character(rankedList$entrezgene_id)
+
+BL_H <- GSEA(geneList, TERM2GENE = mSigH, 
+             minGSSize = 8, pvalueCutoff = 0.25, seed = 1, exponent = 1)
+BL_H <- setReadable(BL_H, org.Hs.eg.db, keyType = "ENTREZID")
+BL_Htab <- BL_H %>% as.data.frame()
+
+write_csv(BL_Htab, "GSEA_Grande2019/BL_GSEA_Htab.csv")
+
+IDs <- c("HALLMARK_MYC_TARGETS_V1",
+         "HALLMARK_UNFOLDED_PROTEIN_RESPONSE",
+         "HALLMARK_MTORC1_SIGNALING")
+
+gseaplot2(BL_H, geneSetID = IDs, pvalue_table = TRUE,
+          color = divergingPal[c(9,10,11)],
+          rel_heights = c(1.5, 0.5, 0.5))
+
+ggsave("plots/Grande2019_HALLMARK.pdf")
+```
