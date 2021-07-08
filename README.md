@@ -13,6 +13,8 @@ Chun Gong, Joanna A Krupka ... Shamith Samarjiwa, Daniel J Hodson
 - Protein synthesis capacity is restored in established male lymphomas by ectopic expression of the Y-chromosome homologue DDX3Y, expression of which is normally restricted to the testis.  
 - DDX3Y is an induced, tumour-essential protein and an attractive therapeutic target in male lymphoma.  
 
+<img width="601" alt="Screenshot 2021-07-08 at 15 53 06" src="https://user-images.githubusercontent.com/32344189/124943668-9b01a780-e004-11eb-8fe4-8b3fa8e2f8cd.png">
+
 ### Abstract 
 
 DDX3X is a ubiquitously expressed RNA helicase involved in multiple stages of RNA biogenesis. DDX3X is frequently mutated in Burkitt lymphoma but the functional basis for this is unknown. Here, we show that loss-of-function DDX3X mutations are also enriched in MYC-translocated diffuse large B cell lymphoma and reveal **functional co-operation between mutant DDX3X and MYC**. **DDX3X promotes translation of mRNAs encoding components of the core translational machinery, thereby driving global protein synthesis**. Loss-of-function DDX3X mutations moderate MYC-driven global protein synthesis, thereby buffering MYC-induced proteotoxic stress during early lymphomagenesis. Established lymphoma cells restore full protein synthetic capacity by aberrant expression of DDX3Y, a Y-chromosome homologue that is normally expressed exclusively in testis.  These findings show that DDX3X loss-of-function can buffer MYC-driven proteotoxic stress and highlight the capacity of male B cell lymphomas to then compensate for this loss by ectopic DDX3Y expression.  
