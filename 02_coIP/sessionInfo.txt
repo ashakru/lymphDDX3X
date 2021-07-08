@@ -1,0 +1,54 @@
+R version 4.0.3 (2020-10-10)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: Fedora 30 (Workstation Edition)
+
+Matrix products: default
+BLAS/LAPACK: /home/JAK75/anaconda3/envs/rbase4/lib/libopenblasp-r0.3.12.so
+
+locale:
+ [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C               LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+ [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8    LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+ [1] grid      parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] org.Hs.eg.db_3.12.0    clusterProfiler_3.18.1 biomaRt_2.46.3         GenomicFeatures_1.42.1 AnnotationDbi_1.52.0  
+ [6] Biobase_2.50.0         corrplot_0.84          ComplexHeatmap_2.6.2   rtracklayer_1.50.0     GenomicRanges_1.42.0  
+[11] GenomeInfoDb_1.26.2    IRanges_2.24.1         S4Vectors_0.28.1       BiocGenerics_0.36.0    forcats_0.5.0         
+[16] stringr_1.4.0          dplyr_1.0.2            purrr_0.3.4            readr_1.4.0            tidyr_1.1.2           
+[21] tibble_3.0.4           ggplot2_3.3.3          tidyverse_1.3.0       
+
+loaded via a namespace (and not attached):
+  [1] shadowtext_0.0.7            readxl_1.3.1                backports_1.2.1             circlize_0.4.12            
+  [5] fastmatch_1.1-0             BiocFileCache_1.14.0        plyr_1.8.6                  igraph_1.2.6               
+  [9] splines_4.0.3               BiocParallel_1.24.1         digest_0.6.27               htmltools_0.5.1.1          
+ [13] GOSemSim_2.16.1             viridis_0.6.1               GO.db_3.12.1                magrittr_2.0.1             
+ [17] memoise_2.0.0               cluster_2.1.1               limma_3.46.0                graphlayouts_0.7.1         
+ [21] Biostrings_2.58.0           modelr_0.1.8                matrixStats_0.57.0          askpass_1.1                
+ [25] enrichplot_1.10.2           prettyunits_1.1.1           colorspace_2.0-0            ggrepel_0.9.1              
+ [29] blob_1.2.1                  rvest_0.3.6                 rappdirs_0.3.1              haven_2.3.1                
+ [33] xfun_0.20                   crayon_1.3.4                RCurl_1.98-1.2              jsonlite_1.7.2             
+ [37] scatterpie_0.1.5            glue_1.4.2                  polyclip_1.10-0             gtable_0.3.0               
+ [41] zlibbioc_1.36.0             XVector_0.30.0              GetoptLong_1.0.5            DelayedArray_0.16.0        
+ [45] shape_1.4.5                 scales_1.1.1                DOSE_3.16.0                 DBI_1.1.0                  
+ [49] edgeR_3.32.0                Rcpp_1.0.6                  viridisLite_0.4.0           progress_1.2.2             
+ [53] clue_0.3-58                 bit_4.0.4                   httr_1.4.2                  fgsea_1.16.0               
+ [57] RColorBrewer_1.1-2          ellipsis_0.3.1              pkgconfig_2.0.3             XML_3.99-0.5               
+ [61] farver_2.0.3                dbplyr_2.0.0                locfit_1.5-9.4              tidyselect_1.1.0           
+ [65] rlang_0.4.10                reshape2_1.4.4              munsell_0.5.0               cellranger_1.1.0           
+ [69] tools_4.0.3                 cachem_1.0.1                downloader_0.4              cli_3.0.0                  
+ [73] generics_0.1.0              RSQLite_2.2.2               broom_0.7.3                 evaluate_0.14              
+ [77] fastmap_1.1.0               yaml_2.2.1                  knitr_1.30                  bit64_4.0.5                
+ [81] fs_1.5.0                    tidygraph_1.2.0             ggraph_2.0.4                DO.db_2.9                  
+ [85] xml2_1.3.2                  compiler_4.0.3              rstudioapi_0.13             curl_4.3                   
+ [89] png_0.1-7                   reprex_0.3.0                tweenr_1.0.1                stringi_1.5.3              
+ [93] lattice_0.20-41             Matrix_1.3-2                vctrs_0.3.6                 pillar_1.4.7               
+ [97] lifecycle_1.0.0             BiocManager_1.30.10         GlobalOptions_0.1.2         cowplot_1.1.1              
+[101] data.table_1.13.6           bitops_1.0-6                qvalue_2.22.0               R6_2.5.0                   
+[105] gridExtra_2.3               MASS_7.3-53                 assertthat_0.2.1            SummarizedExperiment_1.20.0
+[109] openssl_1.4.3               rjson_0.2.20                withr_2.4.2                 GenomicAlignments_1.26.0   
+[113] Rsamtools_2.6.0             GenomeInfoDbData_1.2.4      hms_0.5.3                   rvcheck_0.1.8              
+[117] rmarkdown_2.6               MatrixGenerics_1.2.0        Cairo_1.5-12.2              ggforce_0.3.2              
+[121] lubridate_1.7.9.2          

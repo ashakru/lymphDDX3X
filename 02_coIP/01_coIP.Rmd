@@ -8,20 +8,20 @@ output:
     code_folding: show
 ---
 
-### Background  
+## Background  
 
 The aim of this analysis is to establish the protein interactome of endogenous DDX3X 
 in human lymphoid cell lines: U2932 (female, DDX3X WT) and Mutu (male, DDX3X mutant). 
 
-### Objectives   
+## Objectives   
 
 1. Clean the data: unify redundant protein group, select enriched proteins for downstream analysis  
 2. Perform Gene Ontology and pathway analysis (Reactome)  
 3. Visualise the results for both cell lines: Venn Diagram + scatter plot 
 
-### Materials and methods  
+## Materials and methods  
 
-```{r eval = T, echo = F, message = F, warning = F, error = F}
+```{r eval = T, echo = T, message = F, warning = F, error = F}
 library(tidyverse)
 library(magrittr)
 library(clusterProfiler)
@@ -32,8 +32,13 @@ library(limma)
 library(VennDiagram)
 library(ggrepel)
 library(ReactomePA)
+library(ggpubr)
 
 source("../utilis.R")
+
+# SILAC data (Max Quant output)
+MUTU_DATA <-  "data/12092016_Mutu_DDX3X IP.csv"
+U2932_DATA <- "data/T_Oellerich_08112016_U2932.csv"
 
 # FUNCTIONS
 # Function to parse multiple gene names. 
@@ -84,17 +89,13 @@ doGO <- function(genes, background, categories){
   return(resultsTab)
 }
 
-
-# SILAC data (Max Quant output)
-MUTU_DATA <-  "data/12092016_Mutu_DDX3X IP.csv"
-U2932_DATA <- "data/T_Oellerich_08112016_U2932.csv"
 ```
 
 ### Analysis  
 
 #### Load and organise the results selecting top enriched proteins for further analysis  
 
-```{r eval = T, echo = F, message = F, warning = F, error = F}
+```{r eval = T, echo = T, message = F, warning = F, error = F}
 # Load Mutu
 mutu.tab <- read_csv(MUTU_DATA) %>%
   dplyr::select(`Gene names`, `Ratio H/L`, `Ratio H/L normalized`, Intensity) %>%
@@ -106,14 +107,6 @@ mutu.tab <- read_csv(MUTU_DATA) %>%
   ungroup() %>%
   dplyr::select(Gene_names, Mutu_HL_Ratio, Mutu_Intensity, MutuSignif) %>%
   mutate(Gene_names_rep = splitvec(Gene_names, ";", 1))
-
-# Enrichment threshold
-ggdensity(mutu.tab, x = "Mutu_HL_Ratio", rug = TRUE,
-   color = "MutuSignif", fill = "MutuSignif",
-   palette = divergingPal[c(12,10)]) +
-  geom_vline(xintercept = 7, linetype = "longdash")
-ggsave(file.path("plots", paste("QC_Mutu_HL_Ratio.pdf", sep = "_")),
-           width = 5, height = 4)
 
 # Load U2932 
 U2392.tab <- read_csv(U2932_DATA) %>%
@@ -128,13 +121,28 @@ U2392.tab <- read_csv(U2932_DATA) %>%
   mutate(Gene_names_rep = splitvec(Gene_names, ";", 1))
 
 # Enrichment threshold
-ggdensity(U2392.tab, x = "U2932_HL_Ratio", rug = TRUE,
-   color = "U2932Signif", fill = "U2932Signif",
-   palette = divergingPal[c(12,11)]) +
-  geom_vline(xintercept = 4, linetype = "longdash")
-ggsave(file.path("plots", paste("QC_U2932_HL_Ratio.pdf", sep = "_")),
-           width = 5, height = 4)
+intensities <- c(U2392.tab$U2932_Intensity, mutu.tab$Mutu_Intensity)
+ratios <- c(U2392.tab$U2932_HL_Ratio, mutu.tab$Mutu_HL_Ratio)
+mutu.plot = ggplot(mutu.tab, aes(y = Mutu_HL_Ratio,  x = Mutu_Intensity, color = MutuSignif)) +
+  geom_point() +
+  geom_hline(yintercept = 7, alpha = 0.5, linetype = "longdash", color = "red") +
+  theme_pubclean() +
+  lims(x = c(min(intensities), max(intensities)),
+       y = c(min(ratios), max(ratios))) +
+  scale_color_manual(values = divergingPal[c(12,10)]) +
+  scale_x_log10() 
 
+u2932.plot = ggplot(U2392.tab, aes(y = U2932_HL_Ratio,  x = U2932_Intensity, color = U2932Signif)) +
+  geom_point() +
+  geom_hline(yintercept = 7, alpha = 0.5, linetype = "longdash", color = "red") +
+  theme_pubclean() +
+  scale_color_manual(values = divergingPal[c(12,10)]) +
+  lims(x = c(min(intensities), max(intensities)),
+       y = c(min(ratios), max(ratios))) +
+  scale_x_log10() 
+ggarrange(u2932.plot, mutu.plot, align = "hv")
+ggsave(file.path("plots", paste("QC_Mutu_U2932_IntensityRatio.pdf", sep = "_")),
+           width = 9, height = 4)
 # Combine Mutu and U2932 results into one table, add entrezgene IDs
 # Extract significant genes
 combined.raw <- mutu.tab %>%
@@ -184,7 +192,7 @@ Manual curation involved collapsing redundant protein groups into consensus grou
 that were decided based on the H/L ratio in both cell lines (group with higher H/L 
 ratio considered as dominant). 
 
-```{r eval = T, echo = F, message = F, warning = F, error = F}
+```{r eval = T, echo = T, message = F, warning = F, error = F}
 # Load curated, rank scores
 combined.clean <- read_csv("results/combined_results_clean.csv")
 
@@ -285,7 +293,7 @@ ggsave(file.path("plots", paste("GO_atLeast1in3.pdf", sep = "_")),
 
 Venn Diagram
 
-```{r eval = T, echo = F, message = F, warning = F, error = F}
+```{r eval = T, echo = T, message = F, warning = F, error = F}
 # Venn Diagram
 U2932 <- na.omit(signifTabSelected$Id[signifTabSelected$U2932Signif])
 Mutu <- na.omit(signifTabSelected$Id[signifTabSelected$MutuSignif])
@@ -322,7 +330,7 @@ venn.diagram(
 
 Dot plot 
 
-```{r eval = T, echo = F, message = F, warning = F, error = F}
+```{r eval = T, echo = T, message = F, warning = F, error = F}
 # Annotate 
 plot_df <- combined.clean %>%
   mutate(status = case_when(
@@ -355,3 +363,7 @@ ggplot() +
 ggsave(file.path("plots", paste("CoIP_MutuVsU2932.pdf", sep = "_")),
            width = 8, height = 5, useDingbats=FALSE)
 ```
+
+## Conclusions  
+
+DDX3X interacting proteins were enriched for the components of translation initiation machinery. Some of them are known components of stress granules. 
