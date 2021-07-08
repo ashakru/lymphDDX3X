@@ -8,13 +8,13 @@ output:
     code_folding: show
 ---
 
-### Background  
+## Background  
 
 The aim of this analysis is to identify mRNA transcripts directly bound by DDX3X
 with performed individual nucleotide resolution crosslinking immunoprecipitation (iCLIP). 
 The experiments were performed using primary germinal center B-cells, U2932 and Mutu cells.
 
-### Objectives   
+## Objectives   
 
 1. Examine distribution of iCLIP X-linking sites in different genomic regions.    
 2. Examine reproducibility between replicates: correlation  
@@ -24,9 +24,9 @@ The experiments were performed using primary germinal center B-cells, U2932 and 
 6. Visualise DDX3X binding profile across mature transcript (metagene analysis)  
 7. Perform gene ontology analysis of identified DDX3X targets.  
 
-### Materials and methods  
+## Materials and methods  
 
-```{r eval = T, echo = F, message = F, warning = F, error = F}
+```{r eval = T, echo = T, message = F, warning = F, error = F}
 library(tidyverse)
 library(rtracklayer)
 library(ComplexHeatmap)
@@ -39,8 +39,8 @@ library(org.Hs.eg.db)
 
 source("../utilis.R")
 
-GTF <- "~/Documents/reference-genome/gencode_v29_annotations/gencode.v29.basic.annotation.gtf"
-HUGO.RPs <- read_csv("../../dxJungle/signatures/HUGO_ribosomal_proteins_all.csv")
+GTF <- "../../../../reference_genome/gencode.v29.basic.annotation.gtf"
+HUGO.RPs <- read_csv("../utilis/signatures/HUGO_ribosomal_proteins_all.csv")
 
 # Load annotations
 gtfTab <- rtracklayer::import(GTF, "GTF") %>%
@@ -215,7 +215,7 @@ a reflection of mRNA abundance), I will compare the number of genes with and wit
 X-linking peaks at different expression levels. 
 
 ```{r eval = T, echo = T, message = F, warning = F, error = F}
-peaks.mean.expr.all <-  read_csv("../utilis/expressionData/mRNA_MeanTPM_MutuU2932GCB_RNAseq.csv")
+peaks.mean.expr.all <-  read_csv("../utilis/expressionData/DDX3Xsh/mRNA_MeanTPM_MutuU2932GCB_RNAseq.csv")
   
 peaks.mean.expr <- peaks.mean.expr.all %>%
   group_by(ensembl_gene_id) %>%
@@ -269,7 +269,7 @@ plotProfile -m  iMaps/bigWigs/allGrouped_CPM.gz \
 
 Gene ontology analysis of DDX3X targets.  
 
-```{r eval = T, echo = T, message = F, warning = F, error = F}
+```{r eval = T, echo = T, message = F, warning = F, error = F, width = 15}
 # Load reference set. 
 refU2932 <- read_csv("../utilis/refList/U2932_refList.csv")
 refMutu <- read_csv("../utilis/refList/Mutu_refList.csv")
@@ -352,3 +352,10 @@ ggplot(plot_df, aes(x = Description, y = -log10(p.adjust), fill = sample)) +
 
 ggsave("plots/GO_barplot_universeExpressed.pdf", width = 14, height = 5)
 ```
+
+## Conclusion
+
+1. Cross-linking sites of DDX3X protein to mRNA mapped predominantly to mature protein-coding mRNA transcripts
+2. There was considerable overlap between transcripts bound by DDX3X in all three cell types
+3. Metagene analysis showed the greatest enrichment of iCLIP crosslinks at translation initiation sites (TIS) 
+4. DDX3X protein binds predominantly to mRNAs encoding the protein subunits of the ribosome 
