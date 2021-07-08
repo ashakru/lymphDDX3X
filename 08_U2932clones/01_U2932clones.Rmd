@@ -1,0 +1,336 @@
+---
+title: "01 Differential expression analysis"
+author: "Joanna Krupka"
+date: "13/11/2019"
+output: html_document
+---
+
+## Introduction
+
+We used CRISPR editing to create R475C helicase mutant and control U2932 clones
+
+## Objectives
+
+Identify genes deferentially expressed between DDX3X R475C helicase mutant and control U2932 clones
+
+## Material & Methods
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+library(tidyverse)
+library(DESeq2)
+library(clusterProfiler)
+library(msigdbr)
+library(ReactomePA)
+library(biomaRt)
+library(enrichplot)
+library(pheatmap)
+
+source("../utilis.R")
+
+# Functions 
+doGO <- function(signifList, universeList, name){
+  
+  toSave <- c()
+  ontologies <- c("BP","CC", "MF")
+  ontologyTab <- tibble()
+
+  for (o in 1:3){
+    goTab<- enrichGO(gene = as.character(signifList),
+                universe = as.character(universeList),
+                OrgDb = org.Hs.eg.db,
+                ont = ontologies[o],
+                pAdjustMethod = "BH",
+                pvalueCutoff = 0.1,
+                qvalueCutoff = 0.2,
+                readable = T)
+    
+      goTab <- as.data.frame(goTab) %>%
+        separate(GeneRatio, c("n", "N"), "/", remove = F) %>%
+        separate(BgRatio, c("b", "B"), "/", remove = F) %>%
+        mutate(n = as.numeric(n),
+               N = as.numeric(N),
+               b = as.numeric(b),
+               B = as.numeric(B),
+               EnrichmentScore = (n/N)/(b/B))  %>%
+       # filter(n > 10,
+      #         b > 20)  %>% 
+        arrange(desc(EnrichmentScore)) %>%
+        mutate(group = paste("GO", ontologies[o]),
+               status = name,
+               sample = "U2932") 
+          
+      toSave <- goTab
+      
+      if(nrow(ontologyTab) == 0){
+        ontologyTab <- toSave
+      } else {
+        ontologyTab <- ontologyTab %>%
+          full_join(toSave)
+      }      
+   }
+  return(ontologyTab)
+}
+
+
+# Load data
+
+#U2932 clones
+load("../utilis/expressionData/U2932clones/U2932_clones_RNA_counts.RData")
+U2932clones_counts <- counts$counts %>%
+  as.data.frame() %>%
+  rownames_to_column("ensembl_gene_id")
+colnames(U2932clones_counts)[-1] <- splitvec(colnames(U2932clones_counts)[-1], "[.]", 11:13, ".") 
+
+U2932clones_meta <- read_csv("../utilis/expressionData/U2932clones/U2932clones_metadata.csv")
+
+# Annotations
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart_ensembl2name <- getBM(attributes=c('ensembl_gene_id', 
+                                           'external_gene_name', 
+                                           'entrezgene_id'), 
+                                filters = "ensembl_gene_id", 
+                                values = splitvec(U2932clones_counts$ensembl_gene_id, "[.]", 1),
+                                mart = ens)
+```
+
+## Analysis
+
+### Differential expression   
+
+```{r}
+# Low counts filtering
+U2932clones_countsFiltered <- remove_low(U2932clones_counts, 128, 0.25, 1)
+
+# BCL2 vs. BCL6-BCL2
+U2932clones_meta <- U2932clones_meta %>%
+  filter(Condition != "unmodified") %>%
+  arrange(desc(Condition))
+
+U2932clones_countsSelected <- U2932clones_countsFiltered %>%
+  dplyr::select(ensembl_gene_id, one_of(U2932clones_meta$Sample)) %>%
+  remove_rownames() %>%
+  column_to_rownames("ensembl_gene_id") %>%
+  as.matrix()
+
+U2932clones_toSave <- U2932clones_counts %>%
+  dplyr::select(ensembl_gene_id, U2932clones_meta$Sample) %>%
+  as.matrix()
+colnames(U2932clones_toSave) <- c("ensembl_gene_id", 
+                                  "RNA_U2392_wt_rep1", "RNA_U2392_wt_rep2", "RNA_U2392_wt_rep3",
+                                  "RNA_U2392_wt_rep4", "RNA_U2392_wt_rep5", "RNA_U2392_wt_rep6",
+                                  "RNA_U2392_R475C_rep1", "RNA_U2392_R475C_rep2", 
+                                  "RNA_U2392_R475C_rep3", "RNA_U2392_R475C_rep4")
+write_csv(as.data.frame(U2932clones_toSave), "../../GEO_submission/clones_counts.csv")
+
+dds <- DESeqDataSetFromMatrix(countData = U2932clones_countsSelected,
+                                  colData = U2932clones_meta,
+                                  design = ~ Condition)
+dds$Condition <- relevel(dds$Condition, ref = "wt")
+dds <- DESeq(dds)
+resultsNames(dds)
+res <- results(dds, name = "Condition_mut_vs_wt")
+U2932clonesRes <- as.data.frame(res) %>%
+      rownames_to_column(var = "ensembl_gene_id") %>%
+  mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1)) %>%
+      left_join(biomart_ensembl2name, by = "ensembl_gene_id") %>%
+  na.omit() %>%
+  mutate(status = case_when(
+    padj < 0.05 & log2FoldChange > 0.4 ~  "mRNA_up",
+    padj < 0.05 & log2FoldChange < -0.4 ~ "mRNA_down",
+    TRUE ~ "stable"
+  ))
+
+# VST normalize
+patientsCountsFiltered <- remove_low(U2932clones_countsFiltered, 128, 0.25)
+U2932clones_countsSelected <- patientsCountsFiltered %>%
+  dplyr::select(ensembl_gene_id, one_of(U2932clones_meta$Sample)) %>%
+  remove_rownames() %>%
+  column_to_rownames("ensembl_gene_id") %>%
+  as.matrix()
+
+dds <- DESeqDataSetFromMatrix(countData = U2932clones_countsSelected,
+                              colData = U2932clones_meta,
+                              design = ~ Condition)
+
+dds$Condition <- relevel(dds$Condition, ref = "wt")
+ClonesVst <- assay(vst(dds))
+
+write_csv(U2932clonesRes, "tables/U2932clones_RNA_sumtab.csv")
+write_csv(U2932clonesRes, "tables/U2932clones_VST.csv")
+```
+
+### Overlap with DDX3X kd 
+
+```{r}
+# Expression: pheatmap
+select <- U2932clonesRes$ensembl_gene_id[U2932clonesRes$padj < 0.05 & 
+                                           abs(U2932clonesRes$log2FoldChange) > 0.4]
+
+# Load DDX3Xsh counts and metadata
+load("../04_RiboSeq/results/RiboRNASeq_counts.RData")
+DDX3Xsh_meta <- read_csv("../utilis/expressionData/DDX3Xsh/RiboRNA_DDX3Xsh.csv") %>% 
+  filter(Experiment == "RNA" & Cell_line != "BL41" & grepl("SLX", Corresponding))
+
+DDX3Xsh_counts <- exonCounts %>%
+  dplyr::select(name, one_of(DDX3Xsh_meta$Sample)) %>%
+  column_to_rownames("name")
+
+DDX3Xsh_counts <- remove_low(DDX3Xsh_counts, 128, 0.25) 
+DDX3Xsh_tmm <- tmm(DDX3Xsh_counts) %>%
+  as.data.frame() %>%
+  rownames_to_column("ensembl_gene_id") %>%
+  mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1))
+
+U2932_tmm <- tmm(U2932clones_countsFiltered[,-1]) %>% as.data.frame() %>%
+  mutate(ensembl_gene_id = splitvec(U2932clones_countsFiltered$ensembl_gene_id, "[.]", 1))
+
+# Heatmap 
+tmmTab <- U2932_tmm %>%
+  filter(ensembl_gene_id %in% select) %>%
+  left_join(DDX3Xsh_tmm) %>%
+  left_join(biomart_ensembl2name) %>%
+  na.omit()
+
+U2932clones_meta$Cell_line <- "U2932"
+
+# Annotations
+annotation_col <- data.frame(Sample = c(DDX3Xsh_meta$Sample, U2932clones_meta$Sample),
+                       Cell_line = c(DDX3Xsh_meta$Cell_line, U2932clones_meta$Cell_line),
+                       Condition = c(DDX3Xsh_meta$Treatment2, U2932clones_meta$Condition), 
+                       Group = c(paste0(DDX3Xsh_meta$Cell_line, "_sh"), 
+                                 paste0(U2932clones_meta$Cell_line, "_cl")),
+                       stringsAsFactors = F)
+
+DDX3Xexpression <- tmmTab %>%
+  filter(ensembl_gene_id == "ENSG00000215301") %>%
+  gather(Sample, DDX3Xexpr, -ensembl_gene_id)  %>%
+  dplyr::select(-ensembl_gene_id)
+
+annotation_col <- annotation_col %>%
+  left_join(DDX3Xexpression) %>%
+  na.omit() %>%
+  remove_rownames() %>%
+  group_by(Group) %>%
+  mutate(DDX3Xexpr = scale(as.numeric(DDX3Xexpr))) %>%
+  column_to_rownames("Sample") %>%
+  dplyr::select(-Group)
+
+Var1 = divergingPal[c(3,7)]
+names(Var1) = unique(annotation_col$Cell_line) 
+Var2 = divergingPal[c(11,1,12,10,2)]
+names(Var2) = unique(annotation_col$Condition) 
+Var3 = rev(colorRampPalette(brewer.pal(11, "RdBu"))(length(unique(annotation_col$DDX3Xexpr))))
+names(Var3) = unique(annotation_col$DDX3Xexpr) 
+
+ann_colors = list(Cell_line = Var1,
+                  Condition = Var2, 
+                  DDX3Xexpr = Var3) 
+colors <- c(-4, seq(-2.99,2.99,by=0.01),4) 
+palette <- rev(colorRampPalette(colors = c(divergingPal[2], "white", divergingPal[10]))(n = length(colors)))  
+
+# U2932 clones
+plot_df <- tmmTab %>%
+  dplyr::select(one_of(U2932clones_meta$Sample))
+
+clones <- pheatmap(as.matrix(plot_df), 
+           scale = "row",
+           cluster_cols = F,
+           color = palette,
+           breaks = colors,
+           annotation_col = annotation_col[,c(-1, -4)],
+           annotation_colors = ann_colors, 
+           show_rownames = F,
+           cellwidth = 10,
+           cellheight = 0.5,
+           filename = "plots/U2932_clones_heatmap.pdf")
+
+# DDX3X kd U2932
+samples <- annotation_col %>%
+  rownames_to_column("Samples") %>%
+  filter(Cell_line == "U2932" & Condition %in% c("ctl", "sh")) %>%
+  arrange(DDX3Xexpr)
+order <- clones$tree_row$order
+
+plot_df <- tmmTab %>%
+  dplyr::select(one_of(samples$Samples))
+
+pheatmap(as.matrix(plot_df[order,]),
+           scale = "row",
+           cluster_cols = F,
+         cluster_rows = F,
+           color = palette,
+           breaks = colors,
+           annotation_col = annotation_col[,-1],
+           annotation_colors = ann_colors, 
+           show_rownames = F,
+           cellwidth = 10,
+           cellheight = 0.5,
+           filename = "plots/U2932_sh_heatmap.pdf")
+
+# DDX3X kd Mutu
+samples <- annotation_col %>%
+  rownames_to_column("Samples") %>%
+  filter(Cell_line == "Mutu" & Condition %in% c("ctl", "sh")) %>%
+  arrange(DDX3Xexpr)
+order <- clones$tree_row$order
+
+plot_df <- tmmTab %>%
+  dplyr::select(one_of(samples$Samples))
+
+pheatmap(as.matrix(plot_df[order,]),
+           scale = "row",
+           cluster_cols = F,
+         cluster_rows = F,
+           color = palette,
+           breaks = colors,
+           annotation_col = annotation_col[,-1],
+           annotation_colors = ann_colors, 
+           show_rownames = F,
+           cellwidth = 10,
+           cellheight = 0.5,
+           filename = "plots/Mutu_sh_heatmap.pdf")
+```
+
+### GSEA: desktop
+
+```{r}
+#ExpressionSet construction
+norm_counts <- ClonesVst %>%
+  as.data.frame() %>%
+  rownames_to_column("ensembl_gene_id") %>%
+  gather(sample, VST, -ensembl_gene_id) %>%
+  mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1)) %>%
+  left_join(biomart_ensembl2name) %>%
+  group_by(sample, external_gene_name) %>%
+  summarize(VST = mean(VST)) %>%
+  filter(!duplicated(external_gene_name)) %>%
+  na.omit() %>%
+  ungroup() %>%
+  spread(sample, VST) %>%
+  remove_rownames() %>%
+  column_to_rownames("external_gene_name")
+
+#AnnotatedDataFrame with metadata
+meta <- data.frame(labelDescription= colnames(U2932clones_meta[,c(1,4)]),
+                   row.names=colnames(U2932clones_meta[,c(1,4)]))
+pD <- U2932clones_meta[,c(1,4)] %>% as.data.frame()
+pD <- pD %>%
+  arrange(Sample)
+rownames(pD) <- pD$Sample
+phenoData <- new("AnnotatedDataFrame", data=pD, varMetadata=meta)
+
+#AnnotatedDataFrame with features data
+features <- biomart_ensembl2name[,c(1,2)][match(rownames(norm_counts), biomart_ensembl2name$external_gene_name),]
+rownames(features) <- rownames(norm_counts)
+meta <- data.frame(labelDescription= colnames(features),
+                       row.names=colnames(features))
+featureData <- new("AnnotatedDataFrame", data=features, varMetadata=meta)
+
+#ExpressionSet object
+exampleSet <- ExpressionSet(assayData = as.matrix(norm_counts), 
+                            phenoData = phenoData, 
+                            featureData = featureData)
+
+#create GSEA files
+ArrayTools::createGSEAFiles(mydir = paste(getwd(), "GSEA_clones", sep="/"), exampleSet, "Condition")
+```
