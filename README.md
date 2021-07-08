@@ -1,5 +1,7 @@
 ## Bioinformatic analysis of DDX3X mutations in Burkitt Lymphoma
 
+[![DOI](https://zenodo.org/badge/351418436.svg)](https://zenodo.org/badge/latestdoi/351418436)
+
 ### Manuscript
 
 [Sequential inverse dysregulation of the RNA helicases DDX3X and DDX3Y facilitates MYC-driven lymphomagenesis.](http://dx.doi.org/10.2139/ssrn.3520953)  
