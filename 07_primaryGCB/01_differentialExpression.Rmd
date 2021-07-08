@@ -1,0 +1,295 @@
+---
+title: "01 Differential Expression"
+author: "Joanna Krupka"
+date: "12/11/2019"
+output: html_document
+---
+
+## Introduction
+
+Here we examine the effect of MYC in primary germinal center (GC) B-cells. We cotransduced GC B cells with MYC and BCL2. As controls, cells were transduced with either BCL2 alone or BCL6 and BCL2.
+
+## Objectives
+
+Perform differential expression analysis comparing MYC-BCL2 transduced GC B-cells with BCL2 alone.
+
+## Material & Methods
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+library(DESeq2)
+library(clusterProfiler)
+library(tidyverse)
+library(pheatmap)
+library(biomaRt)
+library(org.Hs.eg.db)
+library(ReactomePA)
+library(msigdbr)
+library(enrichplot)
+
+source("../utilis.R")
+
+# Functions 
+doGO <- function(signifList, universeList, name){
+  
+  toSave <- c()
+  ontologies <- c("BP","CC", "MF")
+  ontologyTab <- tibble()
+
+  for (o in 1:3){
+    goTab<- enrichGO(gene = as.character(signifList),
+                universe = as.character(universeList),
+                OrgDb = org.Hs.eg.db,
+                ont = ontologies[o],
+                pAdjustMethod = "BH",
+                pvalueCutoff = 0.1,
+                qvalueCutoff = 0.2,
+                readable = T)
+    
+      goTab <- as.data.frame(goTab) %>%
+        separate(GeneRatio, c("n", "N"), "/", remove = F) %>%
+        separate(BgRatio, c("b", "B"), "/", remove = F) %>%
+        mutate(n = as.numeric(n),
+               N = as.numeric(N),
+               b = as.numeric(b),
+               B = as.numeric(B),
+               EnrichmentScore = (n/N)/(b/B))  %>%
+       # filter(n > 10,
+      #         b > 20)  %>% 
+        arrange(desc(EnrichmentScore)) %>%
+        mutate(group = paste("GO", ontologies[o]),
+               status = name,
+               sample = "U2932") 
+          
+      toSave <- goTab
+      
+      if(nrow(ontologyTab) == 0){
+        ontologyTab <- toSave
+      } else {
+        ontologyTab <- ontologyTab %>%
+          full_join(toSave)
+      }      
+   }
+  return(ontologyTab)
+}
+
+# Data
+load("../utilis/expressionData/GCBcells/RNA_counts.RData")
+GCBcounts <- counts$counts %>%
+  as.data.frame() %>%
+  rownames_to_column("ensembl") 
+
+colnames(GCBcounts)[-1] <- splitvec(colnames(GCBcounts)[-1], "[.]", 13:15, merge = ".")
+
+metadata <- read_csv("../utilis/expressionData/GCBcells/metadata.csv") %>%
+  filter(Sample %in% colnames(GCBcounts))
+
+# Annotations
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart_ensembl2name <- getBM(attributes=c('ensembl_gene_id', 
+                                           'external_gene_name', 
+                                           'entrezgene_id'), 
+                                filters = "ensembl_gene_id", 
+                                values = splitvec(GCBcounts$ensembl, "[.]", 1),
+                                mart = ens)
+```
+
+## Analysis. 
+
+### Differential expression analysis
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+# Low counts filtering
+GCBcountsFiltered <- remove_low(GCBcounts, 128, 0.25, 1)
+
+# BCL2 vs. MYC-BCL2
+meta_selected <- metadata %>%
+  filter(Condition %in% c("BCL2", "MYC"))
+
+GCBcountsSelected <- GCBcounts %>%
+  dplyr::select(ensembl, one_of(meta_selected$Sample)) %>%
+  column_to_rownames("ensembl") %>%
+  as.matrix()
+
+dds <- DESeqDataSetFromMatrix(countData = GCBcountsSelected,
+                                  colData = meta_selected,
+                                  design = ~ Condition)
+dds$Condition <- relevel(dds$Condition, ref = "BCL2")
+dds <- DESeq(dds)
+GCBVst <- assay(vst(dds))
+resultsNames(dds)
+res <- results(dds, name = "Condition_MYC_vs_BCL2")
+MYCres <- as.data.frame(res) %>%
+      rownames_to_column(var = "ensembl_gene_id") %>%
+  mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1)) %>%
+      left_join(biomart_ensembl2name, by = "ensembl_gene_id") %>%
+  na.omit()
+
+write_csv(MYCres, "results/MYC_DESeq2.csv")
+
+# Normalised
+GCBTMM <- tmm(GCBcountsFiltered[,-1])
+rownames(GCBTMM) <- GCBcountsFiltered[,1]
+GCBTMM <- GCBTMM %>% 
+  as.data.frame() %>%
+  rownames_to_column("ensembl_gene_id") %>%
+  mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1))  %>%
+      left_join(biomart_ensembl2name, by = "ensembl_gene_id") %>%
+  na.omit() 
+
+# VST
+meta_selected <- metadata %>%
+  filter(Condition %in% c("BCL2", "MYC"))
+
+GCBcountsSelected2 <- GCBcountsFiltered %>%
+  dplyr::select(ensembl, one_of(meta_selected$Sample)) %>%
+  remove_rownames() %>%
+  column_to_rownames("ensembl") %>%
+  as.matrix()
+
+dds <- DESeqDataSetFromMatrix(countData = GCBcountsSelected2,
+                                  colData = meta_selected,
+                                  design = ~ Condition)
+dds$Condition <- relevel(dds$Condition, ref = "BCL2")
+dds <- DESeq(dds)
+GCBVst <- assay(vst(dds))
+
+```
+
+### GSEA  
+
+```{r eval = T, echo = T, message = F, warning = F, cache = F, error = F}
+#ExpressionSet construction
+norm_counts <- GCBVst %>%
+  as.data.frame() %>%
+  rownames_to_column("ensembl_gene_id") %>%
+  gather(sample, VST, -ensembl_gene_id) %>%
+  mutate(ensembl_gene_id = splitvec(ensembl_gene_id, "[.]", 1)) %>%
+  left_join(biomart_ensembl2name) %>%
+  group_by(sample, external_gene_name) %>%
+  summarize(VST = mean(VST)) %>%
+  filter(!duplicated(external_gene_name)) %>%
+  na.omit() %>%
+  ungroup() %>%
+  spread(sample, VST) %>%
+  remove_rownames() %>%
+  column_to_rownames("external_gene_name")
+
+#AnnotatedDataFrame with metadata
+meta <- data.frame(labelDescription= colnames(meta_selected[,c(1,6)]),
+                   row.names=colnames(meta_selected[,c(1,6)]))
+pD <- meta_selected[,c(1,6)] %>% as.data.frame()
+pD <- pD %>%
+  arrange(Sample)
+rownames(pD) <- pD$Sample
+phenoData <- new("AnnotatedDataFrame", data=pD, varMetadata=meta)
+
+#AnnotatedDataFrame with features data
+features <- biomart_ensembl2name[,c(1,2)][match(rownames(norm_counts), biomart_ensembl2name$external_gene_name),]
+rownames(features) <- rownames(norm_counts)
+meta <- data.frame(labelDescription= colnames(features),
+                       row.names=colnames(features))
+featureData <- new("AnnotatedDataFrame", data=features, varMetadata=meta)
+
+#ExpressionSet object
+exampleSet <- ExpressionSet(assayData = as.matrix(norm_counts), 
+                            phenoData = phenoData, 
+                            featureData = featureData)
+
+#create GSEA files
+ArrayTools::createGSEAFiles(mydir = paste(getwd(), "GSEA_GCB", sep="/"), exampleSet, "Condition")
+```
+
+```{r}
+rankedList <- read_csv("GSEA_TuI/ranked_gene_list_MYC_versus_BCL2.csv") %>%
+  left_join(biomart_ensembl2name, by = c("NAME" = "external_gene_name")) %>%
+  na.omit()
+
+mSigH <- msigdbr(species = "Homo sapiens", category = "H")  %>% 
+  dplyr::select(gs_name, entrez_gene)
+mSigAll <- msigdbr(species = "Homo sapiens")  %>% 
+  dplyr::select(gs_name, entrez_gene)
+
+geneList <- rankedList$SCORE
+names(geneList) <- as.character(rankedList$entrezgene_id)
+
+MYC_H <- GSEA(geneList, TERM2GENE = mSigH, pvalueCutoff = 0.2, exponent = 1, seed = 1)
+MYC_H <- setReadable(MYC_H, org.Hs.eg.db, keyType = "ENTREZID")
+MYC_Htab <- MYC_H %>% as.data.frame()
+
+geneSetID <- c("HALLMARK_MYC_TARGETS_V1", "HALLMARK_MTORC1_SIGNALING", "HALLMARK_UNFOLDED_PROTEIN_RESPONSE")
+gseaplot2(MYC_H, geneSetID = geneSetID, pvalue_table = TRUE,
+          color = divergingPal[c(8,10,11)],
+          rel_heights = c(1.5, 0.5, 0.5))
+ggsave("plots/MYC_GSEAplot.pdf",useDingbats = F)
+
+write_csv(MYC_Htab, "results/MYC_GSEA_Htab.csv")
+write_csv(MYC_C2tab, "results/MYC_GSEA_GOtab.csv")
+```
+
+### Heatmap
+
+```{r}
+# Data
+selectedSigns <- mSigAll %>% 
+  filter(gs_name == "GO_RIBOSOME_BIOGENESIS") %>%
+  left_join(Tu1_TMM, by = c("entrez_gene" = "entrezgene_id")) %>%
+  na.omit()
+
+metadata <- metadata %>%
+  arrange(Condition)
+
+plot_df <- selectedSigns %>%
+  dplyr::select(metadata$Sample) 
+rownames(plot_df) <- selectedSigns$external_gene_name
+
+# Annptations: columns
+annotation_col <- data.frame(Condition = metadata$Condition,
+                             stringsAsFactors = F) 
+rownames(annotation_col) <- metadata$Sample
+
+Var1 = divergingPal[c(2,3,10)]
+names(Var1) = unique(annotation_col$Condition) 
+
+ann_colors = list(Condition = Var1) 
+
+# Annptations: rows
+annotation_row <- data.frame(RPs = case_when(
+  grepl("^MRPL", selectedSigns$external_gene_name) ~ "Mitochondrial RPs",
+  grepl("^MRPS", selectedSigns$external_gene_name) ~ "Mitochondrial RPs",
+  grepl("^RPL", selectedSigns$external_gene_name) ~ "Cytosolic RPs",
+  grepl("^RPS", selectedSigns$external_gene_name) ~ "Cytosolic RPs",
+  TRUE ~ "Other"),stringsAsFactors = F) 
+
+rownames(annotation_row) <- rownames(plot_df)
+
+Var1 = divergingPal[c(2,3,10)]
+names(Var1) = unique(annotation_col$Condition) 
+Var2 = divergingPal[c(12, 10,11)]
+names(Var2) = unique(annotation_row$RPs) 
+
+ann_colors = list(Condition = Var1,
+                  RPs = Var2) 
+
+# Heatmap graph parameters
+colors <- c(-4, seq(-2.99,2.99,by=0.01),4) 
+palette <- rev(colorRampPalette(colors = c(divergingPal[2], "white", divergingPal[10]))(n = length(colors)))  
+
+ph <- pheatmap(plot_df, 
+         scale = "row", 
+         cluster_rows = T, 
+         cluster_cols = F,
+         color = palette, 
+         breaks = colors, 
+         annotation_col = annotation_col, 
+         annotation_row = annotation_row,
+         annotation_colors = ann_colors,
+         border_color = NA,
+         show_colnames = F,
+         show_rownames = F, 
+         width = 5, 
+         height = 5,
+         cutree_cols = 2,
+         filename = "plots/RibosomeBiogenesis_heatmap.pdf", 
+         treeheight_row = 10,
+         treeheight_col = 10)
+```
