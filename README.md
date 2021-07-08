@@ -43,3 +43,9 @@ DDX3X is a ubiquitously expressed RNA helicase involved in multiple stages of RN
   
   `./utilis`:
 	Supplemmentary data and annotations used in the analysis above
+	
+### Raw sequencing data 
+
+Targeted sequencing data has been deposited to EGA. Accession number: EGAS00001004649. 
+RNA-seq and ribosome profiling data has been deposited to GEO. 
+Accession numbers: GSE144983 and GSE143393. 
