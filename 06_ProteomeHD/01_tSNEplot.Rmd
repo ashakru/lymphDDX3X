@@ -1,0 +1,156 @@
+---
+title: "01 Proteome HD data analysis"
+author: "Joanna A. Krupka"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: hide
+---
+
+### Introduction  
+
+Protome HD database uses data from  5,288 individual mass-spectrometry runs across multiple tissue-types and 294 biological conditions to infer a co-regulation map of the human proteome (Kustatscher et al., 2019). 
+
+#### Objectives  
+
+Analyse DDX3X interactome downloaded from Proteome HD.
+
+### Materials and methods  
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+library(tidyverse)
+library(pheatmap)
+library(biomaRt)
+library(RColorBrewer)
+library(msigdbr)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(ReactomePA)
+library(ggrepel)
+
+source("../utilis.R")
+
+# Reference set
+refU2932 <- read_csv("../utilis/refList/U2932_refList.csv")
+refMutu <- read_csv("../utilis/refList/Mutu_refList.csv")
+
+# Load data (downloaded from Proteome HD)
+tSNE <- read_csv("tSNE.csv") %>%
+  rownames_to_column("Lp") %>%
+  mutate(Lp = as.integer(Lp))
+
+DXinteractome <- read_csv("DDX3X_interactome.csv", skip = 2) %>%
+  dplyr::select(-starts_with("X")) %>%
+  group_by(uniprot_acc) %>%
+  mutate(Lp = grep(uniprot_acc, tSNE$ProteinID)[1])
+
+# Map to entrezID
+ens <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+biomart_ensembl2name <- getBM(attributes=c('external_gene_name',
+                                           'entrezgene_id'), 
+                                filters = "external_gene_name", 
+                                values = DXinteractome$gene_names, 
+                                mart = ens)
+DXinteractome <- DXinteractome %>%
+  left_join(biomart_ensembl2name, by = c("gene_names"="external_gene_name"))
+
+tSNE <- tSNE %>%
+  left_join(DXinteractome) 
+```
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Gene ontology analysis od interacting proteins
+toSave <- c()
+ontologies <- c("BP","CC", "MF")
+
+ontologyTab <- tibble()
+signifList <- DXinteractome$entrezgene_id
+universeList <- unique(c(refU2932$entrezgene_id, refMutu$entrezgene_id))
+
+for (o in 1:3){
+    goTab<- enrichGO(gene = as.character(signifList),
+                universe = as.character(universeList),
+                OrgDb = org.Hs.eg.db,
+                ont = ontologies[o],
+                pAdjustMethod = "BH",
+                pvalueCutoff = 0.01,
+                qvalueCutoff = 0.05,
+                readable = T)
+    
+      goTab <- as.data.frame(goTab) %>%
+        separate(GeneRatio, c("n", "N"), "/", remove = F) %>%
+        separate(BgRatio, c("b", "B"), "/", remove = F) %>%
+        mutate(n = as.numeric(n),
+               N = as.numeric(N),
+               b = as.numeric(b),
+               B = as.numeric(B),
+               EnrichmentScore = (n/N)/(b/B))  %>%
+        filter(n > 10,
+               b > 20)  %>% 
+        arrange(desc(EnrichmentScore)) %>%
+        mutate(group = paste("GO", ontologies[o]),
+               sample = "Co-IP") 
+          
+      toSave <- goTab
+      
+      if(nrow(ontologyTab) == 0){
+        ontologyTab <- toSave
+      } else {
+        ontologyTab <- ontologyTab %>%
+          full_join(toSave)
+      }      
+  }
+
+
+GO_CoIP <- ontologyTab
+write_csv(ontologyTab, "ontologies.csv")
+
+# Pathways
+paths_CoIP <- enrichPathway(gene = as.character(signifList),
+                universe = as.character(universeList),
+                pAdjustMethod = "BH",
+                pvalueCutoff = 0.1,
+                qvalueCutoff = 0.2,
+                readable = T)
+paths_CoIP <- as.data.frame(paths_CoIP)
+```
+
+```{r eval = T, echo = F, message = F, warning = F, error = F}
+# Visualise
+background <- is.na(tSNE$class)
+
+cols <- c("black", divergingPal[c(8,11,2,10)])
+
+ggplot() +
+  geom_point(aes(x = tSNE$tSNE_x_dim[background], y = tSNE$tSNE_y_dim[background]), 
+             size = 0.6, alpha = 0.8, colour = "darkgrey") +
+   geom_point(aes(x = tSNE$tSNE_x_dim[!background], y = tSNE$tSNE_y_dim[!background],
+                  color = tSNE$class[!background]), size = 1.5) +
+  theme_bw() +
+  scale_colour_manual(values = cols) +
+  labs(x = "tSNE dimension 1", y = "tSNE dimension 2", colour = "class") 
+
+ggsave(file.path("plots", "tSNEfull.pdf"),
+           width = 9, height = 6, useDingbats=FALSE)
+
+ggplot() +
+  geom_point(aes(x = tSNE$tSNE_x_dim[background], y = tSNE$tSNE_y_dim[background]), 
+             size = 2, alpha = 0.6, colour = "darkgrey") +
+   geom_point(aes(x = tSNE$tSNE_x_dim[!background], y = tSNE$tSNE_y_dim[!background],
+                  color = tSNE$class[!background]), size = 4) +
+   geom_text_repel(aes(x = tSNE$tSNE_x_dim[!background], y = tSNE$tSNE_y_dim[!background],
+                  color = tSNE$class[!background], label = tSNE$gene_names[!background]), size = 2,
+                 box.padding = 0.3) +
+  theme_bw() +
+  scale_colour_manual(values = cols) +
+  labs(x = "tSNE dimension 1", y = "tSNE dimension 2", colour = "class") +
+  lims(x = c(-65,-30), y = c(-40,60))
+
+ggsave(file.path("plots", "tSNEzoom.pdf"),
+           width = 9, height = 6, useDingbats=FALSE)
+```
+
+### Conclusions  
+
+I found 81 proteins coregulated with DDX3X. 27 of these were components of cytosolic ribosome, 8 were components 
+of core translation machinery. Most enriched GO terms of DDX3X interactome were RNP complex, mRNA metabolism, translation initiation and cytosolic ribosome.  
